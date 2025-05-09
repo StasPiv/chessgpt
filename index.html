@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chess Analysis</title>
+    <link rel="stylesheet"
+          href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+          integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+          crossorigin="anonymous">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #board {
+            width: 500px;
+            margin-bottom: 20px;
+        }
+        #info {
+            width: 500px;
+            font-size: 14px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        #analysis {
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            line-height: 1.4;
+        }
+        .evaluation-line {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .evaluation-score {
+            font-weight: bold;
+            color: #2196F3;
+.evaluation-metrics {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+        .evaluation-moves {
+            color: #333;
+        }
+        #status-bar {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #e3f2fd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div id="board"></div>
+<div id="info">
+<div id="status-bar">
+        <strong>Position:</strong> <span id="position-status">Starting position</span><br>
+        <strong>Turn:</strong> <span id="turn-status">White to move</span>
+    </div>
+<div id="controls" style="margin: 10px 0;">
+        <button id="startAnalysis" style="padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Start Analysis</button>
+        <button id="stopAnalysis" style="padding: 5px 10px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; display: none;">Stop Analysis</button>
+    </div>
+        <div id="analysis">Waiting for engine...</div>
+    </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+        integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script>
+    const game = new Chess();
+    let currentTimeout = null;
+    const board = Chessboard('board', {
+        draggable: true,
+        position: 'start',
+        pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
+        onDrop: function(source, target) {
+            const move = game.move({ from: source, to: target, promotion: 'q' });
+            if (move === null) return 'snapback';
+
+            updateStatus(move);
+            sendPositionToEngine();
+        }
+    });
+    const socket = new WebSocket('ws://localhost:8080');
+    socket.onopen = () => {
+        console.log('Connected to analysis server');
+        sendPositionToEngine();
+    };
+socket.onmessage = async (event) => {
+    const analysisDiv = document.getElementById('analysis');
+    let data;
+    try {
+        if (event.data instanceof Blob) {
+            const text = await event.data.text();
+            data = JSON.parse(text);
+        } else {
+            data = JSON.parse(event.data);
+        }
+        console.log(data);
+        analysisDiv.innerHTML = data.map(line => {
+            let score = line.score;
+            // Инвертируем оценку для хода черных
+if (game.turn() === 'b') {
+                score = score.startsWith('#') ? '-' + score : (-parseFloat(score)).toFixed(2);
+            }
+return `<div class="evaluation-line">
+                <span class="evaluation-score">${score}</span>
+                <span class="evaluation-metrics">(depth: ${line.depth}, nodes: ${line.nodes})</span>:
+                <span class="evaluation-moves">${line.moves}</span>
+            </div>`;
+        }).join('');
+    } catch (error) {
+        console.error('Error parsing analysis');
+        analysisDiv.innerHTML = '<div style="color: red">Error parsing analysis data</div>';
+    }
+};
+    socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        document.getElementById('analysis').innerHTML =
+            '<div style="color: red">Connection error</div>';
+    };
+    function updateStatus(lastMove) {
+        const status = lastMove ?
+            `Last move: ${lastMove.from}-${lastMove.to}` :
+            'Starting position';
+        document.getElementById('position-status').textContent = status;
+        const turn = game.turn() === 'w' ? 'White' : 'Black';
+        document.getElementById('turn-status').textContent = `${turn} to move`;
+    }
+function sendPositionToEngine(command = 'analyze') {
+        if (socket.readyState === WebSocket.OPEN) {
+            if (currentTimeout) {
+                clearTimeout(currentTimeout);
+            }
+            const msg = {
+                type: command,
+                fen: game.fen()
+            };
+            socket.send(JSON.stringify(msg));
+        }
+    }
+    document.getElementById('startAnalysis').addEventListener('click', function() {
+        this.style.display = 'none';
+        document.getElementById('stopAnalysis').style.display = 'inline-block';
+        sendPositionToEngine('analyze');
+    });
+    document.getElementById('stopAnalysis').addEventListener('click', function() {
+        this.style.display = 'none';
+        document.getElementById('startAnalysis').style.display = 'inline-block';
+        sendPositionToEngine('stop');
+    });
+</script>
+</body>
+</html>
