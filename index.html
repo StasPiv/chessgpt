@@ -192,18 +192,17 @@ return `<div class="evaluation-line">
         const moveNumber = Math.ceil(game.history().length / 2);
         const isWhiteMove = game.history().length % 2 !== 0;
         const moveIndex = game.history().length - 1;
+        // Сохраняем текущую FEN-позицию
+        fens[moveIndex + 1] = game.fen();
         function createMoveElement(san, index) {
             const moveSpan = document.createElement('span');
             moveSpan.className = 'move';
             moveSpan.textContent = san;
             moveSpan.setAttribute('data-move-index', index);
             moveSpan.onclick = () => {
-                const moves = game.history();
-                game.reset();
-                for (let i = 0; i <= index; i++) {
-                    game.move(moves[i]);
-                }
-                board.position(game.fen());
+                // Восстанавливаем позицию из сохраненной FEN
+                game.load(fens[index + 1]);
+                board.position(fens[index + 1]);
                 updateStatus();
 
                 // Подсветка текущего хода
@@ -224,9 +223,7 @@ return `<div class="evaluation-line">
             const moveNumberSpan = document.createElement('span');
             moveNumberSpan.className = 'move-number';
             moveNumberSpan.textContent = `${moveNumber}.`;
-
             const whiteMove = createMoveElement(move.san, moveIndex);
-
             moveItem.appendChild(moveNumberSpan);
             moveItem.appendChild(whiteMove);
             moveList.appendChild(moveItem);
@@ -237,6 +234,7 @@ return `<div class="evaluation-line">
         }
     }
     let moveHistory = [];
+    let fens = [game.fen()]; // Инициализируем с текущей позицией
     function undoLastMove() {
         const move = game.undo();
         if (move) {
