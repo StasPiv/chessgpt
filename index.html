@@ -83,6 +83,7 @@
                 <button id="startAnalysis" style="padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Start Analysis</button>
                 <button id="stopAnalysis" style="padding: 5px 10px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; display: none;">Stop Analysis</button>
                 <button id="undoMove" style="padding: 5px 10px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Undo Move</button>
+                <button id="moveForward" style="padding: 5px 10px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Move Forward</button>
             </div>
             <div id="analysis">Waiting for engine...</div>
         </div>
@@ -140,9 +141,6 @@
     document.getElementById('undoMove').addEventListener('click', function() {
         undoLastMove();
     });
-    socket.onmessage = async (event) => {
-        // ... оставляем существующий код обработчика сообщений ...
-    };
     socket.onerror = (error) => {
         console.error('WebSocket error:', error);
         document.getElementById('analysis').innerHTML =
@@ -193,56 +191,77 @@ return `<div class="evaluation-line">
         const moveList = document.querySelector('.move-list');
         const moveNumber = Math.ceil(game.history().length / 2);
         const isWhiteMove = game.history().length % 2 !== 0;
+        const moveIndex = game.history().length - 1;
+        function createMoveElement(san, index) {
+            const moveSpan = document.createElement('span');
+            moveSpan.className = 'move';
+            moveSpan.textContent = san;
+            moveSpan.setAttribute('data-move-index', index);
+            moveSpan.onclick = () => {
+                const moves = game.history();
+                game.reset();
+                for (let i = 0; i <= index; i++) {
+                    game.move(moves[i]);
+                }
+                board.position(game.fen());
+                updateStatus();
+
+                // Подсветка текущего хода
+                document.querySelectorAll('.move').forEach(move => {
+                    move.style.backgroundColor = '';
+                });
+                moveSpan.style.backgroundColor = '#e3f2fd';
+
+                if (isAnalysisRunning) {
+                    sendPositionToEngine();
+                }
+            };
+            return moveSpan;
+        }
         if (isWhiteMove) {
-            // Создаем новый элемент хода
             const moveItem = document.createElement('div');
             moveItem.className = 'move-item';
-            moveItem.innerHTML = `
-            <span class="move-number">${moveNumber}.</span>
-            <span class="move">${move.san}</span>
-        `;
+            const moveNumberSpan = document.createElement('span');
+            moveNumberSpan.className = 'move-number';
+            moveNumberSpan.textContent = `${moveNumber}.`;
+
+            const whiteMove = createMoveElement(move.san, moveIndex);
+
+            moveItem.appendChild(moveNumberSpan);
+            moveItem.appendChild(whiteMove);
             moveList.appendChild(moveItem);
         } else {
-            // Добавляем ход черных к последнему элементу
             const lastMoveItem = moveList.lastElementChild;
-            const blackMove = document.createElement('span');
-            blackMove.className = 'move';
-            blackMove.textContent = move.san;
+            const blackMove = createMoveElement(move.san, moveIndex);
             lastMoveItem.appendChild(blackMove);
         }
     }
+    let moveHistory = [];
     function undoLastMove() {
-        game.undo();
-        board.position(game.fen());
-
-        // Обновляем отображение ходов
-        const moveList = document.querySelector('.move-list');
-        const moves = game.history();
-        moveList.innerHTML = '';
-
-        moves.forEach((move, index) => {
-            if (index % 2 === 0) {
-                const moveItem = document.createElement('div');
-                moveItem.className = 'move-item';
-                moveItem.innerHTML = `
-                <span class="move-number">${Math.floor(index/2 + 1)}.</span>
-                <span class="move">${move}</span>
-            `;
-                moveList.appendChild(moveItem);
-            } else {
-                const lastMoveItem = moveList.lastElementChild;
-                const blackMove = document.createElement('span');
-                blackMove.className = 'move';
-                blackMove.textContent = move;
-                lastMoveItem.appendChild(blackMove);
+        const move = game.undo();
+        if (move) {
+            moveHistory.push(move);
+            board.position(game.fen());
+            updateMoveList();
+            updateStatus();
+            if (isAnalysisRunning) {
+                sendPositionToEngine();
             }
-        });
-
-        updateStatus();
-        if (isAnalysisRunning) {
-            sendPositionToEngine();
         }
     }
+    function moveForward() {
+        const move = moveHistory.pop();
+        if (move) {
+            game.move(move);
+            board.position(game.fen());
+            updateMoveList();
+            updateStatus();
+            if (isAnalysisRunning) {
+                sendPositionToEngine();
+            }
+        }
+    }
+    document.getElementById('moveForward').addEventListener('click', moveForward);
 function sendPositionToEngine(command = 'analyze') {
         if (socket.readyState === WebSocket.OPEN) {
             if (currentTimeout) {
