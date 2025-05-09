@@ -13,64 +13,88 @@
             padding: 20px;
             font-family: sans-serif;
             background: #f0f0f0;
+        }
+        .main-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .board-container {
+            flex: 0 0 500px;
+        }
+        .game-info-container {
+            flex: 1;
+            min-width: 300px;
         }
         #board {
             width: 500px;
             margin-bottom: 20px;
         }
         #info {
-            width: 500px;
+            width: 100%;
             font-size: 14px;
             background: white;
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        #analysis {
-            margin-top: 10px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            line-height: 1.4;
+        #game-text {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
-        .evaluation-line {
-            padding: 5px 0;
-            border-bottom: 1px solid #eee;
+        .move-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .evaluation-score {
-            font-weight: bold;
-            color: #2196F3;
-.evaluation-metrics {
+        .move-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .move-number {
             color: #666;
-            font-size: 0.9em;
-            margin-left: 5px;
+            min-width: 30px;
         }
-        .evaluation-moves {
-            color: #333;
+        .move {
+            padding: 2px 5px;
+            border-radius: 3px;
+            cursor: pointer;
         }
-        #status-bar {
-            margin-bottom: 10px;
-            padding: 8px;
+        .move:hover {
             background: #e3f2fd;
-            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-<div id="board"></div>
-<div id="info">
-<div id="status-bar">
-        <strong>Position:</strong> <span id="position-status">Starting position</span><br>
-        <strong>Turn:</strong> <span id="turn-status">White to move</span>
+<div class="main-container">
+    <div class="board-container">
+        <div id="board"></div>
+        <div id="info">
+            <div id="status-bar">
+                <strong>Position:</strong> <span id="position-status">Starting position</span><br>
+                <strong>Turn:</strong> <span id="turn-status">White to move</span>
+            </div>
+            <div id="controls" style="margin: 10px 0;">
+                <button id="startAnalysis" style="padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Start Analysis</button>
+                <button id="stopAnalysis" style="padding: 5px 10px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; display: none;">Stop Analysis</button>
+                <button id="undoMove" style="padding: 5px 10px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Undo Move</button>
+            </div>
+            <div id="analysis">Waiting for engine...</div>
+        </div>
     </div>
-<div id="controls" style="margin: 10px 0;">
-        <button id="startAnalysis" style="padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Start Analysis</button>
-        <button id="stopAnalysis" style="padding: 5px 10px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; display: none;">Stop Analysis</button>
+    <div class="game-info-container">
+        <div id="game-text">
+            <div class="move-list">
+
+            </div>
+        </div>
     </div>
-        <div id="analysis">Waiting for engine...</div>
-    </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"
         integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
         crossorigin="anonymous"></script>
@@ -81,6 +105,7 @@
 <script>
     const game = new Chess();
     let currentTimeout = null;
+    // Обновляем функцию onDrop в конфигурации доски
     const board = Chessboard('board', {
         draggable: true,
         position: 'start',
@@ -88,15 +113,40 @@
         onDrop: function(source, target) {
             const move = game.move({ from: source, to: target, promotion: 'q' });
             if (move === null) return 'snapback';
-
             updateStatus(move);
-            sendPositionToEngine();
+            updateMoveList(move);
+            if (isAnalysisRunning) {
+                sendPositionToEngine();
+            }
         }
     });
     const socket = new WebSocket('ws://localhost:8080');
     socket.onopen = () => {
         console.log('Connected to analysis server');
+    };
+    let isAnalysisRunning = false;
+    document.getElementById('startAnalysis').addEventListener('click', () => {
+        isAnalysisRunning = true;
+        document.getElementById('startAnalysis').style.display = 'none';
+        document.getElementById('stopAnalysis').style.display = 'inline';
         sendPositionToEngine();
+    });
+    document.getElementById('stopAnalysis').addEventListener('click', () => {
+        isAnalysisRunning = false;
+        document.getElementById('startAnalysis').style.display = 'inline';
+        document.getElementById('stopAnalysis').style.display = 'none';
+        socket.send(JSON.stringify({ type: 'stop' }));
+    });
+    document.getElementById('undoMove').addEventListener('click', function() {
+        undoLastMove();
+    });
+    socket.onmessage = async (event) => {
+        // ... оставляем существующий код обработчика сообщений ...
+    };
+    socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        document.getElementById('analysis').innerHTML =
+            '<div style="color: red">Connection error</div>';
     };
 socket.onmessage = async (event) => {
     const analysisDiv = document.getElementById('analysis');
@@ -138,6 +188,60 @@ return `<div class="evaluation-line">
         document.getElementById('position-status').textContent = status;
         const turn = game.turn() === 'w' ? 'White' : 'Black';
         document.getElementById('turn-status').textContent = `${turn} to move`;
+    }
+    function updateMoveList(move) {
+        const moveList = document.querySelector('.move-list');
+        const moveNumber = Math.ceil(game.history().length / 2);
+        const isWhiteMove = game.history().length % 2 !== 0;
+        if (isWhiteMove) {
+            // Создаем новый элемент хода
+            const moveItem = document.createElement('div');
+            moveItem.className = 'move-item';
+            moveItem.innerHTML = `
+            <span class="move-number">${moveNumber}.</span>
+            <span class="move">${move.san}</span>
+        `;
+            moveList.appendChild(moveItem);
+        } else {
+            // Добавляем ход черных к последнему элементу
+            const lastMoveItem = moveList.lastElementChild;
+            const blackMove = document.createElement('span');
+            blackMove.className = 'move';
+            blackMove.textContent = move.san;
+            lastMoveItem.appendChild(blackMove);
+        }
+    }
+    function undoLastMove() {
+        game.undo();
+        board.position(game.fen());
+
+        // Обновляем отображение ходов
+        const moveList = document.querySelector('.move-list');
+        const moves = game.history();
+        moveList.innerHTML = '';
+
+        moves.forEach((move, index) => {
+            if (index % 2 === 0) {
+                const moveItem = document.createElement('div');
+                moveItem.className = 'move-item';
+                moveItem.innerHTML = `
+                <span class="move-number">${Math.floor(index/2 + 1)}.</span>
+                <span class="move">${move}</span>
+            `;
+                moveList.appendChild(moveItem);
+            } else {
+                const lastMoveItem = moveList.lastElementChild;
+                const blackMove = document.createElement('span');
+                blackMove.className = 'move';
+                blackMove.textContent = move;
+                lastMoveItem.appendChild(blackMove);
+            }
+        });
+
+        updateStatus();
+        if (isAnalysisRunning) {
+            sendPositionToEngine();
+        }
     }
 function sendPositionToEngine(command = 'analyze') {
         if (socket.readyState === WebSocket.OPEN) {

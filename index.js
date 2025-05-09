@@ -4,7 +4,7 @@ import { Chess } from 'chess.js';
 // Подключение к WebSocket-серверу
 const ws = new WebSocket('ws://localhost:8080');
 // Запуск Stockfish
-const stockfish = spawn('stockfish');
+const stockfish = spawn('polyglot');
 let currentFen = 'startpos';
 let lines = {};
 let analysisTimeout = null;
