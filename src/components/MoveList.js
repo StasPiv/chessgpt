@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadPGNAction, undoMoveAction } from '../redux/actions.js';
+import { loadPGNAction, undoMoveAction, gotoMoveAction } from '../redux/actions.js';
 const MoveList = () => {
     const dispatch = useDispatch();
     const history = useSelector(state => state.chess.history);
+    const currentMoveIndex = useSelector(state => state.chess.currentMoveIndex);
     const [pgn, setPgn] = useState('');
     const handleLoadPGN = () => {
         if (pgn.trim()) {
@@ -12,6 +13,14 @@ const MoveList = () => {
     };
     const handleUndoMove = () => {
         dispatch(undoMoveAction());
+    };
+
+    const handleMoveClick = (moveIndex) => {
+        dispatch(gotoMoveAction(moveIndex));
+    };
+
+    const handleStartPosition = () => {
+        dispatch(gotoMoveAction(-1)); // -1 для начальной позиции
     };
     // Создаем список всех ходов с номерами
     const movesList = history.map((move, index) => {
@@ -47,20 +56,54 @@ const MoveList = () => {
                         gap: '8px',
                         lineHeight: '1.4'
                     }}>
-                        {movesList.map((move, index) => (
-                            <span 
-                                key={index} 
-                                style={{ 
-                                    fontSize: '14px',
-                                    padding: '2px 4px',
-                                    cursor: 'pointer',
-                                    whiteSpace: 'nowrap'
-                                }}
-                                title={`Move ${index + 1}: ${move.display}`}
-                            >
-                                {move.display}
-                            </span>
-                        ))}
+                        <span 
+                            style={{ 
+                                fontSize: '14px',
+                                padding: '2px 4px',
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                borderRadius: '3px',
+                                backgroundColor: currentMoveIndex === -1 ? '#4CAF50' : 'transparent',
+                                color: currentMoveIndex === -1 ? 'white' : 'black',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onClick={handleStartPosition}
+                            title="Go to starting position"
+                        >
+                            ⭐ Start
+                        </span>
+                        {movesList.map((move, index) => {
+                            const isCurrentMove = index === currentMoveIndex;
+                            return (
+                                <span 
+                                    key={index} 
+                                    style={{ 
+                                        fontSize: '14px',
+                                        padding: '2px 4px',
+                                        cursor: 'pointer',
+                                        whiteSpace: 'nowrap',
+                                        borderRadius: '3px',
+                                        backgroundColor: isCurrentMove ? '#4CAF50' : 'transparent',
+                                        color: isCurrentMove ? 'white' : 'black',
+                                        transition: 'background-color 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (!isCurrentMove) {
+                                            e.target.style.backgroundColor = '#e0e0e0';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (!isCurrentMove) {
+                                            e.target.style.backgroundColor = 'transparent';
+                                        }
+                                    }}
+                                    onClick={() => handleMoveClick(index)}
+                                    title={`Move ${index + 1}: ${move.display}`}
+                                >
+                                    {move.display}
+                                </span>
+                            );
+                        })}
                     </div>
                 )}
             </div>
