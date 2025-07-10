@@ -1,4 +1,4 @@
-import { LOAD_PGN, ADD_MOVE, UNDO_MOVE, GOTO_MOVE } from './actions.js';
+import { LOAD_PGN, ADD_MOVE, UNDO_MOVE, GOTO_MOVE, GOTO_FIRST, GOTO_LAST, GOTO_PREVIOUS, GOTO_NEXT } from './actions.js';
 import { Chess } from 'chess.js';
 // Initialize a chess game
 const initialGame = new Chess();
@@ -86,6 +86,58 @@ export function chessReducer(state = initialState, action) {
                 currentMoveIndex: targetMoveIndex,
                 // history остается полной историей для отображения в MoveList
                 history: fullHistory
+            };
+        case GOTO_FIRST:
+            // Переход к начальной позиции
+            game.reset();
+            return {
+                ...state,
+                fen: game.fen(),
+                currentMoveIndex: -1,
+                history: state.fullHistory
+            };
+        case GOTO_LAST:
+            // Переход к последнему ходу
+            const lastHistory = state.fullHistory;
+            game.reset();
+            for (let i = 0; i < lastHistory.length; i++) {
+                game.move(lastHistory[i]);
+            }
+            return {
+                ...state,
+                fen: game.fen(),
+                currentMoveIndex: lastHistory.length - 1,
+                history: lastHistory
+            };
+        case GOTO_PREVIOUS:
+            // Переход к предыдущему ходу
+            const prevIndex = Math.max(-1, state.currentMoveIndex - 1);
+            const prevHistory = state.fullHistory;
+            game.reset();
+            if (prevIndex >= 0) {
+                for (let i = 0; i <= prevIndex; i++) {
+                    game.move(prevHistory[i]);
+                }
+            }
+            return {
+                ...state,
+                fen: game.fen(),
+                currentMoveIndex: prevIndex,
+                history: prevHistory
+            };
+        case GOTO_NEXT:
+            // Переход к следующему ходу
+            const nextIndex = Math.min(state.fullHistory.length - 1, state.currentMoveIndex + 1);
+            const nextHistory = state.fullHistory;
+            game.reset();
+            for (let i = 0; i <= nextIndex; i++) {
+                game.move(nextHistory[i]);
+            }
+            return {
+                ...state,
+                fen: game.fen(),
+                currentMoveIndex: nextIndex,
+                history: nextHistory
             };
         default:
             return state;

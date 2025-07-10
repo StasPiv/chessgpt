@@ -2,6 +2,7 @@ import React from 'react';
 import ChessBoard from './components/ChessBoard.js';
 import MoveList from './components/MoveList.js';
 import AnalysisPanel from './components/AnalysisPanel.js';
+import NavigationControls from './components/NavigationControls.js';
 
 const App = () => {
     return (
@@ -9,6 +10,7 @@ const App = () => {
             {/* Левая панель - шахматная доска */}
             <div style={{ flexShrink: 0 }}>
                 <ChessBoard/>
+                <NavigationControls/>
             </div>
             
             {/* Правая панель - ходы и анализ */}
