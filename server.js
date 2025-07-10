@@ -1,4 +1,4 @@
-import { WebSocketServer } from 'ws';
+import {WebSocketServer} from 'ws';
 
 const wss = new WebSocketServer({ port: 8080 });
 const clients = new Set();
@@ -12,7 +12,6 @@ wss.on('connection', (ws) => {
     ws.on('message', (data) => {
         console.log('Message received:', data.toString());
 
-        // Рассылаем всем кроме отправителя
         for (const client of clients) {
             if (client !== ws && client.readyState === ws.OPEN) {
                 client.send(data);

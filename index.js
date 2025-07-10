@@ -18,7 +18,7 @@ function stopAnalysis() {
     }
     sendToEngine('stop');
 }
-function sendAnalysisToClient() {
+function broadcastAnalysis() {
     const analysisData = Object.entries(lines).map(([pvNum, line]) => {
         return line;
     });
@@ -92,7 +92,7 @@ const [_, depth, seldepth, pvNum, scoreType, scoreValue, nodes, moves] = match;
                     moves: sanMoves.join(' ')
                 };
             }
-            sendAnalysisToClient();
+            broadcastAnalysis();
         }
     });
 });
