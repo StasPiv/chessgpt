@@ -1,6 +1,7 @@
 import React from 'react';
 import ChessBoard from './components/ChessBoard.js';
 import MoveList from './components/MoveList.js';
+import LoadPgn from './components/LoadPgn.js';
 import AnalysisPanel from './components/AnalysisPanel.js';
 import NavigationControls from './components/NavigationControls.js';
 
@@ -24,6 +25,11 @@ const App = () => {
                 {/* Верхняя часть - ходы партии */}
                 <div style={{ marginBottom: '20px' }}>
                     <MoveList/>
+                </div>
+                
+                {/* Загрузка PGN */}
+                <div style={{ marginBottom: '20px' }}>
+                    <LoadPgn/>
                 </div>
                 
                 {/* Нижняя часть - анализ */}

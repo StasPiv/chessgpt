@@ -1,19 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadPGNAction, undoMoveAction, gotoMoveAction } from '../redux/actions.js';
+import { undoMoveAction, gotoMoveAction } from '../redux/actions.js';
 import './MoveList.css';
 
 const MoveList = () => {
     const dispatch = useDispatch();
     const history = useSelector(state => state.chess.history);
     const currentMoveIndex = useSelector(state => state.chess.currentMoveIndex);
-    const [pgn, setPgn] = useState('');
-
-    const handleLoadPGN = () => {
-        if (pgn.trim()) {
-            dispatch(loadPGNAction(pgn));
-        }
-    };
 
     const handleUndoMove = () => {
         dispatch(undoMoveAction());
@@ -72,18 +65,6 @@ const MoveList = () => {
                 <button className="undo-button" onClick={handleUndoMove}>
                     Undo Move
                 </button>
-                
-                <div>
-                    <textarea
-                        className="pgn-textarea"
-                        value={pgn}
-                        onChange={(e) => setPgn(e.target.value)}
-                        placeholder="Paste PGN text here..."
-                    />
-                    <button onClick={handleLoadPGN}>
-                        Load PGN
-                    </button>
-                </div>
             </div>
         </div>
     );
