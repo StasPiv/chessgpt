@@ -9,6 +9,77 @@ const initialState = {
     fullHistory: [], // Полная история ходов партии
     currentMoveIndex: -1, // Индекс текущего хода (-1 = начальная позиция)
 };
+// Функция для удаления вариантов из PGN и сохранения только главной линии
+function removeVariations(pgn) {
+    const lines = pgn.split('\n');
+    const headerLines = [];
+    const moveLines = [];
+
+    // Разделяем заголовки и ходы
+    let inHeaders = true;
+    for (const line of lines) {
+        if (inHeaders && line.startsWith('[')) {
+            headerLines.push(line);
+        } else if (line.trim() === '') {
+            if (inHeaders) {
+                headerLines.push(line);
+                inHeaders = false;
+            }
+        } else {
+            inHeaders = false;
+            moveLines.push(line);
+        }
+    }
+
+    // Объединяем строки с ходами, фильтруя пустые строки
+    const movesText = moveLines
+        .map(line => line.trim())  // Убираем пробелы с краев каждой строки
+        .filter(line => line.length > 0)  // Удаляем пустые строки
+        .join(' ');
+
+    // Удаляем варианты (содержимое в скобках)
+    let result = '';
+    let depth = 0;
+    let i = 0;
+
+    while (i < movesText.length) {
+        const char = movesText[i];
+
+        if (char === '(') {
+            depth++;
+        } else if (char === ')') {
+            depth--;
+        } else if (depth === 0) {
+            result += char;
+        }
+
+        i++;
+    }
+
+    // Очищаем лишние пробелы
+    result = result.replace(/\s+/g, ' ').trim();
+
+    // НОВОЕ: Удаляем артефакты номеров ходов после вариантов
+    // Удаляем конструкции вида "4. .. " или "6. .. " (номер хода с двумя точками)
+    result = result.replace(/\d+\.\s*\.\.\s*/g, '');
+
+    // Финальная очистка: удаляем лишние пробелы, которые могли остаться
+    result = result.replace(/\s+/g, ' ').trim();
+
+    // АГРЕССИВНАЯ ОЧИСТКА: убираем все невидимые символы в конце (включая NUL, пробелы, табы, переносы)
+    result = result.replace(/[\s\u0000-\u001F\u007F-\u009F]+$/g, '');
+
+    // Возвращаем заголовки + очищенные ходы
+    if (headerLines.length > 0) {
+        return headerLines.join('\n') + '\n' + result;
+    } else {
+        return result;
+    }
+}
+
+// Экспорт для тестов
+export { removeVariations };
+
 export function chessReducer(state = initialState, action) {
     const game = state.game;
     switch (action.type) {
@@ -20,6 +91,9 @@ export function chessReducer(state = initialState, action) {
                 if (!pgn.startsWith('[')) {
                     pgn = '[Event "Casual Game"]\n\n' + pgn;
                 }
+
+                // Удаляем варианты перед обработкой
+                pgn = removeVariations(pgn);
 
                 if (!pgn.match(/1-0|0-1|1\/2-1\/2|\*$/)) {
                     pgn += ' *';
