@@ -1,0 +1,75 @@
+.move-list-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.moves-container {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+.moves-title {
+    margin: 0 0 10px 0;
+}
+
+.no-moves {
+    color: #666;
+    font-style: italic;
+}
+
+.moves-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    line-height: 1.4;
+}
+
+.move-item {
+    font-size: 14px;
+    padding: 2px 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.move-item:hover:not(.current) {
+    background-color: #e0e0e0;
+}
+
+.move-item.current {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.move-item.start {
+    font-size: 14px;
+    padding: 2px 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-radius: 3px;
+}
+
+.move-item.start.current {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.controls {
+    margin-bottom: 10px;
+}
+
+.undo-button {
+    margin-bottom: 10px;
+}
+
+.pgn-textarea {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 5px;
+}
