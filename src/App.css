@@ -1,0 +1,30 @@
+
+.app-container {
+    display: flex;
+    padding: 20px;
+    height: 100vh;
+}
+
+.board-panel {
+    flex-shrink: 0;
+}
+
+.side-panel {
+    margin-left: 20px;
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.moves-section {
+    margin-bottom: 20px;
+}
+
+.pgn-section {
+    margin-bottom: 20px;
+}
+
+.analysis-section {
+    /* Пустой блок для возможного добавления стилей в будущем */
+}

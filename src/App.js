@@ -1,39 +1,34 @@
 import React from 'react';
 import ChessBoard from './components/ChessBoard.js';
 import MoveList from './components/MoveList.js';
-import LoadPgn from './components/LoadPgn.js';
-import AnalysisPanel from './components/AnalysisPanel.js';
 import NavigationControls from './components/NavigationControls.js';
+import AnalysisPanel from './components/AnalysisPanel.js';
+import LoadPgn from './components/LoadPgn.js';
+import './App.css';
 
 const App = () => {
     return (
-        <div style={{display: 'flex', padding: '20px', height: '100vh'}}>
+        <div className="app-container">
             {/* Левая панель - шахматная доска */}
-            <div style={{ flexShrink: 0 }}>
+            <div className="board-panel">
                 <ChessBoard/>
                 <NavigationControls/>
             </div>
             
             {/* Правая панель - ходы и анализ */}
-            <div style={{
-                marginLeft: '20px', 
-                width: '350px', 
-                display: 'flex', 
-                flexDirection: 'column',
-                height: 'fit-content'
-            }}>
+            <div className="side-panel">
                 {/* Верхняя часть - ходы партии */}
-                <div style={{ marginBottom: '20px' }}>
+                <div className="moves-section">
                     <MoveList/>
                 </div>
                 
                 {/* Загрузка PGN */}
-                <div style={{ marginBottom: '20px' }}>
+                <div className="pgn-section">
                     <LoadPgn/>
                 </div>
                 
                 {/* Нижняя часть - анализ */}
-                <div>
+                <div className="analysis-section">
                     <AnalysisPanel/>
                 </div>
             </div>
