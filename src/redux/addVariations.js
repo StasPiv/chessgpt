@@ -1,7 +1,20 @@
 // Функция для добавления вариантов в PGN
 function addVariations(mainPgn, variationPgn, moveNumber, isWhiteMove) {
+    // Проверка входных параметров
     if (!mainPgn || !variationPgn) {
         return mainPgn || '';
+    }
+
+    // Валидация номера хода
+    if (typeof moveNumber !== 'number' || moveNumber <= 0) {
+        console.warn('Invalid move number:', moveNumber);
+        return mainPgn;
+    }
+
+    // Валидация флага хода
+    if (typeof isWhiteMove !== 'boolean') {
+        console.warn('Invalid move flag (isWhiteMove):', isWhiteMove);
+        return mainPgn;
     }
 
     // Разделяем PGN на заголовки и ходы
@@ -53,26 +66,22 @@ function addVariations(mainPgn, variationPgn, moveNumber, isWhiteMove) {
     let movePattern;
     if (isWhiteMove) {
         // Для хода белых ищем "номер_хода. ход_белых"
-        movePattern = new RegExp(`${moveNumber}\\s*\\.\\s*([^\\s]+)`);
+        // Улучшенный паттерн, который учитывает возможные комментарии и другие варианты
+        movePattern = new RegExp(`${moveNumber}\\s*\\.\\s*([^\\s\\(\\)]+)(?:\\s+|$)`);
     } else {
         // Для хода черных ищем "номер_хода. ход_белых ход_черных"
-        movePattern = new RegExp(`${moveNumber}\\s*\\.\\s*([^\\s]+)\\s+([^\\s]+)`);
+        // Улучшенный паттерн, который учитывает возможные комментарии и другие варианты
+        movePattern = new RegExp(`${moveNumber}\\s*\\.\\s*([^\\s\\(\\)]+)\\s+([^\\s\\(\\)]+)(?:\\s+|$)`);
     }
 
     const moveMatch = movesText.match(movePattern);
     if (!moveMatch) {
+        console.warn(`Move ${moveNumber}${isWhiteMove ? '' : '...'} not found in PGN`);
         return mainPgn; // Не нашли указанный ход
     }
 
-    // Определяем позицию для вставки
-    let insertPosition;
-    if (isWhiteMove) {
-        // Для хода белых вставляем после "номер_хода. ход_белых"
-        insertPosition = moveMatch.index + moveMatch[0].length;
-    } else {
-        // Для хода черных вставляем после "номер_хода. ход_белых ход_черных"
-        insertPosition = moveMatch.index + moveMatch[0].length;
-    }
+    // Определяем позицию для вставки (одинаково для обоих случаев)
+    const insertPosition = moveMatch.index + moveMatch[0].length;
 
     // Вставляем вариацию
     const resultMovesText = 
@@ -80,8 +89,12 @@ function addVariations(mainPgn, variationPgn, moveNumber, isWhiteMove) {
         ` (${variationMovesText}) ` + 
         movesText.substring(insertPosition);
 
-    // Убираем лишние пробелы
-    const cleanedResult = resultMovesText.replace(/\(\s*(.*?)\s*\)\s+/g, '($1) ');
+    // Убираем лишние пробелы и нормализуем пробелы вокруг скобок и комментариев
+    let cleanedResult = resultMovesText
+        .replace(/\(\s*(.*?)\s*\)\s+/g, '($1) ')  // Нормализуем пробелы вокруг вариаций
+        .replace(/\s+\{/g, ' {')                  // Нормализуем пробелы перед комментариями
+        .replace(/\}\s+/g, '} ')                  // Нормализуем пробелы после комментариев
+        .replace(/\s{2,}/g, ' ');                 // Заменяем множественные пробелы одним
 
     // Возвращаем заголовки + обновленные ходы
     if (headerLines.length > 0) {
