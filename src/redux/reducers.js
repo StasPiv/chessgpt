@@ -77,8 +77,11 @@ function removeVariations(pgn) {
     }
 }
 
+// Импортируем функцию для добавления вариаций
+import { addVariations } from './addVariations.js';
+
 // Экспорт для тестов
-export { removeVariations };
+export { removeVariations, addVariations };
 
 export function chessReducer(state = initialState, action) {
     const game = state.game;
@@ -139,13 +142,13 @@ export function chessReducer(state = initialState, action) {
             };
         case GOTO_MOVE:
             const targetMoveIndex = action.payload;
-            
+
             // Используем сохраненную полную историю для навигации
             const { fullHistory } = state;
-            
+
             // Сброс игры к начальной позиции
             game.reset();
-            
+
             // Если targetMoveIndex >= 0, воспроизводим ходы до указанного индекса
             if (targetMoveIndex >= 0) {
                 for (let i = 0; i <= targetMoveIndex && i < fullHistory.length; i++) {
@@ -153,7 +156,7 @@ export function chessReducer(state = initialState, action) {
                 }
             }
             // Если targetMoveIndex === -1, остаемся в начальной позиции
-            
+
             return {
                 ...state,
                 fen: game.fen(),
