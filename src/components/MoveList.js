@@ -1,16 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { undoMoveAction, gotoMoveAction } from '../redux/actions.js';
+import { gotoMoveAction } from '../redux/actions.js'; // удалён импорт undoMoveAction
 import './MoveList.css';
 
 const MoveList = () => {
     const dispatch = useDispatch();
     const history = useSelector(state => state.chess.history);
     const currentMoveIndex = useSelector(state => state.chess.currentMoveIndex);
-
-    const handleUndoMove = () => {
-        dispatch(undoMoveAction());
-    };
 
     const handleMoveClick = (moveIndex) => {
         dispatch(gotoMoveAction(moveIndex));
@@ -59,12 +55,6 @@ const MoveList = () => {
                         ))}
                     </div>
                 )}
-            </div>
-
-            <div className="controls">
-                <button className="undo-button" onClick={handleUndoMove}>
-                    Undo Move
-                </button>
             </div>
         </div>
     );

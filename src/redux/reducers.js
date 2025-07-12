@@ -1,4 +1,4 @@
-import { LOAD_PGN, ADD_MOVE, UNDO_MOVE, GOTO_MOVE, GOTO_FIRST, GOTO_LAST, GOTO_PREVIOUS, GOTO_NEXT } from './actions.js';
+import { LOAD_PGN, ADD_MOVE, GOTO_MOVE, GOTO_FIRST, GOTO_LAST, GOTO_PREVIOUS, GOTO_NEXT } from './actions.js';
 import { Chess } from 'chess.js';
 // Initialize a chess game
 const initialGame = new Chess();
@@ -129,16 +129,6 @@ export function chessReducer(state = initialState, action) {
                 history: newHistory,
                 fullHistory: newHistory,
                 currentMoveIndex: newHistory.length - 1
-            };
-        case UNDO_MOVE:
-            game.undo();
-            const undoHistory = game.history({ verbose: true });
-            return {
-                ...state,
-                fen: game.fen(),
-                history: undoHistory,
-                fullHistory: undoHistory,
-                currentMoveIndex: undoHistory.length - 1
             };
         case GOTO_MOVE:
             const targetMoveIndex = action.payload;

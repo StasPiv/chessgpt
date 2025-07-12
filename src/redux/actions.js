@@ -12,9 +12,6 @@ export function loadPGNAction(pgn) {
 export function addMoveAction(move) {
     return { type: ADD_MOVE, payload: move };
 }
-export function undoMoveAction() {
-    return { type: UNDO_MOVE };
-}
 
 export function gotoMoveAction(moveIndex) {
     return { type: GOTO_MOVE, payload: moveIndex };
