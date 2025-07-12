@@ -79,6 +79,25 @@
     background: #0056b3;
 }
 
+/* Кнопка сброса лейаута */
+.reset-layout-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.reset-layout-btn:hover {
+    background: #218838;
+}
+
 /* Секция ходов */
 .moves-section {
     flex: 1;
@@ -158,17 +177,36 @@
 /* Стили для адаптивности доски */
 .chess-board-container {
     width: 100%;
+    flex: 1;
     padding: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    box-sizing: border-box;
+    min-height: 0; /* Важно для flex-контейнеров */
+}
+
+/* Обеспечиваем корректное поведение самой доски */
+.chess-board-container > div {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Убеждаемся, что доска не выходит за пределы контейнера */
+.chess-board-container [data-testid="chessboard"] {
+    max-width: 100% !important;
+    max-height: 100% !important;
 }
 
 /* Контролы навигации */
 .navigation-controls {
     width: 100%;
     max-width: 100%;
+    flex-shrink: 0; /* Контролы не сжимаются */
+    margin-top: 10px;
 }
+
 /* Адаптивные стили */
 @media (max-width: 768px) {
     .app-header {
