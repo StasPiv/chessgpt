@@ -32,7 +32,7 @@ export function chessReducer(state = initialState, action) {
                 }
 
                 game.loadPgn(cleanedPgn, { sloppy: true });
-                const loadedHistory = game.history({ verbose: true });
+                const loadedHistory = game.history({ verbose: true, variations: true });
                 return {
                     ...state,
                     fen: game.fen(),
