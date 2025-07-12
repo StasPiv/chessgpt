@@ -1,0 +1,24 @@
+.piece.dragging {
+    transform: translateY(-10px) !important;
+    z-index: 10000 !important;
+    pointer-events: none !important;
+    cursor: grabbing !important;
+}
+
+.react-grid-item .piece.dragging {
+    z-index: 10000 !important;
+    pointer-events: none !important;
+    transform: translateY(-10px) !important;
+    position: fixed !important;
+    cursor: grabbing !important;
+}
+
+/* Добавляем плавную анимацию */
+.piece {
+    transition: transform 0.1s ease-out;
+    cursor: grab;
+}
+
+.piece:hover {
+    transform: translateY(-2px);
+}

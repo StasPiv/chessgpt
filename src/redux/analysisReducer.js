@@ -21,10 +21,6 @@ const initialState = {
 export function analysisReducer(state = initialState, action) {
     switch (action.type) {
         case START_ANALYSIS:
-            // Запускать анализ только если автоанализ включен
-            if (!state.autoAnalysisEnabled) {
-                return state;
-            }
             return { ...state, status: 'analyzing', error: null };
         case STOP_ANALYSIS:
             return { ...state, status: 'stopped' };
@@ -34,7 +30,7 @@ export function analysisReducer(state = initialState, action) {
                 ...state, 
                 autoAnalysisEnabled: newAutoEnabled,
                 // Если автоанализ отключается, останавливаем текущий анализ
-                status: newAutoEnabled ? state.status : 'stopped'
+                status: newAutoEnabled ? 'idle' : 'stopped'
             };
         case UPDATE_ANALYSIS:
             return { ...state, lines: action.payload };

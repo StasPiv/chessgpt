@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './redux/store.js';
 import CustomLayout from './components/CustomLayout.js';
 import LoadPgn from './components/LoadPgn.js';
+import { connectWebSocket } from './websocket.js';
 import './App.css';
 
 function App() {
     const [showPgnModal, setShowPgnModal] = useState(false);
+
+    // Инициализируем WebSocket соединение
+    useEffect(() => {
+        connectWebSocket(store);
+    }, []);
 
     const handlePasteClick = () => {
         setShowPgnModal(true);

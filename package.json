@@ -1,7 +1,7 @@
 {
   "name": "my-chess-app",
-  "version": "2.2.0",
-  "description": "Chess PGN viewer built with React and Redux",
+  "version": "2.3.0",
+  "description": "Chess PGN viewer with engine analysis built with React and Redux",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -9,18 +9,20 @@
     "build": "webpack",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
-    "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage"
+    "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
+    "analysis-server": "node index.js"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^1.8.2",
+    "@reduxjs/toolkit": "^2.8.2",
     "chess.js": "^1.2.0",
-    "chessboardjsx": "^2.4.6",
     "cm-chess": "^3.5.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.1.0",
+    "react-chessboard": "^5.1.0",
+    "react-dom": "^19.1.0",
     "react-grid-layout": "^1.5.2",
-    "react-redux": "^8.0.4",
-    "react-resizable": "^3.0.5"
+    "react-redux": "^9.2.0",
+    "react-resizable": "^3.0.5",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "@babel/core": "^7.18.9",
@@ -37,5 +39,18 @@
   },
   "jest": {
     "transform": {}
+  },
+  "keywords": [
+    "chess",
+    "pgn",
+    "analysis",
+    "stockfish",
+    "react",
+    "redux"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

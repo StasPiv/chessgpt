@@ -44,6 +44,8 @@ export function connectWebSocket(store) {
 export function sendPosition(fen) {
     if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify({ type: 'analyze', fen }));
+    } else {
+        console.warn('WebSocket not connected, cannot send position');
     }
 }
 

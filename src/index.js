@@ -1,15 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import App from './App.js';
 import { store } from './redux/store.js';
-import {connectWebSocket} from './websocket.js';
+import App from './App.js';
 
-connectWebSocket(store);
+const container = document.getElementById('root');
+const root = createRoot(container);
 
-ReactDOM.render(
+root.render(
     <Provider store={store}>
-        <App/>
-    </Provider>,
-    document.getElementById('root')
+        <App />
+    </Provider>
 );
