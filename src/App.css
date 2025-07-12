@@ -5,7 +5,7 @@
     gap: 20px;
 }
 
-/* Левая панель - шахматная доска (50% ширины экрана) */
+/* Левая панель - шахматная доска с анализом (50% ширины экрана) */
 .board-panel {
     flex: 0 0 50%;
     display: flex;
@@ -14,7 +14,7 @@
     justify-content: flex-start;
 }
 
-/* Правая панель - ходы и анализ (50% ширины экрана) */
+/* Правая панель - ходы (50% ширины экрана) */
 .side-panel {
     flex: 1;
     display: flex;
@@ -63,14 +63,6 @@
     border-radius: 8px;
     padding: 15px;
     background-color: #fafafa;
-}
-
-/* Секция анализа */
-.analysis-section {
-    flex: 0 0 auto;
-    max-height: 200px;
-    overflow-y: auto;
-    /* Пустой блок для возможного добавления стилей в будущем */
 }
 
 /* Всплывающий блок для PGN */
