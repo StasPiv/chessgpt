@@ -15,10 +15,24 @@ const initialState = {
     fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
     history: [],
     fullHistory: [],
-    currentMoveIndex: -1
+    currentMoveIndex: -1,
+    pgnHeaders: {} // Добавляем поддержку PGN заголовков
 };
 
 const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+// Функция для извлечения заголовков из PGN
+function extractPgnHeaders(pgn) {
+    const headers = {};
+    const headerRegex = /\[(\w+)\s+"([^"]+)"\]/g;
+    let match;
+    
+    while ((match = headerRegex.exec(pgn)) !== null) {
+        headers[match[1]] = match[2];
+    }
+    
+    return headers;
+}
 
 export function chessReducer(state = initialState, action) {
     const game = state.game;
@@ -31,6 +45,9 @@ export function chessReducer(state = initialState, action) {
                     return state;
                 }
 
+                // Извлекаем заголовки перед загрузкой PGN
+                const pgnHeaders = extractPgnHeaders(cleanedPgn);
+
                 game.loadPgn(cleanedPgn, { sloppy: true });
                 const loadedHistory = game.history({ verbose: true, variations: true });
                 return {
@@ -38,7 +55,8 @@ export function chessReducer(state = initialState, action) {
                     fen: game.fen(),
                     history: loadedHistory,
                     fullHistory: loadedHistory,
-                    currentMoveIndex: loadedHistory.length - 1
+                    currentMoveIndex: loadedHistory.length - 1,
+                    pgnHeaders: pgnHeaders
                 };
             } catch (error) {
                 console.error('Error loading PGN:', error);

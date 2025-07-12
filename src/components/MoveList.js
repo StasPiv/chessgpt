@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction } from '../redux/actions.js';
 import './MoveList.css';
+import GameHeader from "./GameHeader.js";
 
 const MoveList = () => {
     const dispatch = useDispatch();
@@ -105,7 +106,8 @@ const MoveList = () => {
                     <div className="no-moves">No moves yet</div>
                 ) : (
                     <div className="moves-list">
-                        <span 
+                        <GameHeader />
+                        <span
                             className={`move-item start ${currentMoveIndex === -1 ? 'current' : ''}`}
                             onClick={handleStartPosition}
                             title="Go to starting position"
