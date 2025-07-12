@@ -24,8 +24,8 @@ const MoveList = () => {
         
         return variations.map((variation, varIndex) => (
             <span key={`var-${varIndex}`} className="variation">
-                ({renderMoveSequence(variation, parentMoveNumber, isWhiteMove)})
-            </span>
+            {renderMoveSequence(variation, parentMoveNumber, isWhiteMove)}
+        </span>
         ));
     };
 
