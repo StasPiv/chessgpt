@@ -141,13 +141,14 @@
 /* Стили для адаптивности доски */
 .chess-board-container {
     width: 100%;
-    max-width: 500px;
-    aspect-ratio: 1;
-    margin-bottom: 20px;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Контролы навигации */
 .navigation-controls {
     width: 100%;
-    max-width: 500px;
+    max-width: 100%;
 }
