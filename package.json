@@ -1,6 +1,6 @@
 {
   "name": "my-chess-app",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Chess PGN viewer built with React and Redux",
   "main": "src/index.js",
   "type": "module",
@@ -15,6 +15,7 @@
     "@reduxjs/toolkit": "^1.8.2",
     "chess.js": "^1.2.0",
     "chessboardjsx": "^2.4.6",
+    "cm-chess": "^3.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.4"

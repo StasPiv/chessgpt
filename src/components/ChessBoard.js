@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addMoveAction } from '../redux/actions.js';
 import { startAnalysis } from '../redux/analysisReducer.js';
 import {sendPosition, stopAnalysisRequest} from '../websocket.js';
-import { Chess } from 'chess.js';
+import { Chess } from 'cm-chess';
 
 
 const ChessBoard = () => {
