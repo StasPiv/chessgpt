@@ -1,8 +1,31 @@
 .app-container {
     display: flex;
+    flex-direction: column;
     height: 100vh;
-    padding: 20px;
-    gap: 20px;
+    background-color: #f5f5f5;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.app-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 /* Левая панель - шахматная доска с анализом (50% ширины экрана) */
@@ -39,19 +62,21 @@
 }
 
 .paste-icon {
-    background: none;
+    background: #007bff;
+    color: white;
     border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
     cursor: pointer;
-    font-size: 18px;
-    color: #666;
-    padding: 5px;
-    border-radius: 4px;
+    font-size: 14px;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .paste-icon:hover {
-    background-color: #f0f0f0;
-    color: #333;
+    background: #0056b3;
 }
 
 /* Секция ходов */
@@ -143,4 +168,21 @@
 .navigation-controls {
     width: 100%;
     max-width: 100%;
+}
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .app-header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .app-title {
+        font-size: 20px;
+    }
+    
+    .app-controls {
+        width: 100%;
+        justify-content: center;
+    }
 }

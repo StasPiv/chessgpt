@@ -1,6 +1,6 @@
 {
   "name": "my-chess-app",
-  "version": "1.9.2",
+  "version": "2.0.0",
   "description": "Chess PGN viewer built with React and Redux",
   "main": "src/index.js",
   "type": "module",
@@ -18,7 +18,9 @@
     "cm-chess": "^3.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-redux": "^8.0.4"
+    "react-grid-layout": "^1.5.2",
+    "react-redux": "^8.0.4",
+    "react-resizable": "^3.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.18.9",
