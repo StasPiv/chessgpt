@@ -80,8 +80,8 @@ export function chessReducer(state = initialState, action) {
 
                 console.log('Move successful in reducer:', move);
                 
-                // Создаем новую историю
-                const newHistory = [...state.fullHistory, move];
+                // Обрезаем историю до текущей позиции и добавляем новый ход
+                const newHistory = [...state.fullHistory.slice(0, state.currentMoveIndex + 1), move];
                 
                 return {
                     ...state,
