@@ -1,30 +1,65 @@
-/* ... существующие стили ... */
-
 .pgn-container {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 0;
 }
 
 .pgn-textarea {
     width: 100%;
-    min-height: 100px;
-    margin-bottom: 10px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    min-height: 200px;
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
     resize: vertical;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: border-color 0.2s;
 }
 
-.pgn-container button {
-    padding: 8px 16px;
+.pgn-textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.pgn-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.pgn-load-button {
+    padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
-.pgn-container button:hover {
+.pgn-load-button:hover:not(:disabled) {
     background-color: #45a049;
+}
+
+.pgn-load-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pgn-cancel-button {
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.pgn-cancel-button:hover {
+    background-color: #da190b;
 }
