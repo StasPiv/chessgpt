@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import Chessboard from 'chessboardjsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMoveAction } from '../redux/actions.js';
@@ -11,6 +11,8 @@ const ChessBoard = () => {
     const fen = useSelector((state) => state.chess.fen);
     const autoAnalysisEnabled = useSelector((state) => state.analysis.autoAnalysisEnabled);
     const [boardWidth, setBoardWidth] = useState(400);
+    const [key, setKey] = useState(0); // Ключ для принудительного перерендера
+    const containerRef = useRef(null);
 
     // Функция для расчета размера доски
     const calculateBoardSize = () => {
@@ -40,6 +42,61 @@ const ChessBoard = () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
+
+    // Принудительно пересоздаем доску после монтирования
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setKey(prev => prev + 1);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Исправляем позиционирование
+    useEffect(() => {
+        const fixBoardPosition = () => {
+            const boardElement = containerRef.current?.querySelector('[data-testid="chessboard"]');
+            if (boardElement) {
+                // Сбрасываем все трансформации и позиционирование
+                boardElement.style.transform = 'none';
+                boardElement.style.position = 'relative';
+                
+                // Исправляем стили для всех дочерних элементов
+                const pieces = boardElement.querySelectorAll('.piece');
+                pieces.forEach(piece => {
+                    piece.style.position = 'absolute';
+                });
+            }
+        };
+
+        // Применяем исправления с задержкой
+        setTimeout(fixBoardPosition, 100);
+        setTimeout(fixBoardPosition, 500);
+        
+        // Добавляем глобальные CSS правила
+        const style = document.createElement('style');
+        style.textContent = `
+            .react-grid-item .chess-board-container {
+                position: relative !important;
+                overflow: visible !important;
+            }
+            .react-grid-item [data-testid="chessboard"] {
+                position: relative !important;
+                transform: none !important;
+            }
+            .react-grid-item .piece.dragging {
+                z-index: 10000 !important;
+                pointer-events: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        return () => {
+            if (document.head.contains(style)) {
+                document.head.removeChild(style);
+            }
+        };
+    }, [key]);
 
     const onDrop = ({sourceSquare, targetSquare}) => {
         try {
@@ -76,11 +133,15 @@ const ChessBoard = () => {
     }, [fen, dispatch, autoAnalysisEnabled]);
 
     return (
-        <Chessboard.default
-            position={fen}
-            onDrop={onDrop}
-            width={boardWidth}
-        />
+        <div ref={containerRef} className="chess-board-container">
+            <Chessboard.default
+                key={key}
+                position={fen}
+                onDrop={onDrop}
+                width={boardWidth}
+                dropOffBoard="snapback"
+            />
+        </div>
     );
 };
 
