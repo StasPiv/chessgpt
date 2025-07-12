@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import { spawn } from 'child_process';
-import { Chess } from 'chess.js';
+import { Chess } from 'cm-chess';
 // Подключение к WebSocket-серверу
 const ws = new WebSocket('ws://localhost:8080');
 // Запуск Stockfish

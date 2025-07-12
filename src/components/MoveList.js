@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { gotoMoveAction } from '../redux/actions.js'; // удалён импорт undoMoveAction
+import { gotoMoveAction } from '../redux/actions.js';
 import './MoveList.css';
 
 const MoveList = () => {
