@@ -12,17 +12,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-}
-
-.moves-title {
-    margin: 0;
-    padding: 15px;
-    background-color: #e9ecef;
-    border-bottom: 1px solid #dee2e6;
-    font-weight: 600;
-    color: #495057;
-    text-align: center;
-    border-radius: 8px 8px 0 0;
+    height: 100%;
 }
 
 .moves-list {
@@ -33,7 +23,8 @@
     font-family: 'Courier New', monospace;
     font-size: 14px;
     word-wrap: break-word;
-    max-height: 400px;
+    height: 100%;
+    min-height: 0;
 }
 
 .move-item {
@@ -119,6 +110,10 @@
     color: #868e96;
     font-style: italic;
     padding: 40px 20px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Responsive design */
@@ -131,11 +126,6 @@
     .move-item {
         padding: 1px 4px;
         font-size: 12px;
-    }
-    
-    .moves-title {
-        padding: 10px;
-        font-size: 16px;
     }
 }
 

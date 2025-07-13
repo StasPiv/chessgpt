@@ -167,7 +167,6 @@ const MoveList = () => {
     return (
         <div className="move-list-container">
             <div className="moves-container">
-                <h4 className="moves-title">Game Moves</h4>
                 {history.length === 0 ? (
                     <div className="no-moves">No moves yet</div>
                 ) : (
