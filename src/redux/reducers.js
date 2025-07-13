@@ -260,21 +260,50 @@ export function chessReducer(state = initialState, action) {
                 return state;
             }
 
+// Нужно исправить обработку GOTO_VARIATION_MOVE
         case GOTO_VARIATION_MOVE:
-            try {
-                console.log('GOTO_VARIATION_MOVE path:', action.payload);
-                const newGame = createPositionFromVariation(state.history, action.payload);
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    currentVariationPath: action.payload,
-                    currentMoveIndex: -1 // Сбрасываем индекс основной линии
-                };
-            } catch (error) {
-                console.error('Error in GOTO_VARIATION_MOVE:', error);
+            const variationPath = action.payload;
+            
+            // Проверяем структуру пути
+            if (!variationPath || variationPath.length < 3) {
                 return state;
             }
+            
+            const mainMove = variationPath[0];
+            const variationInfo = variationPath[1];
+            const moveInfo = variationPath[2];
+            
+            // Получаем вариацию
+            const parentMoveIndex = mainMove.index;
+            const variation = state.history[parentMoveIndex]?.variations?.[variationInfo.variationIndex];
+            
+            if (!variation) {
+                return state;
+            }
+            
+            // Создаем новую позицию
+            let newPosition = new Chess();
+            
+            // Воспроизводим основную линию ДО родительского хода (не включая его)
+            for (let i = 0; i < parentMoveIndex; i++) {
+                if (i < state.history.length) {
+                    newPosition.move(state.history[i]);
+                }
+            }
+            
+            // Воспроизводим ходы вариации до нужного хода (включая его)
+            for (let i = 0; i <= moveInfo.moveIndex; i++) {
+                if (i < variation.length) {
+                    newPosition.move(variation[i]);
+                }
+            }
+            
+            return {
+                ...state,
+                currentMoveIndex: parentMoveIndex,
+                currentVariationPath: variationPath,
+                fen: newPosition.fen()
+            };
 
         case GOTO_MOVE:
             try {

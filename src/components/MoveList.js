@@ -47,8 +47,6 @@ const MoveList = () => {
     const renderVariationSequence = (moves, parentMoveIndex, variationIndex) => {
         return moves.map((move, moveIndex) => {
             // Исправляем логику определения номера хода
-            // parentMoveIndex - это индекс хода в основной линии, после которого начинается вариация
-            // Если parentMoveIndex = 0 (первый ход e4), то вариация начинается с альтернативного первого хода
             const parentMoveNumber = Math.floor(parentMoveIndex / 2) + 1;
             const isParentWhiteMove = parentMoveIndex % 2 === 0;
             
@@ -96,6 +94,7 @@ const MoveList = () => {
             }
             
             // Создаем путь для этого хода в вариации
+            // ИСПРАВЛЕНИЕ: для первого хода в вариации parentMoveIndex должен быть на один меньше
             const variationPath = [
                 { type: 'main', index: parentMoveIndex },
                 { type: 'variation', variationIndex: variationIndex },
