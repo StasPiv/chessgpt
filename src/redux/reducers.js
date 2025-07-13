@@ -16,7 +16,7 @@ import {
 const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 // Функция для извлечения заголовков PGN
-function extractPgnHeaders(pgn) {
+export function extractPgnHeaders(pgn) {
     const headers = {};
     const lines = pgn.split('\n');
     
@@ -31,7 +31,7 @@ function extractPgnHeaders(pgn) {
 }
 
 // Исправленная функция для создания позиции на основе пути через варианты
-function createPositionFromPath(history, path) {
+export function createPositionFromPath(history, path) {
     const newGame = new Chess();
     newGame.load(START_POSITION);
     
@@ -74,7 +74,7 @@ function createPositionFromPath(history, path) {
 }
 
 // Функция для поиска хода по пути
-function findMoveByPath(history, path) {
+export function findMoveByPath(history, path) {
     if (!path || path.length === 0) return null;
     
     let currentMoves = history;
@@ -97,7 +97,7 @@ function findMoveByPath(history, path) {
 }
 
 // Улучшенная функция для создания позиции из вариации
-function createPositionFromVariation(history, variationPath) {
+export function createPositionFromVariation(history, variationPath) {
     const newGame = new Chess();
     newGame.load(START_POSITION);
     
@@ -149,6 +149,263 @@ function createPositionFromVariation(history, variationPath) {
     }
 }
 
+// Функция для создания игры из истории до определенного индекса
+export function createGameFromHistory(history, moveIndex) {
+    const newGame = new Chess();
+    newGame.load(START_POSITION);
+    
+    if (moveIndex >= 0) {
+        for (let i = 0; i <= moveIndex && i < history.length; i++) {
+            newGame.move(history[i]);
+        }
+    }
+    
+    return newGame;
+}
+
+// Обработчик загрузки PGN
+export function handleLoadPgn(state, action) {
+    try {
+        const newGame = new Chess();
+        newGame.load(START_POSITION);
+        const cleanedPgn = cleanPgn(action.payload);
+        if (!cleanedPgn) {
+            return state;
+        }
+
+        const pgnHeaders = extractPgnHeaders(cleanedPgn);
+        newGame.loadPgn(cleanedPgn, { sloppy: true });
+        const loadedHistory = newGame.history({ verbose: true, variations: true });
+        
+        return {
+            ...state,
+            game: newGame,
+            fen: newGame.fen(),
+            history: loadedHistory,
+            fullHistory: loadedHistory,
+            currentMoveIndex: loadedHistory.length - 1,
+            currentVariationPath: [],
+            currentVariationIndex: null,
+            pgnHeaders: pgnHeaders
+        };
+    } catch (error) {
+        console.error('Error loading PGN:', error);
+        return state;
+    }
+}
+
+// Обработчик добавления хода
+export function handleAddMove(state, action) {
+    try {
+        const newGame = new Chess(state.fen);
+        const move = newGame.move(action.payload);
+        
+        if (move === null) {
+            console.log('Invalid move in reducer:', action.payload);
+            return state;
+        }
+
+        // Если мы находимся в конце истории, просто добавляем ход
+        if (state.currentMoveIndex === state.fullHistory.length - 1) {
+            const newHistory = [...state.fullHistory, move];
+            
+            return {
+                ...state,
+                game: newGame,
+                fen: newGame.fen(),
+                history: newHistory,
+                fullHistory: newHistory,
+                currentMoveIndex: newHistory.length - 1,
+                currentVariationPath: [],
+                currentVariationIndex: null
+            };
+        } else {
+            // Если мы находимся в середине истории, создаем вариацию
+            const currentHistory = [...state.fullHistory.slice(0, state.currentMoveIndex + 1)];
+            
+            // Проверяем, есть ли уже такой ход в этой позиции
+            const existingMoveIndex = currentHistory.findIndex(m => 
+                m.from === move.from && m.to === move.to && m.promotion === move.promotion
+            );
+            
+            if (existingMoveIndex !== -1) {
+                // Если ход уже существует, переходим к нему
+                const gameAtExistingMove = createGameFromHistory(state.fullHistory, existingMoveIndex);
+                return {
+                    ...state,
+                    game: gameAtExistingMove,
+                    fen: gameAtExistingMove.fen(),
+                    currentMoveIndex: existingMoveIndex,
+                    currentVariationPath: [],
+                    currentVariationIndex: null
+                };
+            } else {
+                // Создаем новую ветку истории
+                const newHistory = [...currentHistory, move];
+                
+                return {
+                    ...state,
+                    game: newGame,
+                    fen: newGame.fen(),
+                    history: newHistory,
+                    fullHistory: newHistory,
+                    currentMoveIndex: newHistory.length - 1,
+                    currentVariationPath: [],
+                    currentVariationIndex: null
+                };
+            }
+        }
+    } catch (error) {
+        console.error('Error adding move:', error);
+        return state;
+    }
+}
+
+// Обработчик перехода к ходу в вариации
+export function handleGotoVariationMove(state, action) {
+    const variationPath = action.payload;
+    
+    // Проверяем структуру пути
+    if (!variationPath || variationPath.length < 3) {
+        return state;
+    }
+    
+    const mainMove = variationPath[0];
+    const variationInfo = variationPath[1];
+    const moveInfo = variationPath[2];
+    
+    // Получаем вариацию
+    const parentMoveIndex = mainMove.index;
+    const variation = state.history[parentMoveIndex]?.variations?.[variationInfo.variationIndex];
+    
+    if (!variation) {
+        return state;
+    }
+    
+    // Создаем новую позицию
+    let newPosition = new Chess();
+    
+    // Воспроизводим основную линию ДО родительского хода (не включая его)
+    for (let i = 0; i < parentMoveIndex; i++) {
+        if (i < state.history.length) {
+            newPosition.move(state.history[i]);
+        }
+    }
+    
+    // Воспроизводим ходы вариации до нужного хода (включая его)
+    for (let i = 0; i <= moveInfo.moveIndex; i++) {
+        if (i < variation.length) {
+            newPosition.move(variation[i]);
+        }
+    }
+    
+    return {
+        ...state,
+        currentMoveIndex: parentMoveIndex,
+        currentVariationPath: variationPath,
+        fen: newPosition.fen()
+    };
+}
+
+// Обработчик перехода к конкретному ходу
+export function handleGotoMove(state, action) {
+    try {
+        const targetMoveIndex = action.payload;
+        const newGame = createGameFromHistory(state.fullHistory, targetMoveIndex);
+        
+        return {
+            ...state,
+            game: newGame,
+            fen: newGame.fen(),
+            currentMoveIndex: targetMoveIndex,
+            currentVariationPath: [],
+            currentVariationIndex: null,
+            history: state.fullHistory
+        };
+    } catch (error) {
+        console.error('Error in GOTO_MOVE:', error);
+        return state;
+    }
+}
+
+// Обработчик перехода к первому ходу
+export function handleGotoFirst(state) {
+    try {
+        const newGame = new Chess();
+        newGame.load(START_POSITION);
+        return {
+            ...state,
+            game: newGame,
+            fen: newGame.fen(),
+            currentMoveIndex: -1,
+            currentVariationPath: [],
+            currentVariationIndex: null,
+            history: state.fullHistory
+        };
+    } catch (error) {
+        console.error('Error in GOTO_FIRST:', error);
+        return state;
+    }
+}
+
+// Обработчик перехода к последнему ходу
+export function handleGotoLast(state) {
+    try {
+        const lastHistory = state.fullHistory;
+        const newGame = createGameFromHistory(lastHistory, lastHistory.length - 1);
+        return {
+            ...state,
+            game: newGame,
+            fen: newGame.fen(),
+            currentMoveIndex: lastHistory.length - 1,
+            currentVariationPath: [],
+            currentVariationIndex: null,
+            history: lastHistory
+        };
+    } catch (error) {
+        console.error('Error in GOTO_LAST:', error);
+        return state;
+    }
+}
+
+// Обработчик перехода к предыдущему ходу
+export function handleGotoPrevious(state) {
+    try {
+        const prevIndex = Math.max(-1, state.currentMoveIndex - 1);
+        const prevHistory = state.fullHistory;
+        const newGame = createGameFromHistory(prevHistory, prevIndex);
+        return {
+            ...state,
+            game: newGame,
+            fen: newGame.fen(),
+            currentMoveIndex: prevIndex,
+            history: prevHistory
+        };
+    } catch (error) {
+        console.error('Error in GOTO_PREVIOUS:', error);
+        return state;
+    }
+}
+
+// Обработчик перехода к следующему ходу
+export function handleGotoNext(state) {
+    try {
+        const nextIndex = Math.min(state.fullHistory.length - 1, state.currentMoveIndex + 1);
+        const nextHistory = state.fullHistory;
+        const newGame = createGameFromHistory(nextHistory, nextIndex);
+        return {
+            ...state,
+            game: newGame,
+            fen: newGame.fen(),
+            currentMoveIndex: nextIndex,
+            history: nextHistory
+        };
+    } catch (error) {
+        console.error('Error in GOTO_NEXT:', error);
+        return state;
+    }
+}
+
 const initialState = {
     game: new Chess(),
     fen: START_POSITION,
@@ -163,258 +420,28 @@ const initialState = {
 export function chessReducer(state = initialState, action) {
     switch (action.type) {
         case LOAD_PGN:
-            try {
-                const newGame = new Chess();
-                newGame.load(START_POSITION);
-                const cleanedPgn = cleanPgn(action.payload);
-                if (!cleanedPgn) {
-                    return state;
-                }
-
-                const pgnHeaders = extractPgnHeaders(cleanedPgn);
-                newGame.loadPgn(cleanedPgn, { sloppy: true });
-                const loadedHistory = newGame.history({ verbose: true, variations: true });
-                
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    history: loadedHistory,
-                    fullHistory: loadedHistory,
-                    currentMoveIndex: loadedHistory.length - 1,
-                    currentVariationPath: [],
-                    currentVariationIndex: null,
-                    pgnHeaders: pgnHeaders
-                };
-            } catch (error) {
-                console.error('Error loading PGN:', error);
-                return state;
-            }
+            return handleLoadPgn(state, action);
 
         case ADD_MOVE:
-            try {
-                const newGame = new Chess(state.fen);
-                const move = newGame.move(action.payload);
-                
-                if (move === null) {
-                    console.log('Invalid move in reducer:', action.payload);
-                    return state;
-                }
+            return handleAddMove(state, action);
 
-                // Создаем новую игру для работы с вариациями
-                const gameWithVariations = new Chess();
-                gameWithVariations.load(START_POSITION);
-                
-                // Восстанавливаем всю историю до текущей позиции
-                const currentHistory = [...state.fullHistory.slice(0, state.currentMoveIndex + 1)];
-                for (let i = 0; i < currentHistory.length; i++) {
-                    gameWithVariations.move(currentHistory[i]);
-                }
-                
-                // Проверяем, есть ли уже такой ход в этой позиции
-                const existingMove = currentHistory.find(m => 
-                    m.from === move.from && m.to === move.to && m.promotion === move.promotion
-                );
-                
-                if (existingMove) {
-                    // Если ход уже существует, переходим к нему
-                    const moveIndex = currentHistory.findIndex(m => 
-                        m.from === move.from && m.to === move.to && m.promotion === move.promotion
-                    );
-                    return {
-                        ...state,
-                        currentMoveIndex: moveIndex,
-                        fen: newGame.fen()
-                    };
-                } else {
-                    // Если это новый ход, создаем вариацию
-                    try {
-                        // Добавляем ход как новую вариацию
-                        gameWithVariations.move(move, { variation: true });
-                        const newHistory = gameWithVariations.history({ verbose: true, variations: true });
-                        
-                        return {
-                            ...state,
-                            game: gameWithVariations,
-                            fen: newGame.fen(),
-                            history: newHistory,
-                            fullHistory: newHistory,
-                            currentMoveIndex: state.currentMoveIndex + 1
-                        };
-                    } catch (variationError) {
-                        console.error('Error creating variation:', variationError);
-                        // Fallback: просто добавляем ход как продолжение
-                        const newHistory = [...currentHistory, move];
-                        return {
-                            ...state,
-                            game: newGame,
-                            fen: newGame.fen(),
-                            history: newHistory,
-                            fullHistory: newHistory,
-                            currentMoveIndex: newHistory.length - 1
-                        };
-                    }
-                }
-            } catch (error) {
-                console.error('Error adding move:', error);
-                return state;
-            }
-
-// Нужно исправить обработку GOTO_VARIATION_MOVE
         case GOTO_VARIATION_MOVE:
-            const variationPath = action.payload;
-            
-            // Проверяем структуру пути
-            if (!variationPath || variationPath.length < 3) {
-                return state;
-            }
-            
-            const mainMove = variationPath[0];
-            const variationInfo = variationPath[1];
-            const moveInfo = variationPath[2];
-            
-            // Получаем вариацию
-            const parentMoveIndex = mainMove.index;
-            const variation = state.history[parentMoveIndex]?.variations?.[variationInfo.variationIndex];
-            
-            if (!variation) {
-                return state;
-            }
-            
-            // Создаем новую позицию
-            let newPosition = new Chess();
-            
-            // Воспроизводим основную линию ДО родительского хода (не включая его)
-            for (let i = 0; i < parentMoveIndex; i++) {
-                if (i < state.history.length) {
-                    newPosition.move(state.history[i]);
-                }
-            }
-            
-            // Воспроизводим ходы вариации до нужного хода (включая его)
-            for (let i = 0; i <= moveInfo.moveIndex; i++) {
-                if (i < variation.length) {
-                    newPosition.move(variation[i]);
-                }
-            }
-            
-            return {
-                ...state,
-                currentMoveIndex: parentMoveIndex,
-                currentVariationPath: variationPath,
-                fen: newPosition.fen()
-            };
+            return handleGotoVariationMove(state, action);
 
         case GOTO_MOVE:
-            try {
-                const targetMoveIndex = action.payload;
-                const newGame = new Chess();
-                newGame.load(START_POSITION);
-                const { fullHistory } = state;
-                
-                if (targetMoveIndex >= 0) {
-                    for (let i = 0; i <= targetMoveIndex && i < fullHistory.length; i++) {
-                        newGame.move(fullHistory[i]);
-                    }
-                }
-                
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    currentMoveIndex: targetMoveIndex,
-                    currentVariationPath: [],
-                    currentVariationIndex: null,
-                    history: fullHistory
-                };
-            } catch (error) {
-                console.error('Error in GOTO_MOVE:', error);
-                return state;
-            }
+            return handleGotoMove(state, action);
 
         case GOTO_FIRST:
-            try {
-                const newGame = new Chess();
-                newGame.load(START_POSITION);
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    currentMoveIndex: -1,
-                    currentVariationPath: [],
-                    currentVariationIndex: null,
-                    history: state.fullHistory
-                };
-            } catch (error) {
-                console.error('Error in GOTO_FIRST:', error);
-                return state;
-            }
+            return handleGotoFirst(state);
 
         case GOTO_LAST:
-            try {
-                const lastHistory = state.fullHistory;
-                const newGame = new Chess();
-                newGame.load(START_POSITION);
-                for (let i = 0; i < lastHistory.length; i++) {
-                    newGame.move(lastHistory[i]);
-                }
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    currentMoveIndex: lastHistory.length - 1,
-                    currentVariationPath: [],
-                    currentVariationIndex: null,
-                    history: lastHistory
-                };
-            } catch (error) {
-                console.error('Error in GOTO_LAST:', error);
-                return state;
-            }
+            return handleGotoLast(state);
 
         case GOTO_PREVIOUS:
-            try {
-                const prevIndex = Math.max(-1, state.currentMoveIndex - 1);
-                const prevHistory = state.fullHistory;
-                const newGame = new Chess();
-                newGame.load(START_POSITION);
-                if (prevIndex >= 0) {
-                    for (let i = 0; i <= prevIndex; i++) {
-                        newGame.move(prevHistory[i]);
-                    }
-                }
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    currentMoveIndex: prevIndex,
-                    history: prevHistory
-                };
-            } catch (error) {
-                console.error('Error in GOTO_PREVIOUS:', error);
-                return state;
-            }
+            return handleGotoPrevious(state);
 
         case GOTO_NEXT:
-            try {
-                const nextIndex = Math.min(state.fullHistory.length - 1, state.currentMoveIndex + 1);
-                const nextHistory = state.fullHistory;
-                const newGame = new Chess();
-                newGame.load(START_POSITION);
-                for (let i = 0; i <= nextIndex; i++) {
-                    newGame.move(nextHistory[i]);
-                }
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    currentMoveIndex: nextIndex,
-                    history: nextHistory
-                };
-            } catch (error) {
-                console.error('Error in GOTO_NEXT:', error);
-                return state;
-            }
+            return handleGotoNext(state);
 
         default:
             return state;
