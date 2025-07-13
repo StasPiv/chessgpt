@@ -1,40 +1,91 @@
-
 .navigation-controls {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 10px;
+    background-color: #f0f0f0;
     padding: 10px;
-    background-color: #f5f5f5;
     border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin: 10px 0;
 }
 
 .nav-button {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ccc;
+    background-color: #007bff;
+    color: white;
+    border: none;
     border-radius: 4px;
-    background-color: white;
+    padding: 8px 12px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
+    transition: background-color 0.2s, transform 0.1s;
+    min-width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.nav-button:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.nav-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
 .nav-button:disabled {
-    background-color: #f0f0f0;
+    background-color: #ccc;
     cursor: not-allowed;
+    transform: none;
+}
+
+.flip-button {
+    background-color: white;
+    color: black;
+    border: 2px solid #333;
+    margin-left: 10px;
+}
+
+.flip-button:hover {
+    background-color: #f8f8f8;
+}
+
+.flip-button.flipped {
+    background-color: #333;
+    color: white;
+    border: 2px solid #333;
+}
+
+.flip-button.flipped:hover {
+    background-color: #555;
 }
 
 .position-indicator {
-    padding: 8px 12px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
-    min-width: 80px;
-    text-align: center;
+    color: #333;
+    padding: 0 10px;
+    white-space: nowrap;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .navigation-controls {
+        gap: 5px;
+        padding: 8px;
+    }
+    
+    .nav-button {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-width: 30px;
+        height: 30px;
+    }
+    
+    .position-indicator {
+        font-size: 10px;
+        padding: 0 5px;
+    }
 }

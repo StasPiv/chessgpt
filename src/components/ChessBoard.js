@@ -6,7 +6,7 @@ import { startAnalysis } from '../redux/analysisReducer.js';
 import { sendPosition, stopAnalysisRequest } from '../websocket.js';
 import { Chess } from 'cm-chess';
 
-const ChessBoard = () => {
+const ChessBoard = ({ isFlipped = false }) => {
     const dispatch = useDispatch();
     const fen = useSelector((state) => state.chess.fen);
     const autoAnalysisEnabled = useSelector((state) => state.analysis.autoAnalysisEnabled);
@@ -207,7 +207,7 @@ const ChessBoard = () => {
         snapToCursor: true,
         animationDuration: 200,
         showBoardNotation: true,
-        boardOrientation: 'white',
+        boardOrientation: isFlipped ? 'black' : 'white',
         customDropSquareStyle: {
             boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)'
         },

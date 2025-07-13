@@ -27,6 +27,8 @@ const CustomLayout = () => {
         ]
     });
 
+    const [isFlipped, setIsFlipped] = useState(false);
+
     // Загрузка сохраненного лейаута из localStorage
     useEffect(() => {
         const savedLayouts = localStorage.getItem('chessapp-layouts');
@@ -43,6 +45,10 @@ const CustomLayout = () => {
     const handleLayoutChange = (layout, allLayouts) => {
         setLayouts(allLayouts);
         localStorage.setItem('chessapp-layouts', JSON.stringify(allLayouts));
+    };
+
+    const handleFlipBoard = () => {
+        setIsFlipped(!isFlipped);
     };
 
     return (
@@ -68,10 +74,10 @@ const CustomLayout = () => {
                     </div>
                     <div className="panel-content">
                         <div className="chess-board-wrapper">
-                            <ChessBoard />
+                            <ChessBoard isFlipped={isFlipped} />
                         </div>
                         <div className="navigation-wrapper">
-                            <NavigationControls />
+                            <NavigationControls onFlipBoard={handleFlipBoard} isFlipped={isFlipped} />
                         </div>
                     </div>
                 </div>

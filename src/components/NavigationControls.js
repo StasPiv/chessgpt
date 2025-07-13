@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { gotoFirstAction, gotoLastAction, gotoPreviousAction, gotoNextAction } from '../redux/actions.js';
 import './NavigationControls.css';
 
-const NavigationControls = () => {
+const NavigationControls = ({ onFlipBoard, isFlipped }) => {
     const dispatch = useDispatch();
     const currentMoveIndex = useSelector(state => state.chess.currentMoveIndex);
     const fullHistory = useSelector(state => state.chess.fullHistory);
@@ -91,6 +91,14 @@ const NavigationControls = () => {
                 title="Go to end (End)"
             >
                 ⏭
+            </button>
+
+            <button
+                onClick={onFlipBoard}
+                className={`nav-button flip-button ${isFlipped ? 'flipped' : ''}`}
+                title="Перевернуть доску"
+            >
+                🔄
             </button>
         </div>
     );
