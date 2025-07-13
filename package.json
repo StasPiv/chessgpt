@@ -1,7 +1,7 @@
 {
   "name": "my-chess-app",
-  "version": "2.3.1",
-  "description": "Chess PGN viewer with engine analysis built with React and Redux",
+  "version": "3.0.0",
+  "description": "Chess PGN viewer with engine analysis and variation navigation built with React and Redux",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -46,7 +46,9 @@
     "analysis",
     "stockfish",
     "react",
-    "redux"
+    "redux",
+    "variations",
+    "navigation"
   ],
   "author": "",
   "license": "MIT",
