@@ -33,7 +33,11 @@ export function analysisReducer(state = initialState, action) {
                 status: newAutoEnabled ? 'idle' : 'stopped'
             };
         case UPDATE_ANALYSIS:
-            return { ...state, lines: action.payload };
+            return { 
+                ...state, 
+                lines: action.payload,
+                status: state.autoAnalysisEnabled ? 'analyzing' : 'stopped'
+            };
         case CLEAR_ANALYSIS:
             return initialState;
         default:

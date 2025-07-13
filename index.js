@@ -126,11 +126,24 @@ stockfish.stdout.on('data', (data) => {
                     }
                 }
 
+                // Определяем, чей сейчас ход
+                const fenParts = currentFen.split(' ');
+                const isWhiteToMove = fenParts[1] === 'w';
+
                 let score;
                 if (scoreType === 'mate') {
-                    score = `#${scoreValue}`;
+                    let mateValue = parseInt(scoreValue);
+                    // Если ход черных, инвертируем оценку мата
+                    if (!isWhiteToMove) {
+                        mateValue = -mateValue;
+                    }
+                    score = `#${mateValue}`;
                 } else {
-                    const numericScore = parseInt(scoreValue) / 100;
+                    let numericScore = parseInt(scoreValue) / 100;
+                    // Если ход черных, инвертируем оценку
+                    if (!isWhiteToMove) {
+                        numericScore = -numericScore;
+                    }
                     score = numericScore.toFixed(2);
                 }
 
