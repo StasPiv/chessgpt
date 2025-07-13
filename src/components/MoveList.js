@@ -15,7 +15,6 @@ const MoveList = () => {
     };
 
     const handleVariationMoveClick = (path) => {
-        console.log('Clicking variation move with path:', path);
         dispatch(gotoVariationMoveAction(path));
     };
 
@@ -47,46 +46,52 @@ const MoveList = () => {
     // Функция для рендеринга последовательности ходов в вариации
     const renderVariationSequence = (moves, parentMoveIndex, variationIndex) => {
         return moves.map((move, moveIndex) => {
-            // Определяем, какой это ход относительно родительского хода
+            // Исправляем логику определения номера хода
+            // parentMoveIndex - это индекс хода в основной линии, после которого начинается вариация
+            // Если parentMoveIndex = 0 (первый ход e4), то вариация начинается с альтернативного первого хода
             const parentMoveNumber = Math.floor(parentMoveIndex / 2) + 1;
             const isParentWhiteMove = parentMoveIndex % 2 === 0;
             
-            // Если родительский ход - ход белых, то первый ход вариации - это альтернативный ход черных
-            // Если родительский ход - ход черных, то первый ход вариации - это альтернативный ход белых
             const isFirstMoveInVariation = moveIndex === 0;
             
             let moveNumber, isWhiteMove, display;
             
             if (isFirstMoveInVariation) {
+                // Первый ход в вариации - это альтернатива к родительскому ходу
                 if (isParentWhiteMove) {
-                    // Первый ход в вариации после хода белых - это альтернативный ход черных
+                    // Если родительский ход - ход белых, то вариация предлагает альтернативный ход белых
+                    moveNumber = parentMoveNumber;
+                    isWhiteMove = true;
+                    display = `${moveNumber}.${move.san}`;
+                } else {
+                    // Если родительский ход - ход черных, то вариация предлагает альтернативный ход черных
                     moveNumber = parentMoveNumber;
                     isWhiteMove = false;
                     display = `${moveNumber}...${move.san}`;
-                } else {
-                    // Первый ход в вариации после хода черных - это альтернативный ход белых
-                    moveNumber = parentMoveNumber + 1;
-                    isWhiteMove = true;
-                    display = `${moveNumber}.${move.san}`;
                 }
             } else {
-                // Для последующих ходов в вариации считаем от первого хода
+                // Для последующих ходов в вариации
+                const movesFromStart = moveIndex;
                 if (isParentWhiteMove) {
-                    // Если начали с хода черных, то далее чередуем
-                    const adjustedIndex = moveIndex - 1;
-                    isWhiteMove = adjustedIndex % 2 === 0;
-                    moveNumber = parentMoveNumber + Math.floor(adjustedIndex / 2) + (isWhiteMove ? 1 : 0);
+                    // Начали с альтернативного хода белых, теперь ходы чередуются
+                    isWhiteMove = movesFromStart % 2 === 0;
+                    if (isWhiteMove) {
+                        moveNumber = parentMoveNumber + Math.floor(movesFromStart / 2);
+                        display = `${moveNumber}.${move.san}`;
+                    } else {
+                        moveNumber = parentMoveNumber + Math.floor((movesFromStart + 1) / 2);
+                        display = move.san;
+                    }
                 } else {
-                    // Если начали с хода белых, то далее чередуем
-                    const adjustedIndex = moveIndex - 1;
-                    isWhiteMove = adjustedIndex % 2 === 1;
-                    moveNumber = parentMoveNumber + Math.floor((adjustedIndex + 1) / 2) + (isWhiteMove ? 1 : 0);
-                }
-                
-                if (isWhiteMove) {
-                    display = `${moveNumber}.${move.san}`;
-                } else {
-                    display = move.san;
+                    // Начали с альтернативного хода черных, теперь ходы чередуются
+                    isWhiteMove = movesFromStart % 2 === 1;
+                    if (isWhiteMove) {
+                        moveNumber = parentMoveNumber + Math.floor((movesFromStart + 1) / 2);
+                        display = `${moveNumber}.${move.san}`;
+                    } else {
+                        moveNumber = parentMoveNumber + Math.floor(movesFromStart / 2);
+                        display = move.san;
+                    }
                 }
             }
             
