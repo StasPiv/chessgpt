@@ -1,4 +1,5 @@
 const path = require('path');
+
 module.exports = {
     entry: './src/index.js',
     output: {
@@ -15,17 +16,17 @@ module.exports = {
         }
     },
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx', '.ts', '.tsx'] // Добавлены .ts и .tsx
     },
     module: {
         rules: [
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader'
-                }
-            },
+    test: /\.(js|jsx|ts|tsx)$/,
+    exclude: /node_modules/,
+    use: {
+        loader: 'babel-loader'
+    }
+},
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']

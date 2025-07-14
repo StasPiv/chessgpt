@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import ChessBoard from './ChessBoard.js';
 import MoveList from './MoveList.js';
-import AnalysisPanel from './AnalysisPanel.js';
+import AnalysisPanel from './AnalysisPanel.tsx';
 import NavigationControls from './NavigationControls.js';
 import './CustomLayout.css';
 

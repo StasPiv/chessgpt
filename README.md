@@ -144,7 +144,7 @@ chessgpt/
 │   ├── components/
 │   │   ├── ChessBoard.js      # Interactive chess board component
 │   │   ├── MoveList.js        # Game move history display
-│   │   └── AnalysisPanel.js   # Engine analysis display
+│   │   └── AnalysisPanel.tsx   # Engine analysis display
 │   ├── redux/
 │   │   ├── store.js           # Redux store configuration
 │   │   ├── reducers.js        # Chess game state management
