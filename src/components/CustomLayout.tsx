@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Responsive, WidthProvider } from 'react-grid-layout';
-import ChessBoard from './ChessBoard.tsx';
-import MoveList from './MoveList.js';
-import AnalysisPanel from './AnalysisPanel.tsx';
-import NavigationControls from './NavigationControls.js';
+import { Responsive, WidthProvider, Layout, Layouts } from 'react-grid-layout';
+import { CustomLayouts, CustomLayoutProps, LayoutChangeCallback } from '../types';
+import ChessBoard from './ChessBoard';
+import MoveList from './MoveList';
+import AnalysisPanel from './AnalysisPanel';
+import NavigationControls from './NavigationControls';
 import './CustomLayout.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const CustomLayout = () => {
-    const [layouts, setLayouts] = useState({
+const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
+    const [layouts, setLayouts] = useState<CustomLayouts>({
         lg: [
             { i: 'chessboard', x: 0, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
             { i: 'moves', x: 6, y: 0, w: 6, h: 8, minW: 3, minH: 4 },
@@ -27,14 +28,15 @@ const CustomLayout = () => {
         ]
     });
 
-    const [isFlipped, setIsFlipped] = useState(false);
+    const [isFlipped, setIsFlipped] = useState<boolean>(false);
 
     // Load saved layout from localStorage
     useEffect(() => {
         const savedLayouts = localStorage.getItem('chessapp-layouts');
         if (savedLayouts) {
             try {
-                setLayouts(JSON.parse(savedLayouts));
+                const parsedLayouts = JSON.parse(savedLayouts) as CustomLayouts;
+                setLayouts(parsedLayouts);
             } catch (error) {
                 console.error('Error loading saved layouts:', error);
             }
@@ -42,17 +44,17 @@ const CustomLayout = () => {
     }, []);
 
     // Save layout to localStorage
-    const handleLayoutChange = (layout, allLayouts) => {
-        setLayouts(allLayouts);
+    const handleLayoutChange: LayoutChangeCallback = (layout: Layout[], allLayouts: Layouts) => {
+        setLayouts(allLayouts as CustomLayouts);
         localStorage.setItem('chessapp-layouts', JSON.stringify(allLayouts));
     };
 
-    const handleFlipBoard = () => {
+    const handleFlipBoard = (): void => {
         setIsFlipped(!isFlipped);
     };
 
     return (
-        <div className="custom-layout-container">
+        <div className={`custom-layout-container ${className || ''}`}>
             <ResponsiveGridLayout
                 className="layout"
                 layouts={layouts}
