@@ -172,13 +172,6 @@ const MoveList = () => {
                 ) : (
                     <div className="moves-list">
                         <GameHeader />
-                        <span
-                            className={`move-item start ${currentMoveIndex === -1 && currentVariationPath.length === 0 ? 'current' : ''}`}
-                            onClick={handleStartPosition}
-                            title="Go to starting position"
-                        >
-                            ⭐ Start
-                        </span>
                         {renderMovesList()}
                     </div>
                 )}
