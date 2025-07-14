@@ -205,6 +205,41 @@ export function handleAddMove(state, action) {
             return state;
         }
 
+        // Check if we're currently in a variation
+        if (state.currentVariationPath && state.currentVariationPath.length > 0) {
+            // We're in a variation, add the move to the existing variation
+            const newHistory = [...state.fullHistory];
+            
+            // Find the variation we're currently in
+            const mainStep = state.currentVariationPath[0];
+            const variationStep = state.currentVariationPath[1];
+            const currentMoveStep = state.currentVariationPath[2];
+            
+            const parentMove = newHistory[mainStep.index];
+            const variation = parentMove.variations[variationStep.variationIndex];
+            
+            // Add the new move to the variation
+            variation.push(move);
+            
+            // Create new variation path for the added move
+            const newVariationPath = [
+                { type: 'main', index: mainStep.index },
+                { type: 'variation', variationIndex: variationStep.variationIndex },
+                { type: 'move', moveIndex: variation.length - 1 }
+            ];
+            
+            return {
+                ...state,
+                game: newGame,
+                fen: newGame.fen(),
+                history: newHistory,
+                fullHistory: newHistory,
+                currentMoveIndex: state.currentMoveIndex, // Stay at the same main line position
+                currentVariationPath: newVariationPath,
+                currentVariationIndex: variationStep.variationIndex
+            };
+        }
+
         // If we're at the end of history, just add the move
         if (state.currentMoveIndex === state.fullHistory.length - 1) {
             const newHistory = [...state.fullHistory, move];
@@ -221,27 +256,59 @@ export function handleAddMove(state, action) {
             };
         } else {
             // If we're in the middle of history, create variation
-            const currentHistory = [...state.fullHistory.slice(0, state.currentMoveIndex + 1)];
+            const nextMoveIndex = state.currentMoveIndex + 1;
             
-            // Check if such move already exists in this position
-            const existingMoveIndex = currentHistory.findIndex(m => 
-                m.from === move.from && m.to === move.to && m.promotion === move.promotion
-            );
-            
-            if (existingMoveIndex !== -1) {
-                // If move already exists, go to it
-                const gameAtExistingMove = createGameFromHistory(state.fullHistory, existingMoveIndex);
+            // Check if there's already a next move in the main line
+            if (nextMoveIndex < state.fullHistory.length) {
+                const nextMove = state.fullHistory[nextMoveIndex];
+                
+                // Check if the new move is the same as the next move in main line
+                if (nextMove.from === move.from && nextMove.to === move.to && nextMove.promotion === move.promotion) {
+                    // If it's the same move, just go to it
+                    const gameAtNextMove = createGameFromHistory(state.fullHistory, nextMoveIndex);
+                    return {
+                        ...state,
+                        game: gameAtNextMove,
+                        fen: gameAtNextMove.fen(),
+                        currentMoveIndex: nextMoveIndex,
+                        currentVariationPath: [],
+                        currentVariationIndex: null
+                    };
+                }
+                
+                // Create variation - add the new move as an alternative to the existing next move
+                const newHistory = [...state.fullHistory];
+                
+                // The variation should be attached to the NEXT move (the one being replaced)
+                const moveToAddVariationTo = newHistory[nextMoveIndex];
+                
+                if (!moveToAddVariationTo.variations) {
+                    moveToAddVariationTo.variations = [];
+                }
+                
+                // Add the new move as a variation to the next move
+                moveToAddVariationTo.variations.push([move]);
+                
+                // Create path to the new variation move
+                const variationPath = [
+                    { type: 'main', index: nextMoveIndex },
+                    { type: 'variation', variationIndex: moveToAddVariationTo.variations.length - 1 },
+                    { type: 'move', moveIndex: 0 }
+                ];
+                
                 return {
                     ...state,
-                    game: gameAtExistingMove,
-                    fen: gameAtExistingMove.fen(),
-                    currentMoveIndex: existingMoveIndex,
-                    currentVariationPath: [],
-                    currentVariationIndex: null
+                    game: newGame,
+                    fen: newGame.fen(),
+                    history: newHistory,
+                    fullHistory: newHistory,
+                    currentMoveIndex: state.currentMoveIndex, // Stay at current position
+                    currentVariationPath: variationPath,
+                    currentVariationIndex: moveToAddVariationTo.variations.length - 1
                 };
             } else {
-                // Create new history branch
-                const newHistory = [...currentHistory, move];
+                // No next move exists, just add the move to main line
+                const newHistory = [...state.fullHistory, move];
                 
                 return {
                     ...state,
