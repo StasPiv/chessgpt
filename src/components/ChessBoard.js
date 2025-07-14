@@ -5,6 +5,7 @@ import { addMoveAction } from '../redux/actions.js';
 import { startAnalysis } from '../redux/analysisReducer.js';
 import { sendPosition, stopAnalysisRequest } from '../websocket.js';
 import { Chess } from 'cm-chess';
+import './ChessBoard.css';
 
 const ChessBoard = ({ isFlipped = false }) => {
     const dispatch = useDispatch();
@@ -58,69 +59,6 @@ const ChessBoard = ({ isFlipped = false }) => {
             clearTimeout(initialTimeout);
             if (resizeTimeoutRef.current) {
                 clearTimeout(resizeTimeoutRef.current);
-            }
-        };
-    }, []);
-
-    // Add styles for improved drag and drop with "sticky" effect
-    useEffect(() => {
-        const style = document.createElement('style');
-        style.textContent = `
-            .react-grid-item .chess-board-container {
-                position: relative !important;
-                overflow: visible !important;
-            }
-            
-            /* Styles for react-chessboard */
-            .react-chessboard [data-piece] {
-                transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
-                cursor: grab !important;
-                border-radius: 4px;
-            }
-            
-            .react-chessboard [data-piece]:hover {
-                transform: translateY(-3px) scale(1.05);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.25);
-                filter: brightness(1.1);
-            }
-            
-            /* Styles for dragging piece */
-            .react-chessboard [data-piece][style*="cursor: grabbing"] {
-                z-index: 10000 !important;
-                transform: translateY(-15px) scale(1.15) !important;
-                box-shadow: 0 12px 24px rgba(0,0,0,0.4) !important;
-                filter: brightness(1.2) !important;
-                transition: none !important;
-                opacity: 0.9 !important;
-            }
-            
-            /* Styles for squares */
-            .react-chessboard [data-square] {
-                transition: background-color 0.2s ease;
-            }
-            
-            /* Animation for move completion */
-            @keyframes pieceSettle {
-                0% {
-                    transform: translateY(-5px) scale(1.1);
-                }
-                50% {
-                    transform: translateY(2px) scale(0.95);
-                }
-                100% {
-                    transform: translateY(0) scale(1);
-                }
-            }
-            
-            .react-chessboard [data-piece]:not([style*="cursor: grabbing"]) {
-                animation: pieceSettle 0.3s ease-out;
-            }
-        `;
-        document.head.appendChild(style);
-
-        return () => {
-            if (document.head.contains(style)) {
-                document.head.removeChild(style);
             }
         };
     }, []);
