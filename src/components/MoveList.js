@@ -18,10 +18,6 @@ const MoveList = () => {
         dispatch(gotoVariationMoveAction(path));
     };
 
-    const handleStartPosition = () => {
-        dispatch(gotoMoveAction(-1));
-    };
-
     // Function to check if a move is current
     const isCurrentMove = (moveIndex, variationPath = []) => {
         if (variationPath.length === 0) {
@@ -59,12 +55,10 @@ const MoveList = () => {
                 if (isParentWhiteMove) {
                     // If parent move is white's move, variation offers alternative white move
                     moveNumber = parentMoveNumber;
-                    isWhiteMove = true;
                     display = `${moveNumber}.${move.san}`;
                 } else {
                     // If parent move is black's move, variation offers alternative black move
                     moveNumber = parentMoveNumber;
-                    isWhiteMove = false;
                     display = `${moveNumber}...${move.san}`;
                 }
             } else {
@@ -77,7 +71,6 @@ const MoveList = () => {
                         moveNumber = parentMoveNumber + Math.floor(movesFromStart / 2);
                         display = `${moveNumber}.${move.san}`;
                     } else {
-                        moveNumber = parentMoveNumber + Math.floor((movesFromStart + 1) / 2);
                         display = move.san;
                     }
                 } else {
@@ -87,7 +80,6 @@ const MoveList = () => {
                         moveNumber = parentMoveNumber + Math.floor((movesFromStart + 1) / 2);
                         display = `${moveNumber}.${move.san}`;
                     } else {
-                        moveNumber = parentMoveNumber + Math.floor(movesFromStart / 2);
                         display = move.san;
                     }
                 }
