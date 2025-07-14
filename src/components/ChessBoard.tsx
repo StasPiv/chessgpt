@@ -5,19 +5,26 @@ import { addMoveAction } from '../redux/actions.js';
 import { startAnalysis } from '../redux/analysisReducer.js';
 import { sendPosition, stopAnalysisRequest } from '../websocket.js';
 import { Chess } from 'cm-chess';
+import { 
+    RootState, 
+    ChessBoardProps, 
+    ChessMove, 
+    PieceDropEvent
+} from '../types';
+import { ChessboardOptions } from 'react-chessboard';
 import './ChessBoard.css';
 
-const ChessBoard = ({ isFlipped = false }) => {
+const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const dispatch = useDispatch();
-    const fen = useSelector((state) => state.chess.fen);
-    const autoAnalysisEnabled = useSelector((state) => state.analysis.autoAnalysisEnabled);
-    const [boardWidth, setBoardWidth] = useState(400);
-    const containerRef = useRef(null);
-    const resizeTimeoutRef = useRef(null);
+    const fen = useSelector((state: RootState) => state.chess.fen);
+    const autoAnalysisEnabled = useSelector((state: RootState) => state.analysis.autoAnalysisEnabled);
+    const [boardWidth, setBoardWidth] = useState<number>(400);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Function to calculate board size
-    const calculateBoardSize = () => {
-        const boardContainer = document.querySelector('.chess-board-container');
+    const calculateBoardSize = (): void => {
+        const boardContainer = document.querySelector('.chess-board-container') as HTMLElement;
         if (boardContainer) {
             const containerWidth = boardContainer.offsetWidth;
             const padding = 10;
@@ -34,7 +41,7 @@ const ChessBoard = ({ isFlipped = false }) => {
         }
     };
 
-    const debouncedCalculateBoardSize = () => {
+    const debouncedCalculateBoardSize = (): void => {
         if (resizeTimeoutRef.current) {
             clearTimeout(resizeTimeoutRef.current);
         }
@@ -47,7 +54,7 @@ const ChessBoard = ({ isFlipped = false }) => {
     useEffect(() => {
         calculateBoardSize();
         
-        const handleResize = () => {
+        const handleResize = (): void => {
             debouncedCalculateBoardSize();
         };
 
@@ -64,7 +71,7 @@ const ChessBoard = ({ isFlipped = false }) => {
     }, []);
 
     // Function to create serializable move object
-    const createSerializableMove = (move) => {
+    const createSerializableMove = (move: any): ChessMove => {
         return {
             from: move.from,
             to: move.to,
@@ -80,7 +87,7 @@ const ChessBoard = ({ isFlipped = false }) => {
     };
 
     // Main function for handling moves - as in documentation
-    const onPieceDrop = useCallback(({ sourceSquare, targetSquare }) => {
+    const onPieceDrop = useCallback(({ sourceSquare, targetSquare }: PieceDropEvent): boolean => {
         // Check that targetSquare is not null (if piece is dropped off the board)
         if (!targetSquare) {
             return false;
@@ -111,11 +118,6 @@ const ChessBoard = ({ isFlipped = false }) => {
         }
     }, [fen, dispatch]);
 
-    // Function to handle board clicks
-    const onSquareClick = useCallback((square) => {
-        // Can add logic for handling board clicks
-    }, []);
-
     // Effect to send position for analysis
     useEffect(() => {
         if (fen && autoAnalysisEnabled) {
@@ -130,25 +132,10 @@ const ChessBoard = ({ isFlipped = false }) => {
     }, [fen, dispatch, autoAnalysisEnabled]);
 
     // Create board options object - as in documentation
-    const chessboardOptions = {
+    const chessboardOptions: ChessboardOptions = {
         position: fen,
         onPieceDrop,
-        onSquareClick,
-        boardWidth,
-        customBoardStyle: {
-            borderRadius: '8px',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-        },
-        customDarkSquareStyle: { backgroundColor: '#779952' },
-        customLightSquareStyle: { backgroundColor: '#edeed1' },
-        arePiecesDraggable: true,
-        snapToCursor: true,
-        animationDuration: 200,
-        showBoardNotation: true,
         boardOrientation: isFlipped ? 'black' : 'white',
-        customDropSquareStyle: {
-            boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)'
-        },
         id: 'chess-board'
     };
 

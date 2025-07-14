@@ -142,7 +142,7 @@ Then open your browser to `http://localhost:9000`
 chessgpt/
 ├── src/
 │   ├── components/
-│   │   ├── ChessBoard.js      # Interactive chess board component
+│   │   ├── ChessBoard.tsx      # Interactive chess board component
 │   │   ├── MoveList.js        # Game move history display
 │   │   └── AnalysisPanel.tsx   # Engine analysis display
 │   ├── redux/
