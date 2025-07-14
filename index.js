@@ -71,7 +71,7 @@ function formatMovesWithNumbers(sanMoves, startFen) {
 ws.on('open', () => {
     console.log('Connected to WebSocket server');
     sendToEngine('uci');
-    sendToEngine('setoption name MultiPV value 3');
+    sendToEngine('setoption name MultiPV value 4');
     sendToEngine('isready');
 });
 
