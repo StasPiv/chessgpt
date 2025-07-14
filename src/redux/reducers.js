@@ -8,9 +8,6 @@ import {
     GOTO_LAST, 
     GOTO_PREVIOUS, 
     GOTO_NEXT,
-    GOTO_VARIATION_MOVE,
-    ENTER_VARIATION,
-    EXIT_VARIATION
 } from './actions.js';
 
 const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -407,63 +404,15 @@ export function handleAddMove(state, action) {
     }
 }
 
-// Handler for going to variation move
-export function handleGotoVariationMove(state, action) {
-    const variationPath = action.payload;
-    
-    // Check path structure
-    if (!variationPath || variationPath.length < 3) {
-        return state;
-    }
-    
-    const mainMove = variationPath[0];
-    const variationInfo = variationPath[1];
-    const moveInfo = variationPath[2];
-    
-    // Get variation
-    const parentMoveIndex = mainMove.index;
-    const variation = state.history[parentMoveIndex]?.variations?.[variationInfo.variationIndex];
-    
-    if (!variation) {
-        return state;
-    }
-    
-    // Create new position
-    let newPosition = new Chess();
-    
-    // Play main line UP TO parent move (not including it)
-    for (let i = 0; i < parentMoveIndex; i++) {
-        if (i < state.history.length) {
-            newPosition.move(state.history[i]);
-        }
-    }
-    
-    // Play variation moves up to needed move (including it)
-    for (let i = 0; i <= moveInfo.moveIndex; i++) {
-        if (i < variation.length) {
-            newPosition.move(variation[i]);
-        }
-    }
-    
-    return {
-        ...state,
-        currentMoveIndex: parentMoveIndex,
-        currentVariationPath: variationPath,
-        fen: newPosition.fen()
-    };
-}
-
 // Handler for going to specific move
 export function handleGotoMove(state, action) {
     try {
-        const targetMoveIndex = action.payload;
-        const newGame = createGameFromHistory(state.fullHistory, targetMoveIndex);
-        
+        const payload = action.payload;
+
         return {
             ...state,
-            game: newGame,
-            fen: newGame.fen(),
-            currentMoveIndex: targetMoveIndex,
+            fen: payload.fen,
+            currentMoveIndex: payload.globalIndex,
             currentVariationPath: [],
             currentVariationIndex: null,
             history: state.fullHistory
@@ -570,9 +519,6 @@ export function chessReducer(state = initialState, action) {
 
         case ADD_MOVE:
             return handleAddMove(state, action);
-
-        case GOTO_VARIATION_MOVE:
-            return handleGotoVariationMove(state, action);
 
         case GOTO_MOVE:
             return handleGotoMove(state, action);

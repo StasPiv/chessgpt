@@ -18,12 +18,8 @@ export function addMoveAction(move) {
     return { type: ADD_MOVE, payload: move };
 }
 
-export function gotoMoveAction(moveIndex) {
-    return { type: GOTO_MOVE, payload: moveIndex };
-}
-
-export function gotoVariationMoveAction(path) {
-    return { type: GOTO_VARIATION_MOVE, payload: path };
+export function gotoMoveAction(payload) {
+    return { type: GOTO_MOVE, payload: payload };
 }
 
 export function enterVariationAction(variationIndex, parentMoveIndex) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { gotoMoveAction, gotoVariationMoveAction } from '../redux/actions.js';
+import { gotoMoveAction } from '../redux/actions.js';
 import './MoveList.css';
 import GameHeader from "./GameHeader.js";
 
@@ -10,37 +10,156 @@ const MoveList = () => {
     const currentMoveIndex = useSelector(state => state.chess.currentMoveIndex);
     const currentVariationPath = useSelector(state => state.chess.currentVariationPath);
 
-    const handleMoveClick = (moveIndex) => {
-        dispatch(gotoMoveAction(moveIndex));
+    // New block-based indexing algorithm
+    const createBlockBasedIndex = () => {
+        const BLOCK_SIZE = 1000;
+        const moveMap = new Map(); // globalIndex -> moveInfo
+        const reverseMap = new Map(); // pathKey -> globalIndex
+        let currentBlockIndex = 0;
+        
+        // Индексация основной линии (блок 0: 0-999)
+        const indexMainLine = () => {
+            const mainLineIndexes = [];
+            const blockStart = currentBlockIndex * BLOCK_SIZE;
+            
+            for (let i = 0; i < history.length; i++) {
+                const globalIndex = blockStart + i;
+                mainLineIndexes.push(globalIndex);
+                
+                moveMap.set(globalIndex, {
+                    type: 'main',
+                    moveIndex: i,
+                    move: history[i],
+                    san: history[i].san,
+                    fen: history[i].fen,
+                    globalIndex: globalIndex,
+                    block: currentBlockIndex,
+                    variationPath: [] // Пустой путь для основной линии
+                });
+                
+                reverseMap.set(`main-${i}`, globalIndex);
+            }
+            
+            return mainLineIndexes;
+        };
+        
+        // Индексация ветки (каждая ветка получает свой блок)
+        const indexBranch = (moves, pathToParent, parentMoveIndex, variationIndex) => {
+            currentBlockIndex++; // Переходим к следующему блоку
+            const blockStart = currentBlockIndex * BLOCK_SIZE;
+            const branchIndexes = [];
+            
+            moves.forEach((move, moveIndex) => {
+                const globalIndex = blockStart + moveIndex;
+                branchIndexes.push(globalIndex);
+                
+                // Создаем путь для этого хода варианта
+                const variationPath = [
+                    { type: 'main', index: parentMoveIndex },
+                    { type: 'variation', variationIndex: variationIndex },
+                    { type: 'move', moveIndex: moveIndex }
+                ];
+                
+                moveMap.set(globalIndex, {
+                    type: 'variation',
+                    moveIndex: moveIndex,
+                    move: move,
+                    san: move.san,
+                    fen: move.fen,
+                    pathToParent: pathToParent,
+                    globalIndex: globalIndex,
+                    block: currentBlockIndex,
+                    variationPath: variationPath,
+                    parentMoveIndex: parentMoveIndex,
+                    variationIndex: variationIndex
+                });
+                
+                // Создаем уникальный ключ для этого хода в ветке
+                const pathKey = `${pathToParent}-${moveIndex}`;
+                reverseMap.set(pathKey, globalIndex);
+                
+                console.log(`Indexed variation move: ${move.san} with pathKey: ${pathKey} and globalIndex: ${globalIndex}`);
+            });
+            
+            return branchIndexes;
+        };
+        
+        // Рекурсивная функция для обработки всех веток
+        const processVariations = (moves, currentPath = 'main', parentMoveIndexInPath = 0) => {
+            moves.forEach((move, moveIndex) => {
+                if (move.variations && move.variations.length > 0) {
+                    move.variations.forEach((variation, varIndex) => {
+                        // Создаем путь для этой ветки
+                        const branchPath = `${currentPath}-${moveIndex}-${varIndex}`;
+                        
+                        console.log(`Processing variation at path: ${branchPath}`);
+                        
+                        // Определяем правильный parentMoveIndex для Redux
+                        const actualParentMoveIndex = currentPath === 'main' ? moveIndex : parentMoveIndexInPath;
+                        
+                        // Индексируем текущую ветку
+                        const branchIndexes = indexBranch(variation, branchPath, actualParentMoveIndex, varIndex);
+                        
+                        // Рекурсивно обрабатываем вложенные варианты
+                        processVariations(variation, branchPath, actualParentMoveIndex);
+                    });
+                }
+            });
+        };
+        
+        // Выполняем индексацию
+        const mainLineIndexes = indexMainLine();
+        processVariations(history);
+        
+        console.log('Block-based indexing completed:');
+        console.log('Main line indexes:', mainLineIndexes);
+        console.log('Total blocks used:', currentBlockIndex + 1);
+        console.log('Full move map:', moveMap);
+        console.log('Reverse map:', reverseMap);
+        
+        return { moveMap, mainLineIndexes, reverseMap };
     };
 
-    const handleVariationMoveClick = (path) => {
-        dispatch(gotoVariationMoveAction(path));
-    };
+    const { moveMap: globalMoveMap, mainLineIndexes, reverseMap } = createBlockBasedIndex();
 
-    // Function to check if a move is current
-    const isCurrentMove = (moveIndex, variationPath = []) => {
-        if (variationPath.length === 0) {
-            return moveIndex === currentMoveIndex && currentVariationPath.length === 0;
+    const handleMoveClick = (globalIndex) => {
+        const moveInfo = globalMoveMap.get(globalIndex);
+        
+        if (!moveInfo) {
+            console.error('Move not found for globalIndex:', globalIndex);
+            return;
         }
-        return JSON.stringify(variationPath) === JSON.stringify(currentVariationPath);
+        
+        // Отправляем глобальный индекс и FEN позицию
+        dispatch(gotoMoveAction({
+            globalIndex: globalIndex,
+            fen: moveInfo.fen,
+            variationPath: moveInfo.variationPath
+        }));
     };
 
-    // Function to render variations
-    const renderVariations = (variations, parentMoveIndex) => {
+    // Упрощенная функция проверки текущего хода
+    const isCurrentMove = (globalIndex) => {
+        return globalIndex === currentMoveIndex;
+    };
+
+    // Function to render variations with nested support
+    const renderVariations = (variations, parentMoveIndex, currentPath = 'main') => {
         if (!variations || variations.length === 0) return null;
         
         return variations.map((variation, varIndex) => (
             <span key={`var-${varIndex}`} className="variation">
                 <span className="variation-bracket">(</span>
-                {renderVariationSequence(variation, parentMoveIndex, varIndex)}
+                {renderVariationSequence(variation, parentMoveIndex, varIndex, currentPath)}
                 <span className="variation-bracket">)</span>
             </span>
         ));
     };
 
-    // Function to render move sequence in variation
-    const renderVariationSequence = (moves, parentMoveIndex, variationIndex) => {
+    // Function to render move sequence in variation with nested support
+    const renderVariationSequence = (moves, parentMoveIndex, variationIndex, currentPath = 'main') => {
+        const branchPath = `${currentPath}-${parentMoveIndex}-${variationIndex}`;
+        
         return moves.map((move, moveIndex) => {
             // Fix logic for move number determination
             const parentMoveNumber = Math.floor(parentMoveIndex / 2) + 1;
@@ -85,25 +204,24 @@ const MoveList = () => {
                 }
             }
             
-            // Create path for this move in variation
-            // FIX: for first move in variation parentMoveIndex should be one less
-            const variationPath = [
-                { type: 'main', index: parentMoveIndex },
-                { type: 'variation', variationIndex: variationIndex },
-                { type: 'move', moveIndex: moveIndex }
-            ];
+            // Получаем глобальный индекс для этого хода варианта
+            const pathKey = `${branchPath}-${moveIndex}`;
+            const globalIndex = reverseMap.get(pathKey);
+            
+            console.log(`Looking for pathKey: ${pathKey}, found globalIndex: ${globalIndex}`);
             
             return (
-                <span key={`var-move-${moveIndex}`}>
+                <span key={globalIndex || `var-move-${moveIndex}`}>
                     <span 
-                        className={`move-item variation-move ${isCurrentMove(moveIndex, variationPath) ? 'current' : ''}`}
-                        onClick={() => handleVariationMoveClick(variationPath)}
-                        title={`Variation move: ${display}`}
+                        className={`move-item variation-move ${isCurrentMove(globalIndex) ? 'current' : ''}`}
+                        onClick={() => handleMoveClick(globalIndex)}
+                        title={`Variation move: ${display} (Global index: ${globalIndex})`}
                     >
                         {display}
                     </span>
+                    {/* Рекурсивно обрабатываем вложенные варианты */}
                     {move.variations && renderVariations(move.variations, 
-                        parentMoveIndex + moveIndex)}
+                        moveIndex, branchPath)}
                     {moveIndex < moves.length - 1 ? ' ' : ''}
                 </span>
             );
@@ -126,12 +244,15 @@ const MoveList = () => {
                 display = move.san;
             }
             
+            // Используем глобальный индекс для основной линии
+            const globalIndex = mainLineIndexes[i];
+            
             result.push(
                 <span 
-                    key={i} 
-                    className={`move-item ${isCurrentMove(i) ? 'current' : ''}`}
-                    onClick={() => handleMoveClick(i)}
-                    title={`Move ${i + 1}: ${display}`}
+                    key={globalIndex} 
+                    className={`move-item ${isCurrentMove(globalIndex) ? 'current' : ''}`}
+                    onClick={() => handleMoveClick(globalIndex)}
+                    title={`Move ${i + 1}: ${display} (Global index: ${globalIndex})`}
                 >
                     {display}
                 </span>
@@ -142,7 +263,7 @@ const MoveList = () => {
                 result.push(
                     <span key={`variations-${i}`} className="variations-container">
                         {' '}
-                        {renderVariations(move.variations, i)}
+                        {renderVariations(move.variations, i, 'main')}
                     </span>
                 );
             }
