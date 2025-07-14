@@ -111,7 +111,7 @@ const MoveList = () => {
                         {display}
                     </span>
                     {move.variations && renderVariations(move.variations, 
-                        parentMoveIndex + moveIndex + 1)}
+                        parentMoveIndex + moveIndex)}
                     {moveIndex < moves.length - 1 ? ' ' : ''}
                 </span>
             );
