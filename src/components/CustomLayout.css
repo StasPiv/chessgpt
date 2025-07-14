@@ -1,4 +1,4 @@
-/* Базовые стили для react-grid-layout */
+/* Basic styles for react-grid-layout */
 .react-grid-layout {
     position: relative;
 }
@@ -88,7 +88,7 @@
     cursor: move;
 }
 
-/* Кастомные стили для нашего приложения */
+/* Custom styles for our application */
 .custom-layout-container {
     height: 100vh;
     padding: 10px;
@@ -185,7 +185,7 @@
     flex-direction: column;
 }
 
-/* Специальные стили для разных панелей */
+/* Special styles for different panels */
 .chessboard-item .panel-content {
     display: flex;
     flex-direction: column;
@@ -220,7 +220,7 @@
     padding: 10px;
 }
 
-/* Переопределение стилей для ресайзинга */
+/* Override styles for resizing */
 .layout-item > .react-resizable-handle {
     background: #ddd;
     border-radius: 2px;
@@ -255,7 +255,7 @@
     transform: rotate(45deg);
 }
 
-/* Адаптивные стили */
+/* Responsive styles */
 @media (max-width: 768px) {
     .custom-layout-container {
         padding: 5px;
@@ -288,7 +288,7 @@
     }
 }
 
-/* Особые стили для мобильных устройств */
+/* Special styles for mobile devices */
 @media (max-width: 480px) {
     .layout-item {
         min-height: 200px;

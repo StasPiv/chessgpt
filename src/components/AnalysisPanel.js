@@ -14,17 +14,17 @@ const AnalysisPanel = () => {
         dispatch(toggleAutoAnalysis());
         
         if (!newAutoEnabled) {
-            // Если автоанализ отключается, останавливаем текущий анализ
+            // If auto-analysis is being disabled, stop current analysis
             stopAnalysisRequest();
         } else if (currentFen) {
-            // Если автоанализ включается, начинаем анализ текущей позиции
+            // If auto-analysis is being enabled, start analyzing current position
             sendPosition(currentFen);
         }
     };
 
     const isInactive = !autoAnalysisEnabled || status === 'stopped';
 
-    // Получаем общее количество узлов из всех линий
+    // Get total number of nodes from all lines
     const totalNodes = lines.reduce((sum, line) => sum + line.nodes, 0);
 
     return (
@@ -55,7 +55,7 @@ const AnalysisPanel = () => {
                     ))
                 ) : (
                     <div className="no-analysis">
-                        {autoAnalysisEnabled ? 'Анализ не запущен' : 'Включите автоанализ для начала анализа'}
+                        {autoAnalysisEnabled ? 'Analysis not started' : 'Enable auto-analysis to start analysis'}
                     </div>
                 )}
             </div>

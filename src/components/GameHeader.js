@@ -5,7 +5,7 @@ import './GameHeader.css';
 const GameHeader = () => {
     const pgnHeaders = useSelector(state => state.chess.pgnHeaders);
 
-    // Если нет заголовков, не отображаем компонент
+    // If no headers, don't display component
     if (!pgnHeaders || Object.keys(pgnHeaders).length === 0) {
         return null;
     }
@@ -13,13 +13,13 @@ const GameHeader = () => {
     const formatResult = (result) => {
         switch (result) {
             case '1-0':
-                return '1-0 (Белые выиграли)';
+                return '1-0 (White wins)';
             case '0-1':
-                return '0-1 (Черные выиграли)';
+                return '0-1 (Black wins)';
             case '1/2-1/2':
-                return '1/2-1/2 (Ничья)';
+                return '1/2-1/2 (Draw)';
             case '*':
-                return 'Партия не завершена';
+                return 'Game not finished';
             default:
                 return result;
         }
@@ -28,7 +28,7 @@ const GameHeader = () => {
     return (
         <div className="game-header">
             <div className="game-header-title">
-                <h3>{pgnHeaders.Event || 'Партия'}</h3>
+                <h3>{pgnHeaders.Event || 'Game'}</h3>
                 {pgnHeaders.Site && pgnHeaders.Site !== '?' && (
                     <span className="game-site">{pgnHeaders.Site}</span>
                 )}
@@ -36,7 +36,7 @@ const GameHeader = () => {
             
             <div className="game-players">
                 <div className="player white-player">
-                    <span className="player-label">Белые:</span>
+                    <span className="player-label">White:</span>
                     <span className="player-name">
                         {pgnHeaders.White || '?'}
                         {pgnHeaders.WhiteElo && ` (${pgnHeaders.WhiteElo})`}
@@ -44,7 +44,7 @@ const GameHeader = () => {
                 </div>
                 <div className="vs-separator">vs</div>
                 <div className="player black-player">
-                    <span className="player-label">Черные:</span>
+                    <span className="player-label">Black:</span>
                     <span className="player-name">
                         {pgnHeaders.Black || '?'}
                         {pgnHeaders.BlackElo && ` (${pgnHeaders.BlackElo})`}
@@ -55,19 +55,19 @@ const GameHeader = () => {
             <div className="game-info">
                 {pgnHeaders.Date && pgnHeaders.Date !== '????.??.??' && (
                     <div className="game-date">
-                        <span className="info-label">Дата:</span>
+                        <span className="info-label">Date:</span>
                         <span>{pgnHeaders.Date}</span>
                     </div>
                 )}
                 {pgnHeaders.Round && pgnHeaders.Round !== '?' && (
                     <div className="game-round">
-                        <span className="info-label">Тур:</span>
+                        <span className="info-label">Round:</span>
                         <span>{pgnHeaders.Round}</span>
                     </div>
                 )}
                 {pgnHeaders.Result && (
                     <div className="game-result">
-                        <span className="info-label">Результат:</span>
+                        <span className="info-label">Result:</span>
                         <span className="result-value">{formatResult(pgnHeaders.Result)}</span>
                     </div>
                 )}
@@ -75,7 +75,7 @@ const GameHeader = () => {
 
             {pgnHeaders.Opening && (
                 <div className="game-opening">
-                    <span className="info-label">Дебют:</span>
+                    <span className="info-label">Opening:</span>
                     <span>{pgnHeaders.Opening}</span>
                     {pgnHeaders.Variation && (
                         <span className="opening-variation"> - {pgnHeaders.Variation}</span>

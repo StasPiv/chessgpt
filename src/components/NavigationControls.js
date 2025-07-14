@@ -96,7 +96,7 @@ const NavigationControls = ({ onFlipBoard, isFlipped }) => {
             <button
                 onClick={onFlipBoard}
                 className={`nav-button flip-button ${isFlipped ? 'flipped' : ''}`}
-                title="Перевернуть доску"
+                title="Rotate board"
             >
                 🔄
             </button>

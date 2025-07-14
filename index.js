@@ -1,9 +1,9 @@
 import WebSocket from 'ws';
 import { spawn } from 'child_process';
 import { Chess } from 'cm-chess';
-// Подключение к WebSocket-серверу
+// Connect to WebSocket server
 const ws = new WebSocket('ws://localhost:8080');
-// Запуск Stockfish
+// Start Stockfish
 const stockfish = spawn('polyglot');
 let currentFen = 'startpos';
 let lines = {};
@@ -35,7 +35,7 @@ function formatMovesWithNumbers(sanMoves, startFen) {
     
     const chess = new Chess(startFen);
     
-    // Получаем номер хода и очередность из FEN
+    // Get move number and turn from FEN
     const fenParts = startFen.split(' ');
     const isWhiteToMove = fenParts[1] === 'w';
     const moveNumber = parseInt(fenParts[5]) || 1;
@@ -51,7 +51,7 @@ function formatMovesWithNumbers(sanMoves, startFen) {
             result.push(`${currentMoveNumber}. ${move}`);
         } else {
             if (i === 0) {
-                // Первый ход черных
+                // First black move
                 result.push(`${currentMoveNumber}... ${move}`);
             } else {
                 result.push(move);
@@ -126,21 +126,21 @@ stockfish.stdout.on('data', (data) => {
                     }
                 }
 
-                // Определяем, чей сейчас ход
+                // Determine whose turn it is
                 const fenParts = currentFen.split(' ');
                 const isWhiteToMove = fenParts[1] === 'w';
 
                 let score;
                 if (scoreType === 'mate') {
                     let mateValue = parseInt(scoreValue);
-                    // Если ход черных, инвертируем оценку мата
+                    // If it's black's turn, invert mate evaluation
                     if (!isWhiteToMove) {
                         mateValue = -mateValue;
                     }
                     score = `#${mateValue}`;
                 } else {
                     let numericScore = parseInt(scoreValue) / 100;
-                    // Если ход черных, инвертируем оценку
+                    // If it's black's turn, invert evaluation
                     if (!isWhiteToMove) {
                         numericScore = -numericScore;
                     }
@@ -159,7 +159,7 @@ stockfish.stdout.on('data', (data) => {
     });
 });
 
-// Обработка ошибок
+// Error handling
 stockfish.on('error', (error) => {
     console.error('Stockfish error:', error);
 });

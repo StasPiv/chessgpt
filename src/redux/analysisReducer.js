@@ -15,7 +15,7 @@ const initialState = {
     status: 'idle', // 'idle', 'analyzing', 'stopped'
     lines: [],
     error: null,
-    autoAnalysisEnabled: false, // включен ли автоматический анализ
+    autoAnalysisEnabled: false, // whether automatic analysis is enabled
 };
 
 export function analysisReducer(state = initialState, action) {
@@ -29,7 +29,7 @@ export function analysisReducer(state = initialState, action) {
             return { 
                 ...state, 
                 autoAnalysisEnabled: newAutoEnabled,
-                // Если автоанализ отключается, останавливаем текущий анализ
+                // If auto-analysis is being disabled, stop current analysis
                 status: newAutoEnabled ? 'idle' : 'stopped'
             };
         case UPDATE_ANALYSIS:

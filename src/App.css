@@ -28,7 +28,7 @@
     gap: 15px;
 }
 
-/* Левая панель - шахматная доска с анализом (50% ширины экрана) */
+/* Left panel - chess board with analysis (50% screen width) */
 .board-panel {
     flex: 0 0 50%;
     display: flex;
@@ -37,7 +37,7 @@
     justify-content: flex-start;
 }
 
-/* Правая панель - ходы (50% ширины экрана) */
+/* Right panel - moves (50% screen width) */
 .side-panel {
     flex: 1;
     display: flex;
@@ -46,7 +46,7 @@
     position: relative;
 }
 
-/* Заголовок с иконкой Paste */
+/* Header with Paste icon */
 .moves-header {
     display: flex;
     justify-content: space-between;
@@ -79,7 +79,7 @@
     background: #0056b3;
 }
 
-/* Кнопка сброса лейаута */
+/* Layout reset button */
 .reset-layout-btn {
     background: #28a745;
     color: white;
@@ -98,7 +98,7 @@
     background: #218838;
 }
 
-/* Секция ходов */
+/* Moves section */
 .moves-section {
     flex: 1;
     overflow-y: auto;
@@ -109,7 +109,7 @@
     background-color: #fafafa;
 }
 
-/* Всплывающий блок для PGN */
+/* PGN popup block */
 .pgn-modal {
     position: fixed;
     top: 0;
@@ -168,13 +168,13 @@
     color: #333;
 }
 
-/* Скрытие обычной секции PGN */
+/* Hide regular PGN section */
 .pgn-section {
     display: none;
     margin-bottom: 20px;
 }
 
-/* Стили для адаптивности доски */
+/* Styles for board responsiveness */
 .chess-board-container {
     width: 100%;
     flex: 1;
@@ -184,30 +184,30 @@
     align-items: center;
     overflow: hidden;
     box-sizing: border-box;
-    min-height: 0; /* Важно для flex-контейнеров */
+    min-height: 0; /* Important for flex containers */
 }
 
-/* Обеспечиваем корректное поведение самой доски */
+/* Ensure correct behavior of the board itself */
 .chess-board-container > div {
     max-width: 100%;
     max-height: 100%;
 }
 
-/* Убеждаемся, что доска не выходит за пределы контейнера */
+/* Ensure the board doesn't go beyond container boundaries */
 .chess-board-container [data-testid="chessboard"] {
     max-width: 100% !important;
     max-height: 100% !important;
 }
 
-/* Контролы навигации */
+/* Navigation controls */
 .navigation-controls {
     width: 100%;
     max-width: 100%;
-    flex-shrink: 0; /* Контролы не сжимаются */
+    flex-shrink: 0; /* Controls don't shrink */
     margin-top: 10px;
 }
 
-/* Адаптивные стили */
+/* Responsive styles */
 @media (max-width: 768px) {
     .app-header {
         flex-direction: column;

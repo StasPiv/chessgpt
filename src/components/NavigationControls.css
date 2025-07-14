@@ -70,7 +70,7 @@
     white-space: nowrap;
 }
 
-/* Адаптивные стили */
+/* Mobile styles */
 @media (max-width: 768px) {
     .navigation-controls {
         gap: 5px;

@@ -9,7 +9,7 @@ import './App.css';
 function App() {
     const [showPgnModal, setShowPgnModal] = useState(false);
 
-    // Инициализируем WebSocket соединение
+    // Initialize WebSocket connection
     useEffect(() => {
         connectWebSocket(store);
     }, []);
@@ -22,7 +22,7 @@ function App() {
         setShowPgnModal(false);
     };
 
-    // Функция для сброса лейаута
+    // Function to reset layout
     const handleResetLayout = () => {
         const defaultLayouts = {
             lg: [
@@ -42,7 +42,7 @@ function App() {
             ]
         };
         localStorage.setItem('chessapp-layouts', JSON.stringify(defaultLayouts));
-        // Перезагружаем страницу для применения нового лейаута
+        // Reload page to apply new layout
         window.location.reload();
     };
 
@@ -55,16 +55,16 @@ function App() {
                         <button 
                             className="reset-layout-btn" 
                             onClick={handleResetLayout}
-                            title="Сбросить лейаут"
+                            title="Reset Layout"
                         >
-                            🔄 Сбросить лейаут
+                            🔄 Reset Layout
                         </button>
                         <button 
                             className="paste-icon" 
                             onClick={handlePasteClick}
                             title="Load PGN"
                         >
-                            📋 Загрузить PGN
+                            📋 Load PGN
                         </button>
                     </div>
                 </div>

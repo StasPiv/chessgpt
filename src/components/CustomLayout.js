@@ -29,7 +29,7 @@ const CustomLayout = () => {
 
     const [isFlipped, setIsFlipped] = useState(false);
 
-    // Загрузка сохраненного лейаута из localStorage
+    // Load saved layout from localStorage
     useEffect(() => {
         const savedLayouts = localStorage.getItem('chessapp-layouts');
         if (savedLayouts) {
@@ -41,7 +41,7 @@ const CustomLayout = () => {
         }
     }, []);
 
-    // Сохранение лейаута в localStorage
+    // Save layout to localStorage
     const handleLayoutChange = (layout, allLayouts) => {
         setLayouts(allLayouts);
         localStorage.setItem('chessapp-layouts', JSON.stringify(allLayouts));
@@ -70,7 +70,7 @@ const CustomLayout = () => {
                 <div key="chessboard" className="layout-item chessboard-item">
                     <div className="drag-handle">
                         <span className="drag-icon">⋮⋮</span>
-                        <span className="panel-title">Шахматная доска</span>
+                        <span className="panel-title">Chess Board</span>
                     </div>
                     <div className="panel-content">
                         <div className="chess-board-wrapper">
@@ -85,7 +85,7 @@ const CustomLayout = () => {
                 <div key="moves" className="layout-item moves-item">
                     <div className="drag-handle">
                         <span className="drag-icon">⋮⋮</span>
-                        <span className="panel-title">Ходы</span>
+                        <span className="panel-title">Moves</span>
                     </div>
                     <div className="panel-content">
                         <MoveList />
@@ -95,7 +95,7 @@ const CustomLayout = () => {
                 <div key="analysis" className="layout-item analysis-item">
                     <div className="drag-handle">
                         <span className="drag-icon">⋮⋮</span>
-                        <span className="panel-title">Анализ</span>
+                        <span className="panel-title">Analysis</span>
                     </div>
                     <div className="panel-content">
                         <AnalysisPanel />

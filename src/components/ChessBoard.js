@@ -14,7 +14,7 @@ const ChessBoard = ({ isFlipped = false }) => {
     const containerRef = useRef(null);
     const resizeTimeoutRef = useRef(null);
 
-    // Функция для расчета размера доски
+    // Function to calculate board size
     const calculateBoardSize = () => {
         const boardContainer = document.querySelector('.chess-board-container');
         if (boardContainer) {
@@ -62,7 +62,7 @@ const ChessBoard = ({ isFlipped = false }) => {
         };
     }, []);
 
-    // Добавляем стили для улучшенного drag and drop с эффектом "прилипания"
+    // Add styles for improved drag and drop with "sticky" effect
     useEffect(() => {
         const style = document.createElement('style');
         style.textContent = `
@@ -71,7 +71,7 @@ const ChessBoard = ({ isFlipped = false }) => {
                 overflow: visible !important;
             }
             
-            /* Стили для react-chessboard */
+            /* Styles for react-chessboard */
             .react-chessboard [data-piece] {
                 transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
                 cursor: grab !important;
@@ -84,7 +84,7 @@ const ChessBoard = ({ isFlipped = false }) => {
                 filter: brightness(1.1);
             }
             
-            /* Стили для перетаскиваемой фигуры */
+            /* Styles for dragging piece */
             .react-chessboard [data-piece][style*="cursor: grabbing"] {
                 z-index: 10000 !important;
                 transform: translateY(-15px) scale(1.15) !important;
@@ -94,12 +94,12 @@ const ChessBoard = ({ isFlipped = false }) => {
                 opacity: 0.9 !important;
             }
             
-            /* Стили для квадратов */
+            /* Styles for squares */
             .react-chessboard [data-square] {
                 transition: background-color 0.2s ease;
             }
             
-            /* Анимация для завершения хода */
+            /* Animation for move completion */
             @keyframes pieceSettle {
                 0% {
                     transform: translateY(-5px) scale(1.1);
@@ -125,7 +125,7 @@ const ChessBoard = ({ isFlipped = false }) => {
         };
     }, []);
 
-    // Функция для создания сериализуемого объекта хода
+    // Function to create serializable move object
     const createSerializableMove = (move) => {
         return {
             from: move.from,
@@ -141,26 +141,26 @@ const ChessBoard = ({ isFlipped = false }) => {
         };
     };
 
-    // Основная функция для обработки ходов - как в документации
+    // Main function for handling moves - as in documentation
     const onPieceDrop = useCallback(({ sourceSquare, targetSquare }) => {
-        // Проверяем, что targetSquare не null (если фигура брошена за доской)
+        // Check that targetSquare is not null (if piece is dropped off the board)
         if (!targetSquare) {
             return false;
         }
 
         try {
-            // Создаем новую игру с текущей позицией
+            // Create new game with current position
             const tempGame = new Chess(fen);
             
-            // Пробуем сделать ход
+            // Try to make the move
             const move = tempGame.move({
                 from: sourceSquare,
                 to: targetSquare,
-                promotion: 'q' // всегда превращаем в ферзя для простоты
+                promotion: 'q' // always promote to queen for simplicity
             });
 
             if (move) {
-                // Создаем сериализуемый объект хода
+                // Create serializable move object
                 const serializableMove = createSerializableMove(move);
                 dispatch(addMoveAction(serializableMove));
                 return true;
@@ -173,12 +173,12 @@ const ChessBoard = ({ isFlipped = false }) => {
         }
     }, [fen, dispatch]);
 
-    // Функция для обработки клика по доске
+    // Function to handle board clicks
     const onSquareClick = useCallback((square) => {
-        // Можно добавить логику для обработки кликов по доске
+        // Can add logic for handling board clicks
     }, []);
 
-    // Эффект для отправки позиции на анализ
+    // Effect to send position for analysis
     useEffect(() => {
         if (fen && autoAnalysisEnabled) {
             dispatch(startAnalysis());
@@ -191,7 +191,7 @@ const ChessBoard = ({ isFlipped = false }) => {
         };
     }, [fen, dispatch, autoAnalysisEnabled]);
 
-    // Создаем объект опций для доски - как в документации
+    // Create board options object - as in documentation
     const chessboardOptions = {
         position: fen,
         onPieceDrop,

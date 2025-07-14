@@ -15,7 +15,7 @@ import {
 
 const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-// Функция для извлечения заголовков PGN
+// Function to extract PGN headers
 export function extractPgnHeaders(pgn) {
     const headers = {};
     const lines = pgn.split('\n');
@@ -30,7 +30,7 @@ export function extractPgnHeaders(pgn) {
     return headers;
 }
 
-// Исправленная функция для создания позиции на основе пути через варианты
+// Fixed function to create position based on path through variations
 export function createPositionFromPath(history, path) {
     const newGame = new Chess();
     newGame.load(START_POSITION);
@@ -40,23 +40,23 @@ export function createPositionFromPath(history, path) {
     }
     
     try {
-        // Проходим по пути и выполняем ходы
+        // Walk through the path and execute moves
         for (const step of path) {
             if (step.type === 'main' && step.index >= 0) {
-                // Основная линия - играем все ходы до указанного индекса
+                // Main line - play all moves up to specified index
                 for (let i = 0; i <= step.index && i < history.length; i++) {
                     newGame.move(history[i]);
                 }
             } else if (step.type === 'variation' && step.variationIndex >= 0) {
-                // Находим родительский ход и его вариации
+                // Find parent move and its variations
                 const parentMove = findMoveByPath(history, path.slice(0, path.indexOf(step)));
                 if (parentMove && parentMove.variations && 
                     parentMove.variations[step.variationIndex]) {
-                    // Проигрываем все ходы в вариации до указанного хода
+                    // Play all moves in variation up to specified move
                     const variation = parentMove.variations[step.variationIndex];
                     for (let i = 0; i < variation.length; i++) {
                         newGame.move(variation[i]);
-                        // Если это целевой ход, останавливаемся
+                        // If this is the target move, stop
                         const nextStep = path[path.indexOf(step) + 1];
                         if (nextStep && nextStep.type === 'move' && nextStep.moveIndex === i) {
                             break;
@@ -73,7 +73,7 @@ export function createPositionFromPath(history, path) {
     }
 }
 
-// Функция для поиска хода по пути
+// Function to find move by path
 export function findMoveByPath(history, path) {
     if (!path || path.length === 0) return null;
     
@@ -96,7 +96,7 @@ export function findMoveByPath(history, path) {
     return currentMove;
 }
 
-// Улучшенная функция для создания позиции из вариации
+// Improved function to create position from variation
 export function createPositionFromVariation(history, variationPath) {
     const newGame = new Chess();
     newGame.load(START_POSITION);
@@ -106,11 +106,11 @@ export function createPositionFromVariation(history, variationPath) {
     }
     
     try {
-        // Находим родительский ход для вариации
+        // Find parent move for variation
         const parentPath = variationPath.slice(0, -1);
         const lastStep = variationPath[variationPath.length - 1];
         
-        // Проигрываем основную линию до родительского хода
+        // Play main line up to parent move
         let parentMoveIndex = -1;
         for (const step of parentPath) {
             if (step.type === 'main') {
@@ -119,22 +119,22 @@ export function createPositionFromVariation(history, variationPath) {
             }
         }
         
-        // Проигрываем ходы основной линии до точки ветвления
+        // Play main line moves up to branching point
         for (let i = 0; i <= parentMoveIndex && i < history.length; i++) {
             newGame.move(history[i]);
         }
         
-        // Если последний шаг указывает на ход в вариации
+        // If last step points to move in variation
         if (lastStep.type === 'move' && parentMoveIndex >= 0 && parentMoveIndex < history.length) {
             const parentMove = history[parentMoveIndex];
             if (parentMove.variations) {
-                // Находим нужную вариацию
+                // Find needed variation
                 const variationStep = variationPath.find(step => step.type === 'variation');
                 if (variationStep && variationStep.variationIndex >= 0 && 
                     variationStep.variationIndex < parentMove.variations.length) {
                     const variation = parentMove.variations[variationStep.variationIndex];
                     
-                    // Проигрываем ходы в вариации до нужного хода
+                    // Play moves in variation up to needed move
                     for (let i = 0; i <= lastStep.moveIndex && i < variation.length; i++) {
                         newGame.move(variation[i]);
                     }
@@ -149,7 +149,7 @@ export function createPositionFromVariation(history, variationPath) {
     }
 }
 
-// Функция для создания игры из истории до определенного индекса
+// Function to create game from history up to certain index
 export function createGameFromHistory(history, moveIndex) {
     const newGame = new Chess();
     newGame.load(START_POSITION);
@@ -163,7 +163,7 @@ export function createGameFromHistory(history, moveIndex) {
     return newGame;
 }
 
-// Обработчик загрузки PGN
+// PGN loading handler
 export function handleLoadPgn(state, action) {
     try {
         const newGame = new Chess();
@@ -194,7 +194,7 @@ export function handleLoadPgn(state, action) {
     }
 }
 
-// Обработчик добавления хода
+// Add move handler
 export function handleAddMove(state, action) {
     try {
         const newGame = new Chess(state.fen);
@@ -205,7 +205,7 @@ export function handleAddMove(state, action) {
             return state;
         }
 
-        // Если мы находимся в конце истории, просто добавляем ход
+        // If we're at the end of history, just add the move
         if (state.currentMoveIndex === state.fullHistory.length - 1) {
             const newHistory = [...state.fullHistory, move];
             
@@ -220,16 +220,16 @@ export function handleAddMove(state, action) {
                 currentVariationIndex: null
             };
         } else {
-            // Если мы находимся в середине истории, создаем вариацию
+            // If we're in the middle of history, create variation
             const currentHistory = [...state.fullHistory.slice(0, state.currentMoveIndex + 1)];
             
-            // Проверяем, есть ли уже такой ход в этой позиции
+            // Check if such move already exists in this position
             const existingMoveIndex = currentHistory.findIndex(m => 
                 m.from === move.from && m.to === move.to && m.promotion === move.promotion
             );
             
             if (existingMoveIndex !== -1) {
-                // Если ход уже существует, переходим к нему
+                // If move already exists, go to it
                 const gameAtExistingMove = createGameFromHistory(state.fullHistory, existingMoveIndex);
                 return {
                     ...state,
@@ -240,7 +240,7 @@ export function handleAddMove(state, action) {
                     currentVariationIndex: null
                 };
             } else {
-                // Создаем новую ветку истории
+                // Create new history branch
                 const newHistory = [...currentHistory, move];
                 
                 return {
@@ -261,11 +261,11 @@ export function handleAddMove(state, action) {
     }
 }
 
-// Обработчик перехода к ходу в вариации
+// Handler for going to variation move
 export function handleGotoVariationMove(state, action) {
     const variationPath = action.payload;
     
-    // Проверяем структуру пути
+    // Check path structure
     if (!variationPath || variationPath.length < 3) {
         return state;
     }
@@ -274,7 +274,7 @@ export function handleGotoVariationMove(state, action) {
     const variationInfo = variationPath[1];
     const moveInfo = variationPath[2];
     
-    // Получаем вариацию
+    // Get variation
     const parentMoveIndex = mainMove.index;
     const variation = state.history[parentMoveIndex]?.variations?.[variationInfo.variationIndex];
     
@@ -282,17 +282,17 @@ export function handleGotoVariationMove(state, action) {
         return state;
     }
     
-    // Создаем новую позицию
+    // Create new position
     let newPosition = new Chess();
     
-    // Воспроизводим основную линию ДО родительского хода (не включая его)
+    // Play main line UP TO parent move (not including it)
     for (let i = 0; i < parentMoveIndex; i++) {
         if (i < state.history.length) {
             newPosition.move(state.history[i]);
         }
     }
     
-    // Воспроизводим ходы вариации до нужного хода (включая его)
+    // Play variation moves up to needed move (including it)
     for (let i = 0; i <= moveInfo.moveIndex; i++) {
         if (i < variation.length) {
             newPosition.move(variation[i]);
@@ -307,7 +307,7 @@ export function handleGotoVariationMove(state, action) {
     };
 }
 
-// Обработчик перехода к конкретному ходу
+// Handler for going to specific move
 export function handleGotoMove(state, action) {
     try {
         const targetMoveIndex = action.payload;
@@ -328,7 +328,7 @@ export function handleGotoMove(state, action) {
     }
 }
 
-// Обработчик перехода к первому ходу
+// Handler for going to first move
 export function handleGotoFirst(state) {
     try {
         const newGame = new Chess();
@@ -348,7 +348,7 @@ export function handleGotoFirst(state) {
     }
 }
 
-// Обработчик перехода к последнему ходу
+// Handler for going to last move
 export function handleGotoLast(state) {
     try {
         const lastHistory = state.fullHistory;
@@ -368,7 +368,7 @@ export function handleGotoLast(state) {
     }
 }
 
-// Обработчик перехода к предыдущему ходу
+// Handler for going to previous move
 export function handleGotoPrevious(state) {
     try {
         const prevIndex = Math.max(-1, state.currentMoveIndex - 1);
@@ -387,7 +387,7 @@ export function handleGotoPrevious(state) {
     }
 }
 
-// Обработчик перехода к следующему ходу
+// Handler for going to next move
 export function handleGotoNext(state) {
     try {
         const nextIndex = Math.min(state.fullHistory.length - 1, state.currentMoveIndex + 1);
@@ -412,8 +412,8 @@ const initialState = {
     history: [],
     fullHistory: [],
     currentMoveIndex: -1,
-    currentVariationPath: [], // Путь через варианты
-    currentVariationIndex: null, // Индекс текущей вариации
+    currentVariationPath: [], // Path through variations
+    currentVariationIndex: null, // Index of current variation
     pgnHeaders: {}
 };
 
