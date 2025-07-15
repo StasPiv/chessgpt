@@ -82,7 +82,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
             san: move.san,
             lan: move.lan,
             before: move.before,
-            after: move.after
+            after: move.after,
+            fen: move.fen,
         };
     };
 

@@ -4,20 +4,6 @@ export interface ChessBoardProps {
     isFlipped?: boolean;
 }
 
-// Типы для хода шахмат
-export interface ChessMove {
-    from: string;
-    to: string;
-    piece: string;
-    captured?: string;
-    promotion?: string;
-    flags: string;
-    san: string;
-    lan: string;
-    before: string;
-    after: string;
-}
-
 // Типы для событий доски
 export interface PieceDropEvent {
     sourceSquare: string;

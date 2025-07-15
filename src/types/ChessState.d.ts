@@ -14,6 +14,15 @@ export interface ChessMove {
     fen: string;          // FEN позиция после хода
     variations?: ChessMove[][]; // Вложенные варианты
     [key: string]: any;   // Дополнительные свойства от chess.js
+    from: string;
+    to: string;
+    piece: string;
+    captured?: string;
+    promotion?: string;
+    flags: string;
+    lan: string;
+    before: string;
+    after: string;
 }
 
 // Основное состояние шахмат
