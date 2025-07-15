@@ -1,6 +1,5 @@
 import { Chess } from 'cm-chess';
 import { 
-    GOTO_MOVE, 
     GOTO_FIRST, 
     GOTO_LAST, 
     GOTO_PREVIOUS, 
@@ -32,25 +31,6 @@ function createGameFromHistory(history, moveIndex) {
     }
     
     return newGame;
-}
-
-// Handler for going to specific move
-function handleGotoMove(state, action) {
-    try {
-        const payload = action.payload;
-
-        return {
-            ...state,
-            fen: payload.fen,
-            currentMoveIndex: payload.globalIndex,
-            currentVariationPath: [],
-            currentVariationIndex: null,
-            history: state.fullHistory
-        };
-    } catch (error) {
-        console.error('Error in GOTO_MOVE:', error);
-        return state;
-    }
 }
 
 // Handler for going to first move
@@ -133,8 +113,6 @@ function handleGotoNext(state) {
 
 export function navigationReducer(state = initialState, action) {
     switch (action.type) {
-        case GOTO_MOVE:
-            return handleGotoMove(state, action);
         case GOTO_FIRST:
             return handleGotoFirst(state);
         case GOTO_LAST:

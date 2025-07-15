@@ -1,6 +1,5 @@
-
 import { Chess } from 'cm-chess';
-import { ADD_MOVE } from './actions.js';
+import { ADD_MOVE, GOTO_MOVE } from './actions.js';
 
 const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -242,10 +241,31 @@ function handleAddMove(state, action) {
     }
 }
 
+// Handler for going to specific move
+function handleGoToMove(state, action) {
+    try {
+        const payload = action.payload;
+
+        return {
+            ...state,
+            fen: payload.fen,
+            currentMoveIndex: payload.globalIndex,
+            currentVariationPath: [],
+            currentVariationIndex: null,
+            history: state.fullHistory
+        };
+    } catch (error) {
+        console.error('Error in GOTO_MOVE:', error);
+        return state;
+    }
+}
+
 export function moveListReducer(state = initialState, action) {
     switch (action.type) {
         case ADD_MOVE:
             return handleAddMove(state, action);
+        case GOTO_MOVE:
+            return handleGoToMove(state, action);
         default:
             return state;
     }
