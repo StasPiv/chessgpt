@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction } from '../redux/actions.js';
+import { RootState } from '../types';
 import './MoveList.css';
-import GameHeader from "./GameHeader.tsx";
+import GameHeader from "./GameHeader";
 
-const MoveList = () => {
+const MoveList = (): ReactElement => {
     const dispatch = useDispatch();
-    const history = useSelector(state => state.chess.history);
-    const currentMoveIndex = useSelector(state => state.chess.currentMoveIndex);
-    const currentVariationPath = useSelector(state => state.chess.currentVariationPath);
+    const history = useSelector((state: RootState) => state.chess.history);
+    const currentMoveIndex = useSelector((state: RootState) => state.chess.currentMoveIndex);
+    const currentVariationPath = useSelector((state: RootState) => state.chess.currentVariationPath);
 
     // New block-based indexing algorithm
     const createBlockBasedIndex = () => {

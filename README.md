@@ -143,7 +143,7 @@ chessgpt/
 ├── src/
 │   ├── components/
 │   │   ├── ChessBoard.tsx      # Interactive chess board component
-│   │   ├── MoveList.js        # Game move history display
+│   │   ├── MoveList.tsx        # Game move history display
 │   │   └── AnalysisPanel.tsx   # Engine analysis display
 │   ├── redux/
 │   │   ├── store.js           # Redux store configuration
