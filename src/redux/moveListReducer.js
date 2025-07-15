@@ -8,6 +8,7 @@ const initialState = {
     fen: START_POSITION,
     history: [],
     currentMoveIndex: -1,
+    currentVariationPath: [],
     pgnHeaders: {}
 };
 
@@ -69,14 +70,8 @@ function handleAddMove(state, action) {
 // Goto move handler
 function handleGotoMove(state, action) {
     try {
-        const { moveIndex, fen } = action.payload;
+        const { moveIndex, variationPath, fen } = action.payload;
         
-        // Validate move index
-        if (moveIndex < -1 || moveIndex >= state.history.length) {
-            console.error('Invalid move index:', moveIndex);
-            return state;
-        }
-
         // If going to position before first move
         if (moveIndex === -1) {
             const newGame = new Chess();
@@ -87,7 +82,6 @@ function handleGotoMove(state, action) {
                 game: newGame,
                 fen: START_POSITION,
                 currentMoveIndex: -1
-                // НЕ меняем history!
             };
         }
 
@@ -97,9 +91,9 @@ function handleGotoMove(state, action) {
         return {
             ...state,
             game: gameAtMove,
-            fen: gameAtMove.fen(),
-            currentMoveIndex: moveIndex
-            // НЕ меняем history!
+            fen: fen,
+            currentMoveIndex: moveIndex,
+            currentVariationPath: variationPath,
         };
     } catch (error) {
         console.error('Error in goto move:', error);

@@ -30,6 +30,39 @@ function extractPgnHeaders(pgn) {
     return headers;
 }
 
+// Function to assign global indexes to moves
+function assignGlobalIndexes(history) {
+    let globalVariationCounter = 0;
+    
+    function processMove(move, variationLevel = 0) {
+        if (variationLevel === 0) {
+            // Main line: indexes from 0 to 999
+            move.globalIndex = move.moveIndex || 0;
+        } else {
+            // Variations: each variation level gets its own 1000-based range
+            move.globalIndex = variationLevel * 1000 + (move.moveIndex || 0);
+        }
+        
+        // Process variations if they exist
+        if (move.variations && move.variations.length > 0) {
+            move.variations.forEach((variation) => {
+                globalVariationCounter++;
+                variation.forEach((varMove, moveIndex) => {
+                    varMove.moveIndex = moveIndex;
+                    processMove(varMove, globalVariationCounter);
+                });
+            });
+        }
+    }
+    
+    history.forEach((move, index) => {
+        move.moveIndex = index;
+        processMove(move);
+    });
+    
+    return history;
+}
+
 // PGN loading handler
 function handleLoadPgn(state, action) {
     try {
@@ -44,13 +77,16 @@ function handleLoadPgn(state, action) {
         newGame.loadPgn(cleanedPgn, { sloppy: true });
         const loadedHistory = newGame.history({ verbose: true, variations: true });
         
+        // Assign global indexes to all moves
+        const historyWithGlobalIndexes = assignGlobalIndexes(loadedHistory);
+        
         return {
             ...state,
             game: newGame,
             fen: newGame.fen(),
-            history: loadedHistory,
-            fullHistory: loadedHistory,
-            currentMoveIndex: loadedHistory.length - 1,
+            history: historyWithGlobalIndexes,
+            fullHistory: historyWithGlobalIndexes,
+            currentMoveIndex: historyWithGlobalIndexes.length - 1,
             currentVariationPath: [],
             currentVariationIndex: null,
             pgnHeaders: pgnHeaders

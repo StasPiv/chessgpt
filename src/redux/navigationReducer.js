@@ -91,7 +91,7 @@ function handleGotoPrevious(state) {
 // Handler for going to next move
 function handleGotoNext(state) {
     try {
-        const nextIndex = Math.min(state.history.length - 1, state.currentMoveIndex + 1);
+        const nextIndex = state.currentMoveIndex + 1;
         const newGame = createGameFromHistory(state.history, nextIndex);
         return {
             ...state,
