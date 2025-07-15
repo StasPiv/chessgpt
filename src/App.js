@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './redux/store.js';
 import CustomLayout from './components/CustomLayout.tsx';
-import LoadPgn from './components/LoadPgn.js';
+import LoadPgn from './components/LoadPgn.tsx';
 import { connectWebSocket } from './websocket.js';
 import './App.css';
 

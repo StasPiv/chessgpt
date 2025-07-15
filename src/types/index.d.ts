@@ -6,4 +6,4 @@ export * from './ChessBoard';
 export * from './Layout';
 export * from './GameHeader';
 export * from './NavigationControls';
-export * from './NavigationConstants';
+export * from './LoadPgn';
