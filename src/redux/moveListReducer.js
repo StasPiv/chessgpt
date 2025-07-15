@@ -1,153 +1,22 @@
+
 import { Chess } from 'cm-chess';
-import { cleanPgn } from './cleanPgn.js';
-import { 
-    LOAD_PGN, 
-    ADD_MOVE, 
-    GOTO_MOVE, 
-    GOTO_FIRST, 
-    GOTO_LAST, 
-    GOTO_PREVIOUS, 
-    GOTO_NEXT,
-} from './actions.js';
+import { ADD_MOVE } from './actions.js';
 
 const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-// Function to extract PGN headers
-export function extractPgnHeaders(pgn) {
-    const headers = {};
-    const lines = pgn.split('\n');
-    
-    for (const line of lines) {
-        const match = line.match(/^\[(\w+)\s+"(.*)"\]$/);
-        if (match) {
-            headers[match[1]] = match[2];
-        }
-    }
-    
-    return headers;
-}
-
-// Fixed function to create position based on path through variations
-export function createPositionFromPath(history, path) {
-    const newGame = new Chess();
-    newGame.load(START_POSITION);
-    
-    if (!path || path.length === 0) {
-        return newGame;
-    }
-    
-    try {
-        // Walk through the path and execute moves
-        for (const step of path) {
-            if (step.type === 'main' && step.index >= 0) {
-                // Main line - play all moves up to specified index
-                for (let i = 0; i <= step.index && i < history.length; i++) {
-                    newGame.move(history[i]);
-                }
-            } else if (step.type === 'variation' && step.variationIndex >= 0) {
-                // Find parent move and its variations
-                const parentMove = findMoveByPath(history, path.slice(0, path.indexOf(step)));
-                if (parentMove && parentMove.variations && 
-                    parentMove.variations[step.variationIndex]) {
-                    // Play all moves in variation up to specified move
-                    const variation = parentMove.variations[step.variationIndex];
-                    for (let i = 0; i < variation.length; i++) {
-                        newGame.move(variation[i]);
-                        // If this is the target move, stop
-                        const nextStep = path[path.indexOf(step) + 1];
-                        if (nextStep && nextStep.type === 'move' && nextStep.moveIndex === i) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return newGame;
-    } catch (error) {
-        console.error('Error creating position from path:', error);
-        return newGame;
-    }
-}
-
-// Function to find move by path
-export function findMoveByPath(history, path) {
-    if (!path || path.length === 0) return null;
-    
-    let currentMoves = history;
-    let currentMove = null;
-    
-    for (const step of path) {
-        if (step.type === 'main' && step.index >= 0 && step.index < currentMoves.length) {
-            currentMove = currentMoves[step.index];
-            currentMoves = currentMove.variations || [];
-        } else if (step.type === 'variation' && step.variationIndex >= 0 && 
-                   step.variationIndex < currentMoves.length) {
-            currentMove = currentMoves[step.variationIndex];
-            if (Array.isArray(currentMove)) {
-                currentMoves = currentMove;
-            }
-        }
-    }
-    
-    return currentMove;
-}
-
-// Improved function to create position from variation
-export function createPositionFromVariation(history, variationPath) {
-    const newGame = new Chess();
-    newGame.load(START_POSITION);
-    
-    if (!variationPath || variationPath.length === 0) {
-        return newGame;
-    }
-    
-    try {
-        // Find parent move for variation
-        const parentPath = variationPath.slice(0, -1);
-        const lastStep = variationPath[variationPath.length - 1];
-        
-        // Play main line up to parent move
-        let parentMoveIndex = -1;
-        for (const step of parentPath) {
-            if (step.type === 'main') {
-                parentMoveIndex = step.index;
-                break;
-            }
-        }
-        
-        // Play main line moves up to branching point
-        for (let i = 0; i <= parentMoveIndex && i < history.length; i++) {
-            newGame.move(history[i]);
-        }
-        
-        // If last step points to move in variation
-        if (lastStep.type === 'move' && parentMoveIndex >= 0 && parentMoveIndex < history.length) {
-            const parentMove = history[parentMoveIndex];
-            if (parentMove.variations) {
-                // Find needed variation
-                const variationStep = variationPath.find(step => step.type === 'variation');
-                if (variationStep && variationStep.variationIndex >= 0 && 
-                    variationStep.variationIndex < parentMove.variations.length) {
-                    const variation = parentMove.variations[variationStep.variationIndex];
-                    
-                    // Play moves in variation up to needed move
-                    for (let i = 0; i <= lastStep.moveIndex && i < variation.length; i++) {
-                        newGame.move(variation[i]);
-                    }
-                }
-            }
-        }
-        
-        return newGame;
-    } catch (error) {
-        console.error('Error creating position from variation:', error);
-        return newGame;
-    }
-}
+const initialState = {
+    game: new Chess(),
+    fen: START_POSITION,
+    history: [],
+    fullHistory: [],
+    currentMoveIndex: -1,
+    currentVariationPath: [],
+    currentVariationIndex: null,
+    pgnHeaders: {}
+};
 
 // Function to create game from history up to certain index
-export function createGameFromHistory(history, moveIndex) {
+function createGameFromHistory(history, moveIndex) {
     const newGame = new Chess();
     newGame.load(START_POSITION);
     
@@ -160,39 +29,8 @@ export function createGameFromHistory(history, moveIndex) {
     return newGame;
 }
 
-// PGN loading handler
-export function handleLoadPgn(state, action) {
-    try {
-        const newGame = new Chess();
-        newGame.load(START_POSITION);
-        const cleanedPgn = cleanPgn(action.payload);
-        if (!cleanedPgn) {
-            return state;
-        }
-
-        const pgnHeaders = extractPgnHeaders(cleanedPgn);
-        newGame.loadPgn(cleanedPgn, { sloppy: true });
-        const loadedHistory = newGame.history({ verbose: true, variations: true });
-        
-        return {
-            ...state,
-            game: newGame,
-            fen: newGame.fen(),
-            history: loadedHistory,
-            fullHistory: loadedHistory,
-            currentMoveIndex: loadedHistory.length - 1,
-            currentVariationPath: [],
-            currentVariationIndex: null,
-            pgnHeaders: pgnHeaders
-        };
-    } catch (error) {
-        console.error('Error loading PGN:', error);
-        return state;
-    }
-}
-
 // Add move handler
-export function handleAddMove(state, action) {
+function handleAddMove(state, action) {
     try {
         const newGame = new Chess(state.fen);
         const move = newGame.move(action.payload);
@@ -404,137 +242,10 @@ export function handleAddMove(state, action) {
     }
 }
 
-// Handler for going to specific move
-export function handleGotoMove(state, action) {
-    try {
-        const payload = action.payload;
-
-        return {
-            ...state,
-            fen: payload.fen,
-            currentMoveIndex: payload.globalIndex,
-            currentVariationPath: [],
-            currentVariationIndex: null,
-            history: state.fullHistory
-        };
-    } catch (error) {
-        console.error('Error in GOTO_MOVE:', error);
-        return state;
-    }
-}
-
-// Handler for going to first move
-export function handleGotoFirst(state) {
-    try {
-        const newGame = new Chess();
-        newGame.load(START_POSITION);
-        return {
-            ...state,
-            game: newGame,
-            fen: newGame.fen(),
-            currentMoveIndex: -1,
-            currentVariationPath: [],
-            currentVariationIndex: null,
-            history: state.fullHistory
-        };
-    } catch (error) {
-        console.error('Error in GOTO_FIRST:', error);
-        return state;
-    }
-}
-
-// Handler for going to last move
-export function handleGotoLast(state) {
-    try {
-        const lastHistory = state.fullHistory;
-        const newGame = createGameFromHistory(lastHistory, lastHistory.length - 1);
-        return {
-            ...state,
-            game: newGame,
-            fen: newGame.fen(),
-            currentMoveIndex: lastHistory.length - 1,
-            currentVariationPath: [],
-            currentVariationIndex: null,
-            history: lastHistory
-        };
-    } catch (error) {
-        console.error('Error in GOTO_LAST:', error);
-        return state;
-    }
-}
-
-// Handler for going to previous move
-export function handleGotoPrevious(state) {
-    try {
-        const prevIndex = Math.max(-1, state.currentMoveIndex - 1);
-        const prevHistory = state.fullHistory;
-        const newGame = createGameFromHistory(prevHistory, prevIndex);
-        return {
-            ...state,
-            game: newGame,
-            fen: newGame.fen(),
-            currentMoveIndex: prevIndex,
-            history: prevHistory
-        };
-    } catch (error) {
-        console.error('Error in GOTO_PREVIOUS:', error);
-        return state;
-    }
-}
-
-// Handler for going to next move
-export function handleGotoNext(state) {
-    try {
-        const nextIndex = Math.min(state.fullHistory.length - 1, state.currentMoveIndex + 1);
-        const nextHistory = state.fullHistory;
-        const newGame = createGameFromHistory(nextHistory, nextIndex);
-        return {
-            ...state,
-            game: newGame,
-            fen: newGame.fen(),
-            currentMoveIndex: nextIndex,
-            history: nextHistory
-        };
-    } catch (error) {
-        console.error('Error in GOTO_NEXT:', error);
-        return state;
-    }
-}
-
-const initialState = {
-    game: new Chess(),
-    fen: START_POSITION,
-    history: [],
-    fullHistory: [],
-    currentMoveIndex: -1,
-    currentVariationPath: [], // Path through variations
-    currentVariationIndex: null, // Index of current variation
-    pgnHeaders: {}
-};
-
-export function chessReducer(state = initialState, action) {
+export function moveListReducer(state = initialState, action) {
     switch (action.type) {
-        case LOAD_PGN:
-            return handleLoadPgn(state, action);
-
         case ADD_MOVE:
             return handleAddMove(state, action);
-
-        case GOTO_MOVE:
-            return handleGotoMove(state, action);
-
-        case GOTO_FIRST:
-            return handleGotoFirst(state);
-
-        case GOTO_LAST:
-            return handleGotoLast(state);
-
-        case GOTO_PREVIOUS:
-            return handleGotoPrevious(state);
-
-        case GOTO_NEXT:
-            return handleGotoNext(state);
-
         default:
             return state;
     }

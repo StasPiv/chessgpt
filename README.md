@@ -147,7 +147,7 @@ chessgpt/
 │   │   └── AnalysisPanel.tsx   # Engine analysis display
 │   ├── redux/
 │   │   ├── store.js           # Redux store configuration
-│   │   ├── reducers.js        # Chess game state management
+│   │   ├── chessReducer.js        # Chess game state management
 │   │   ├── analysisReducer.js # Analysis state management
 │   │   └── actions.js         # Redux actions
 │   ├── websocket.js           # WebSocket client service
