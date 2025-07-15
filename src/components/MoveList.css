@@ -1,163 +1,99 @@
 .move-list-container {
-    display: flex;
-    flex-direction: column;
+    width: 100%;
     height: 100%;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .moves-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    width: 100%;
     height: 100%;
 }
 
 .moves-list {
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto;
-    line-height: 1.8;
-    font-family: 'Courier New', monospace;
+    font-family: 'Arial', sans-serif;
     font-size: 14px;
-    word-wrap: break-word;
-    height: 100%;
-    min-height: 0;
+    line-height: 1.6;
+    color: #333;
 }
 
 .move-item {
     display: inline-block;
     padding: 2px 6px;
-    margin: 1px;
-    border-radius: 4px;
+    margin: 1px 2px;
+    border-radius: 3px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease;
     user-select: none;
-    color: #333;
-    font-weight: 500;
 }
 
 .move-item:hover {
-    background-color: #e3f2fd;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #e6f3ff;
 }
 
 .move-item.current {
-    background-color: #2196f3;
+    background-color: #007acc;
     color: white;
-    font-weight: 600;
-    box-shadow: 0 2px 6px rgba(33, 150, 243, 0.3);
-}
-
-.move-item.start {
-    background-color: #4caf50;
-    color: white;
-    font-weight: 600;
-    margin-right: 8px;
-    padding: 4px 8px;
-}
-
-.move-item.start:hover {
-    background-color: #45a049;
-}
-
-.move-item.start.current {
-    background-color: #2e7d32;
-}
-
-/* Styles for variations */
-.variation {
-    display: inline;
-    margin-left: 4px;
-    margin-right: 4px;
-}
-
-.variation-bracket {
-    color: #666;
     font-weight: bold;
-    font-size: 16px;
-    margin: 0 2px;
 }
 
 .variation-move {
-    color: #1976d2;
-    background-color: transparent;
-    border: 1px solid transparent;
     font-style: italic;
 }
 
-.variation-move:hover {
-    background-color: #bbdefb;
-    border-color: #1976d2;
+/* Цвета для разных уровней вариантов */
+.move-item.variation-move[style*="margin-left: 20px"] {
+    /* Уровень 1 - темно-синий */
+    color: #2563eb;
 }
 
-.variation-move.current {
-    background-color: #1976d2;
-    color: white;
-    border-color: #1976d2;
+.move-item.variation-move[style*="margin-left: 40px"] {
+    /* Уровень 2 - синий */
+    color: #3b82f6;
 }
 
-.variations-container {
-    display: inline;
-    margin-left: 2px;
+.move-item.variation-move[style*="margin-left: 60px"] {
+    /* Уровень 3 - светло-синий */
+    color: #60a5fa;
+}
+
+.move-item.variation-move[style*="margin-left: 80px"] {
+    /* Уровень 4 - очень светло-синий */
+    color: #93c5fd;
+}
+
+/* Альтернативный подход с CSS классами */
+.variation-level-1 {
+    color: #2563eb !important;
+}
+
+.variation-level-2 {
+    color: #3b82f6 !important;
+}
+
+.variation-level-3 {
+    color: #60a5fa !important;
+}
+
+.variation-level-4 {
+    color: #93c5fd !important;
+}
+
+.variation-bracket {
+    color: #999;
+    font-weight: bold;
+    margin: 0 2px;
+}
+
+.move-space {
+    display: inline-block;
+    width: 6px;
 }
 
 .no-moves {
     text-align: center;
-    color: #868e96;
+    color: #666;
     font-style: italic;
-    padding: 40px 20px;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .moves-list {
-        font-size: 12px;
-        padding: 10px;
-    }
-    
-    .move-item {
-        padding: 1px 4px;
-        font-size: 12px;
-    }
-}
-
-/* Scrollbar styling */
-.moves-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.moves-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 6px;
-}
-
-.moves-list::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 6px;
-}
-
-.moves-list::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
-
-.controls {
-    margin-bottom: 10px;
-}
-
-.undo-button {
-    margin-bottom: 10px;
-}
-
-.pgn-textarea {
-    width: 100%;
-    height: 80px;
-    margin-bottom: 5px;
+    padding: 20px;
 }
