@@ -1,5 +1,22 @@
 import { PgnHeaders } from './GameHeader';
 
+// Типы для вариантов ходов
+export interface VariationPathItem {
+    type: 'main' | 'variation' | 'move';
+    index?: number;
+    variationIndex?: number;
+    moveIndex?: number;
+}
+
+// Тип для хода в шахматах
+export interface ChessMove {
+    san: string;          // Стандартная алгебраическая нотация (e.g., "e4", "Nf3")
+    fen: string;          // FEN позиция после хода
+    variations?: ChessMove[][]; // Вложенные варианты
+    [key: string]: any;   // Дополнительные свойства от chess.js
+}
+
+// Основное состояние шахмат
 export interface ChessState {
     fen: string;
     currentFen: string;
@@ -9,6 +26,8 @@ export interface ChessState {
     currentMoveIndex: number;
     gameHistory: string[];
     fullHistory: string[];
+    history: ChessMove[];                    // Массив ходов с вариантами
+    currentVariationPath: VariationPathItem[]; // Путь к текущему варианту
     variations: any[];
     isAnalysisMode: boolean;
     engineAnalysis: any;
