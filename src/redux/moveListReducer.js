@@ -28,6 +28,46 @@ function createGameFromHistory(history, moveIndex) {
     return newGame;
 }
 
+// Function to calculate global index for a move in variation
+function calculateGlobalIndex(fullHistory, variationPath) {
+    const BLOCK_SIZE = 1000;
+    
+    if (!variationPath || variationPath.length === 0) {
+        // Main line move
+        return fullHistory.length - 1;
+    }
+    
+    // For variation moves, we need to find which block this variation belongs to
+    // This is a simplified calculation - in reality, we need to count variations before this one
+    
+    // For now, let's use a simple approach:
+    // Block 0: main line (0-999)
+    // Block 1: first variation (1000-1999)
+    // Block 2: second variation (2000-2999), etc.
+    
+    const mainStep = variationPath[0];
+    const variationStep = variationPath[1];
+    const moveStep = variationPath[2];
+    
+    // Count how many variations exist before this one in the entire history
+    let variationCount = 0;
+    for (let i = 0; i < fullHistory.length; i++) {
+        if (fullHistory[i].variations) {
+            if (i < mainStep.index) {
+                variationCount += fullHistory[i].variations.length;
+            } else if (i === mainStep.index) {
+                variationCount += variationStep.variationIndex;
+            }
+        }
+    }
+    
+    // Each variation gets its own block
+    const blockIndex = variationCount + 1; // +1 because block 0 is main line
+    const blockStart = blockIndex * BLOCK_SIZE;
+    
+    return blockStart + moveStep.moveIndex;
+}
+
 // Add move handler
 function handleAddMove(state, action) {
     try {
@@ -209,13 +249,16 @@ function handleAddMove(state, action) {
                     { type: 'move', moveIndex: 0 }
                 ];
                 
+                // Calculate global index for the new variation move
+                const newGlobalIndex = calculateGlobalIndex(newHistory, variationPath);
+                
                 return {
                     ...state,
                     game: newGame,
                     fen: newGame.fen(),
                     history: newHistory,
                     fullHistory: newHistory,
-                    currentMoveIndex: state.currentMoveIndex, // Stay at current position
+                    currentMoveIndex: newGlobalIndex, // Set to the new move's global index
                     currentVariationPath: variationPath,
                     currentVariationIndex: moveToAddVariationTo.variations.length - 1
                 };
