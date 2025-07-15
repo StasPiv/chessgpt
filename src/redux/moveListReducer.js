@@ -7,10 +7,7 @@ const initialState = {
     game: new Chess(),
     fen: START_POSITION,
     history: [],
-    fullHistory: [],
     currentMoveIndex: -1,
-    currentVariationPath: [],
-    currentVariationIndex: null,
     pgnHeaders: {}
 };
 
@@ -28,46 +25,6 @@ function createGameFromHistory(history, moveIndex) {
     return newGame;
 }
 
-// Function to calculate global index for a move in variation
-function calculateGlobalIndex(fullHistory, variationPath) {
-    const BLOCK_SIZE = 1000;
-    
-    if (!variationPath || variationPath.length === 0) {
-        // Main line move
-        return fullHistory.length - 1;
-    }
-    
-    // For variation moves, we need to find which block this variation belongs to
-    // This is a simplified calculation - in reality, we need to count variations before this one
-    
-    // For now, let's use a simple approach:
-    // Block 0: main line (0-999)
-    // Block 1: first variation (1000-1999)
-    // Block 2: second variation (2000-2999), etc.
-    
-    const mainStep = variationPath[0];
-    const variationStep = variationPath[1];
-    const moveStep = variationPath[2];
-    
-    // Count how many variations exist before this one in the entire history
-    let variationCount = 0;
-    for (let i = 0; i < fullHistory.length; i++) {
-        if (fullHistory[i].variations) {
-            if (i < mainStep.index) {
-                variationCount += fullHistory[i].variations.length;
-            } else if (i === mainStep.index) {
-                variationCount += variationStep.variationIndex;
-            }
-        }
-    }
-    
-    // Each variation gets its own block
-    const blockIndex = variationCount + 1; // +1 because block 0 is main line
-    const blockStart = blockIndex * BLOCK_SIZE;
-    
-    return blockStart + moveStep.moveIndex;
-}
-
 // Add move handler
 function handleAddMove(state, action) {
     try {
@@ -79,204 +36,29 @@ function handleAddMove(state, action) {
             return state;
         }
 
-        // Check if we're currently in a variation
-        if (state.currentVariationPath && state.currentVariationPath.length > 0) {
-            // We're in a variation
-            const newHistory = [...state.fullHistory];
-            
-            // Find the variation we're currently in
-            const mainStep = state.currentVariationPath[0];
-            const variationStep = state.currentVariationPath[1];
-            const currentMoveStep = state.currentVariationPath[2];
-            
-            const parentMove = newHistory[mainStep.index];
-            const variation = parentMove.variations[variationStep.variationIndex];
-            
-            // Check if we're at the end of the variation
-            if (currentMoveStep.moveIndex === variation.length - 1) {
-                // At the end of variation, add the move to the existing variation
-                variation.push(move);
-                
-                // Create new variation path for the added move
-                const newVariationPath = [
-                    { type: 'main', index: mainStep.index },
-                    { type: 'variation', variationIndex: variationStep.variationIndex },
-                    { type: 'move', moveIndex: variation.length - 1 }
-                ];
-                
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    history: newHistory,
-                    fullHistory: newHistory,
-                    currentMoveIndex: state.currentMoveIndex, // Stay at the same main line position
-                    currentVariationPath: newVariationPath,
-                    currentVariationIndex: variationStep.variationIndex
-                };
-            } else {
-                // We're in the middle of a variation, need to create a sub-variation
-                const nextMoveIndex = currentMoveStep.moveIndex + 1;
-                
-                // Check if there's already a next move in the variation
-                if (nextMoveIndex < variation.length) {
-                    const nextMove = variation[nextMoveIndex];
-                    
-                    // Check if the new move is the same as the next move in variation
-                    if (nextMove.from === move.from && nextMove.to === move.to && nextMove.promotion === move.promotion) {
-                        // If it's the same move, just go to it
-                        const newVariationPath = [
-                            { type: 'main', index: mainStep.index },
-                            { type: 'variation', variationIndex: variationStep.variationIndex },
-                            { type: 'move', moveIndex: nextMoveIndex }
-                        ];
-                        
-                        return {
-                            ...state,
-                            game: newGame,
-                            fen: newGame.fen(),
-                            currentVariationPath: newVariationPath
-                        };
-                    }
-                    
-                    // Create sub-variation - add the new move as an alternative to the existing next move
-                    const moveToAddVariationTo = variation[nextMoveIndex];
-                    
-                    if (!moveToAddVariationTo.variations) {
-                        moveToAddVariationTo.variations = [];
-                    }
-                    
-                    // Add the new move as a sub-variation
-                    moveToAddVariationTo.variations.push([move]);
-                    
-                    // Create path to the new sub-variation move
-                    const subVariationPath = [
-                        { type: 'main', index: mainStep.index },
-                        { type: 'variation', variationIndex: variationStep.variationIndex },
-                        { type: 'move', moveIndex: nextMoveIndex },
-                        { type: 'variation', variationIndex: moveToAddVariationTo.variations.length - 1 },
-                        { type: 'move', moveIndex: 0 }
-                    ];
-                    
-                    return {
-                        ...state,
-                        game: newGame,
-                        fen: newGame.fen(),
-                        history: newHistory,
-                        fullHistory: newHistory,
-                        currentMoveIndex: state.currentMoveIndex,
-                        currentVariationPath: subVariationPath,
-                        currentVariationIndex: variationStep.variationIndex
-                    };
-                } else {
-                    // No next move exists in variation, just add the move to variation
-                    variation.push(move);
-                    
-                    // Create new variation path for the added move
-                    const newVariationPath = [
-                        { type: 'main', index: mainStep.index },
-                        { type: 'variation', variationIndex: variationStep.variationIndex },
-                        { type: 'move', moveIndex: variation.length - 1 }
-                    ];
-                    
-                    return {
-                        ...state,
-                        game: newGame,
-                        fen: newGame.fen(),
-                        history: newHistory,
-                        fullHistory: newHistory,
-                        currentMoveIndex: state.currentMoveIndex,
-                        currentVariationPath: newVariationPath,
-                        currentVariationIndex: variationStep.variationIndex
-                    };
-                }
-            }
-        }
-
         // If we're at the end of history, just add the move
-        if (state.currentMoveIndex === state.fullHistory.length - 1) {
-            const newHistory = [...state.fullHistory, move];
+        if (state.currentMoveIndex === state.history.length - 1) {
+            const newHistory = [...state.history, move];
             
             return {
                 ...state,
                 game: newGame,
                 fen: newGame.fen(),
                 history: newHistory,
-                fullHistory: newHistory,
-                currentMoveIndex: newHistory.length - 1,
-                currentVariationPath: [],
-                currentVariationIndex: null
+                currentMoveIndex: newHistory.length - 1
             };
         } else {
-            // If we're in the middle of history, create variation
-            const nextMoveIndex = state.currentMoveIndex + 1;
+            // If we're in the middle of history, truncate and add new move
+            const truncatedHistory = state.history.slice(0, state.currentMoveIndex + 1);
+            const newHistory = [...truncatedHistory, move];
             
-            // Check if there's already a next move in the main line
-            if (nextMoveIndex < state.fullHistory.length) {
-                const nextMove = state.fullHistory[nextMoveIndex];
-                
-                // Check if the new move is the same as the next move in main line
-                if (nextMove.from === move.from && nextMove.to === move.to && nextMove.promotion === move.promotion) {
-                    // If it's the same move, just go to it
-                    const gameAtNextMove = createGameFromHistory(state.fullHistory, nextMoveIndex);
-                    return {
-                        ...state,
-                        game: gameAtNextMove,
-                        fen: gameAtNextMove.fen(),
-                        currentMoveIndex: nextMoveIndex,
-                        currentVariationPath: [],
-                        currentVariationIndex: null
-                    };
-                }
-                
-                // Create variation - add the new move as an alternative to the existing next move
-                const newHistory = [...state.fullHistory];
-                
-                // The variation should be attached to the NEXT move (the one being replaced)
-                const moveToAddVariationTo = newHistory[nextMoveIndex];
-                
-                if (!moveToAddVariationTo.variations) {
-                    moveToAddVariationTo.variations = [];
-                }
-                
-                // Add the new move as a variation to the next move
-                moveToAddVariationTo.variations.push([move]);
-                
-                // Create path to the new variation move
-                const variationPath = [
-                    { type: 'main', index: nextMoveIndex },
-                    { type: 'variation', variationIndex: moveToAddVariationTo.variations.length - 1 },
-                    { type: 'move', moveIndex: 0 }
-                ];
-                
-                // Calculate global index for the new variation move
-                const newGlobalIndex = calculateGlobalIndex(newHistory, variationPath);
-                
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    history: newHistory,
-                    fullHistory: newHistory,
-                    currentMoveIndex: newGlobalIndex, // Set to the new move's global index
-                    currentVariationPath: variationPath,
-                    currentVariationIndex: moveToAddVariationTo.variations.length - 1
-                };
-            } else {
-                // No next move exists, just add the move to main line
-                const newHistory = [...state.fullHistory, move];
-                
-                return {
-                    ...state,
-                    game: newGame,
-                    fen: newGame.fen(),
-                    history: newHistory,
-                    fullHistory: newHistory,
-                    currentMoveIndex: newHistory.length - 1,
-                    currentVariationPath: [],
-                    currentVariationIndex: null
-                };
-            }
+            return {
+                ...state,
+                game: newGame,
+                fen: newGame.fen(),
+                history: newHistory,
+                currentMoveIndex: newHistory.length - 1
+            };
         }
     } catch (error) {
         console.error('Error adding move:', error);
@@ -284,21 +66,43 @@ function handleAddMove(state, action) {
     }
 }
 
-// Handler for going to specific move
-function handleGoToMove(state, action) {
+// Goto move handler
+function handleGotoMove(state, action) {
     try {
-        const payload = action.payload;
+        const { moveIndex, fen } = action.payload;
+        
+        // Validate move index
+        if (moveIndex < -1 || moveIndex >= state.history.length) {
+            console.error('Invalid move index:', moveIndex);
+            return state;
+        }
 
+        // If going to position before first move
+        if (moveIndex === -1) {
+            const newGame = new Chess();
+            newGame.load(START_POSITION);
+            
+            return {
+                ...state,
+                game: newGame,
+                fen: START_POSITION,
+                currentMoveIndex: -1
+                // НЕ меняем history!
+            };
+        }
+
+        // Create game state at the specified move
+        const gameAtMove = createGameFromHistory(state.history, moveIndex);
+        
         return {
             ...state,
-            fen: payload.fen,
-            currentMoveIndex: payload.globalIndex,
-            currentVariationPath: [],
-            currentVariationIndex: null,
-            history: state.fullHistory
+            game: gameAtMove,
+            fen: gameAtMove.fen(),
+            currentMoveIndex: moveIndex
+            // НЕ меняем history!
         };
     } catch (error) {
-        console.error('Error in GOTO_MOVE:', error);
+        console.error('Error in goto move:', error);
         return state;
     }
 }
@@ -308,7 +112,7 @@ export function moveListReducer(state = initialState, action) {
         case ADD_MOVE:
             return handleAddMove(state, action);
         case GOTO_MOVE:
-            return handleGoToMove(state, action);
+            return handleGotoMove(state, action);
         default:
             return state;
     }

@@ -12,10 +12,7 @@ const initialState = {
     game: new Chess(),
     fen: START_POSITION,
     history: [],
-    fullHistory: [],
     currentMoveIndex: -1,
-    currentVariationPath: [],
-    currentVariationIndex: null,
     pgnHeaders: {}
 };
 
@@ -42,10 +39,8 @@ function handleGotoFirst(state) {
             ...state,
             game: newGame,
             fen: newGame.fen(),
-            currentMoveIndex: -1,
-            currentVariationPath: [],
-            currentVariationIndex: null,
-            history: state.fullHistory
+            currentMoveIndex: -1
+            // НЕ меняем history!
         };
     } catch (error) {
         console.error('Error in GOTO_FIRST:', error);
@@ -56,16 +51,18 @@ function handleGotoFirst(state) {
 // Handler for going to last move
 function handleGotoLast(state) {
     try {
-        const lastHistory = state.fullHistory;
-        const newGame = createGameFromHistory(lastHistory, lastHistory.length - 1);
+        if (state.history.length === 0) {
+            return state;
+        }
+        
+        const lastIndex = state.history.length - 1;
+        const newGame = createGameFromHistory(state.history, lastIndex);
         return {
             ...state,
             game: newGame,
             fen: newGame.fen(),
-            currentMoveIndex: lastHistory.length - 1,
-            currentVariationPath: [],
-            currentVariationIndex: null,
-            history: lastHistory
+            currentMoveIndex: lastIndex
+            // НЕ меняем history!
         };
     } catch (error) {
         console.error('Error in GOTO_LAST:', error);
@@ -77,14 +74,13 @@ function handleGotoLast(state) {
 function handleGotoPrevious(state) {
     try {
         const prevIndex = Math.max(-1, state.currentMoveIndex - 1);
-        const prevHistory = state.fullHistory;
-        const newGame = createGameFromHistory(prevHistory, prevIndex);
+        const newGame = createGameFromHistory(state.history, prevIndex);
         return {
             ...state,
             game: newGame,
             fen: newGame.fen(),
-            currentMoveIndex: prevIndex,
-            history: prevHistory
+            currentMoveIndex: prevIndex
+            // НЕ меняем history!
         };
     } catch (error) {
         console.error('Error in GOTO_PREVIOUS:', error);
@@ -95,15 +91,14 @@ function handleGotoPrevious(state) {
 // Handler for going to next move
 function handleGotoNext(state) {
     try {
-        const nextIndex = Math.min(state.fullHistory.length - 1, state.currentMoveIndex + 1);
-        const nextHistory = state.fullHistory;
-        const newGame = createGameFromHistory(nextHistory, nextIndex);
+        const nextIndex = Math.min(state.history.length - 1, state.currentMoveIndex + 1);
+        const newGame = createGameFromHistory(state.history, nextIndex);
         return {
             ...state,
             game: newGame,
             fen: newGame.fen(),
-            currentMoveIndex: nextIndex,
-            history: nextHistory
+            currentMoveIndex: nextIndex
+            // НЕ меняем history!
         };
     } catch (error) {
         console.error('Error in GOTO_NEXT:', error);

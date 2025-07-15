@@ -12,7 +12,6 @@ export interface VariationPathItem {
 export interface ChessMove {
     san: string;          // Стандартная алгебраическая нотация (e.g., "e4", "Nf3")
     fen: string;          // FEN позиция после хода
-    variations?: ChessMove[][]; // Вложенные варианты
     [key: string]: any;   // Дополнительные свойства от chess.js
     from: string;
     to: string;

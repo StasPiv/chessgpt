@@ -22,7 +22,7 @@ const NavigationControls: React.FC<NavigationControlsProps> = ({
 }) => {
     const dispatch = useDispatch();
     const currentMoveIndex = useSelector((state: RootState) => state.chess.currentMoveIndex);
-    const fullHistory = useSelector((state: RootState) => state.chess.fullHistory);
+    const history = useSelector((state: RootState) => state.chess.history); // Используем history вместо fullHistory
 
     // Navigation handlers
     const navigationHandlers: NavigationHandlers = {
@@ -35,18 +35,18 @@ const NavigationControls: React.FC<NavigationControlsProps> = ({
     // Calculate navigation state
     const navigationState: NavigationState = {
         currentMoveIndex,
-        fullHistoryLength: fullHistory.length,
+        fullHistoryLength: history.length,
         isAtStart: currentMoveIndex === -1,
-        isAtEnd: currentMoveIndex === fullHistory.length - 1,
-        hasHistory: fullHistory.length > 0
+        isAtEnd: currentMoveIndex === history.length - 1,
+        hasHistory: history.length > 0
     };
 
     // Calculate position indicator
     const positionIndicator: PositionIndicator = {
         current: Math.max(0, currentMoveIndex + 1),
-        total: fullHistory.length,
+        total: history.length,
         displayText: navigationState.hasHistory 
-            ? `${Math.max(0, currentMoveIndex + 1)} / ${fullHistory.length}` 
+            ? `${Math.max(0, currentMoveIndex + 1)} / ${history.length}` 
             : '0 / 0'
     };
 
