@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Responsive, WidthProvider, Layout, Layouts } from 'react-grid-layout';
-import { CustomLayouts, CustomLayoutProps, LayoutChangeCallback } from '../types';
+import { CustomLayoutProps, LayoutChangeCallback } from '../types';
 import ChessBoard from './ChessBoard';
 import MoveList from './MoveList';
 import AnalysisPanel from './AnalysisPanel';
@@ -10,7 +10,8 @@ import './CustomLayout.css';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
-    const [layouts, setLayouts] = useState<CustomLayouts>({
+    // Используем стандартный тип Layouts
+    const [layouts, setLayouts] = useState<Layouts>({
         lg: [
             { i: 'chessboard', x: 0, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
             { i: 'moves', x: 6, y: 0, w: 6, h: 8, minW: 3, minH: 4 },
@@ -35,7 +36,7 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
         const savedLayouts = localStorage.getItem('chessapp-layouts');
         if (savedLayouts) {
             try {
-                const parsedLayouts = JSON.parse(savedLayouts) as CustomLayouts;
+                const parsedLayouts = JSON.parse(savedLayouts) as Layouts;
                 setLayouts(parsedLayouts);
             } catch (error) {
                 console.error('Error loading saved layouts:', error);
@@ -45,7 +46,7 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
 
     // Save layout to localStorage
     const handleLayoutChange: LayoutChangeCallback = (layout: Layout[], allLayouts: Layouts) => {
-        setLayouts(allLayouts as CustomLayouts);
+        setLayouts(allLayouts);
         localStorage.setItem('chessapp-layouts', JSON.stringify(allLayouts));
     };
 
