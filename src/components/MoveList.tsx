@@ -91,7 +91,11 @@ const MoveList = (): ReactElement => {
         };
         
         // Рекурсивная функция для обработки всех веток
-        const processVariations = (moves, currentPath = 'main', parentMoveIndexInPath = 0) => {
+        const processVariations = (
+            moves: ChessMove[], 
+            currentPath: string = 'main', 
+            parentMoveIndexInPath: number = 0
+        ): void => {
             moves.forEach((move, moveIndex) => {
                 if (move.variations && move.variations.length > 0) {
                     move.variations.forEach((variation, varIndex) => {
@@ -128,7 +132,7 @@ const MoveList = (): ReactElement => {
 
     const { moveMap: globalMoveMap, mainLineIndexes, reverseMap } = createBlockBasedIndex();
 
-    const handleMoveClick = (globalIndex) => {
+    const handleMoveClick = (globalIndex: number): void => {
         const moveInfo = globalMoveMap.get(globalIndex);
         
         if (!moveInfo) {
@@ -145,12 +149,16 @@ const MoveList = (): ReactElement => {
     };
 
     // Упрощенная функция проверки текущего хода
-    const isCurrentMove = (globalIndex) => {
+    const isCurrentMove = (globalIndex: number): boolean => {
         return globalIndex === currentMoveIndex;
     };
 
     // Function to render variations with nested support
-    const renderVariations = (variations, parentMoveIndex, currentPath = 'main') => {
+    const renderVariations = (
+        variations: ChessMove[][], 
+        parentMoveIndex: number, 
+        currentPath: string = 'main'
+    ): React.ReactNode => {
         if (!variations || variations.length === 0) return null;
         
         return variations.map((variation, varIndex) => (
@@ -163,7 +171,12 @@ const MoveList = (): ReactElement => {
     };
 
     // Function to render move sequence in variation with nested support
-    const renderVariationSequence = (moves, parentMoveIndex, variationIndex, currentPath = 'main') => {
+    const renderVariationSequence = (
+        moves: ChessMove[], 
+        parentMoveIndex: number, 
+        variationIndex: number, 
+        currentPath: string = 'main'
+    ): React.ReactNode => {
         const branchPath = `${currentPath}-${parentMoveIndex}-${variationIndex}`;
         
         return moves.map((move, moveIndex) => {
@@ -172,8 +185,8 @@ const MoveList = (): ReactElement => {
             const isParentWhiteMove = parentMoveIndex % 2 === 0;
             
             const isFirstMoveInVariation = moveIndex === 0;
-            
-            let moveNumber, isWhiteMove, display;
+
+            let moveNumber: number, isWhiteMove: boolean, display: string;
             
             if (isFirstMoveInVariation) {
                 // First move in variation - alternative to parent move
@@ -215,7 +228,7 @@ const MoveList = (): ReactElement => {
             const globalIndex = reverseMap.get(pathKey);
             
             console.log(`Looking for pathKey: ${pathKey}, found globalIndex: ${globalIndex}`);
-            
+
             return (
                 <span key={globalIndex || `var-move-${moveIndex}`}>
                     <span 
@@ -227,8 +240,8 @@ const MoveList = (): ReactElement => {
                     </span>
                     {/* Рекурсивно обрабатываем вложенные варианты */}
                     {move.variations && renderVariations(move.variations, 
-                        moveIndex, branchPath)}
-                    {moveIndex < moves.length - 1 ? ' ' : ''}
+                        currentPath === 'main' ? parentMoveIndex + moveIndex + 1 : parentMoveIndex, 
+                        branchPath)}
                 </span>
             );
         });
