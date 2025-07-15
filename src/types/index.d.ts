@@ -5,3 +5,5 @@ export * from './WebSocket';
 export * from './ChessBoard';
 export * from './Layout';
 export * from './GameHeader';
+export * from './NavigationControls';
+export * from './NavigationConstants';
