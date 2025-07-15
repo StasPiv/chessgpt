@@ -1,16 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../types';
+import { PgnHeaders, GameResult, FormattedGameResult, GameHeaderProps, ResultFormatter } from '../types';
 import './GameHeader.css';
 
-const GameHeader = () => {
-    const pgnHeaders = useSelector(state => state.chess.pgnHeaders);
+const GameHeader: React.FC<GameHeaderProps> = ({ className, compact = false }) => {
+    const pgnHeaders = useSelector((state: RootState) => state.chess.pgnHeaders);
 
     // If no headers, don't display component
     if (!pgnHeaders || Object.keys(pgnHeaders).length === 0) {
         return null;
     }
 
-    const formatResult = (result) => {
+    const formatResult: ResultFormatter = (result: GameResult): FormattedGameResult => {
         switch (result) {
             case '1-0':
                 return '1-0 (White wins)';
@@ -25,11 +27,19 @@ const GameHeader = () => {
         }
     };
 
+    const isValidDate = (date: string | undefined): boolean => {
+        return date !== undefined && date !== '????.??.??';
+    };
+
+    const isValidField = (field: string | undefined): boolean => {
+        return field !== undefined && field !== '?';
+    };
+
     return (
-        <div className="game-header">
+        <div className={`game-header ${className || ''} ${compact ? 'compact' : ''}`}>
             <div className="game-header-title">
                 <h3>{pgnHeaders.Event || 'Game'}</h3>
-                {pgnHeaders.Site && pgnHeaders.Site !== '?' && (
+                {isValidField(pgnHeaders.Site) && (
                     <span className="game-site">{pgnHeaders.Site}</span>
                 )}
             </div>
@@ -53,13 +63,13 @@ const GameHeader = () => {
             </div>
 
             <div className="game-info">
-                {pgnHeaders.Date && pgnHeaders.Date !== '????.??.??' && (
+                {isValidDate(pgnHeaders.Date) && (
                     <div className="game-date">
                         <span className="info-label">Date:</span>
                         <span>{pgnHeaders.Date}</span>
                     </div>
                 )}
-                {pgnHeaders.Round && pgnHeaders.Round !== '?' && (
+                {isValidField(pgnHeaders.Round) && (
                     <div className="game-round">
                         <span className="info-label">Round:</span>
                         <span>{pgnHeaders.Round}</span>

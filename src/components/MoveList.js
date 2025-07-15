@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction } from '../redux/actions.js';
 import './MoveList.css';
-import GameHeader from "./GameHeader.js";
+import GameHeader from "./GameHeader.tsx";
 
 const MoveList = () => {
     const dispatch = useDispatch();
