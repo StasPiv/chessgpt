@@ -107,22 +107,8 @@ const LoadPgn: React.FC<LoadPgnProps> = ({
         }
     }, [autoValidate, validatePgn, onChange, initialValue]);
 
-    // Handle keyboard shortcuts
-    const handleKeyDown: PgnKeyboardEventHandler = useCallback((event) => {
-        const isCtrlEnter = event.key === 'Enter' && event.ctrlKey;
-        const isCtrlDelete = event.key === 'Delete' && event.ctrlKey;
-        
-        if (isCtrlEnter) {
-            event.preventDefault();
-            handleLoadPGN();
-        } else if (isCtrlDelete && showClearButton) {
-            event.preventDefault();
-            handleClearPGN();
-        }
-    }, [showClearButton]);
-
     // Handle PGN loading
-    const handleLoadPGN = useCallback(async () => {
+    const handleLoadPGN = useCallback(() => {
         if (!pgnState.value.trim() || disabled) {
             return;
         }
@@ -139,6 +125,7 @@ const LoadPgn: React.FC<LoadPgnProps> = ({
                     validation,
                     validationState: 'invalid'
                 }));
+                setLoadingState({ isLoading: false });
                 return;
             }
 
@@ -202,6 +189,20 @@ const LoadPgn: React.FC<LoadPgnProps> = ({
             validationState: validation.isValid ? 'valid' : 'invalid'
         }));
     }, [pgnState.value, validatePgn]);
+
+    // Handle keyboard shortcuts
+    const handleKeyDown: PgnKeyboardEventHandler = useCallback((event) => {
+        const isCtrlEnter = event.key === 'Enter' && event.ctrlKey;
+        const isCtrlDelete = event.key === 'Delete' && event.ctrlKey;
+        
+        if (isCtrlEnter) {
+            event.preventDefault();
+            handleLoadPGN();
+        } else if (isCtrlDelete && showClearButton) {
+            event.preventDefault();
+            handleClearPGN();
+        }
+    }, [handleLoadPGN, handleClearPGN, showClearButton]);
 
     // Effect for auto-validation
     useEffect(() => {
