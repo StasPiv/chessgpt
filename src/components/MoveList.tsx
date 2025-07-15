@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction } from '../redux/actions.js';
-import { RootState } from '../types';
+import { RootState, ChessMove } from '../types';
 import './MoveList.css';
 import GameHeader from "./GameHeader";
 
@@ -45,10 +45,15 @@ const MoveList = (): ReactElement => {
         };
         
         // Индексация ветки (каждая ветка получает свой блок)
-        const indexBranch = (moves, pathToParent, parentMoveIndex, variationIndex) => {
+        const indexBranch = (
+            moves: ChessMove[], 
+            pathToParent: string, 
+            parentMoveIndex: number, 
+            variationIndex: number
+        ): number[] => {
             currentBlockIndex++; // Переходим к следующему блоку
             const blockStart = currentBlockIndex * BLOCK_SIZE;
-            const branchIndexes = [];
+            const branchIndexes: number[] = [];
             
             moves.forEach((move, moveIndex) => {
                 const globalIndex = blockStart + moveIndex;
