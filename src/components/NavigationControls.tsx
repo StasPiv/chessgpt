@@ -17,7 +17,7 @@ const NavigationControls: React.FC<NavigationControlsProps> = ({
     onFlipBoard,
     isFlipped,
     className = '',
-    showPositionIndicator = true,
+    showPositionIndicator = false,
     compact = false
 }) => {
     const dispatch = useDispatch();

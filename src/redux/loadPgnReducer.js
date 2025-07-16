@@ -76,13 +76,15 @@ function assignGlobalIndexes(history) {
 // PGN loading handler
 function handleLoadPgn(state, action) {
     try {
-        const newGame = new Chess();
-        newGame.load(START_POSITION);
         const cleanedPgn = cleanPgn(action.payload);
         if (!cleanedPgn) {
             return state;
         }
 
+        // Создаем новый экземпляр Chess и полностью очищаем состояние
+        const newGame = new Chess();
+        newGame.load(START_POSITION);
+        
         const pgnHeaders = extractPgnHeaders(cleanedPgn);
         newGame.loadPgn(cleanedPgn, { sloppy: true });
         const loadedHistory = newGame.history({ verbose: true, variations: true });
@@ -90,15 +92,14 @@ function handleLoadPgn(state, action) {
         // Assign global indexes to all moves and get max global index
         const { history: historyWithGlobalIndexes, maxGlobalIndex } = assignGlobalIndexes(loadedHistory);
         
+        // Полный сброс состояния к начальному с новыми данными
         return {
-            ...state,
+            ...initialState, // Сначала берем все поля из initialState
             game: newGame,
             fen: newGame.fen(),
             history: historyWithGlobalIndexes,
             fullHistory: historyWithGlobalIndexes,
             currentMoveIndex: historyWithGlobalIndexes.length - 1,
-            currentVariationPath: [],
-            currentVariationIndex: null,
             pgnHeaders: pgnHeaders,
             maxGlobalIndex: maxGlobalIndex
         };
