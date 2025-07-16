@@ -33,27 +33,29 @@ function extractPgnHeaders(pgn) {
 
 // Function to assign global indexes to moves
 function assignGlobalIndexes(history) {
-    let globalVariationCounter = 0;
+    let variationCounter = 0;
     let maxGlobalIndex = 0;
     
-    function processMove(move, variationLevel = 0) {
-        if (variationLevel === 0) {
+    function processMove(move, currentVariationIndex = 0) {
+        if (currentVariationIndex === 0) {
             // Main line: indexes from 0 to 999
             move.globalIndex = move.moveIndex || 0;
             maxGlobalIndex = Math.max(maxGlobalIndex, move.globalIndex);
         } else {
-            // Variations: each variation level gets its own 1000-based range
-            move.globalIndex = variationLevel * 1000 + (move.moveIndex || 0);
+            // Variations: each variation gets its own 1000-based range
+            move.globalIndex = currentVariationIndex * 1000 + (move.moveIndex || 0);
             maxGlobalIndex = Math.max(maxGlobalIndex, move.globalIndex);
         }
         
         // Process variations if they exist
         if (move.variations && move.variations.length > 0) {
             move.variations.forEach((variation) => {
-                globalVariationCounter++;
+                variationCounter++; // Каждая новая вариация получает свой счетчик
+                const variationIndex = variationCounter;
+                
                 variation.forEach((varMove, moveIndex) => {
                     varMove.moveIndex = moveIndex;
-                    processMove(varMove, globalVariationCounter);
+                    processMove(varMove, variationIndex);
                 });
             });
         }

@@ -78,7 +78,7 @@ const MoveList = (): ReactElement => {
             // Основной ход
             result.push(
                 <span
-                    key={`${level}-${i}-${move.globalIndex}`}
+                    key={`move-${move.globalIndex}`}
                     className={moveClasses}
                     onClick={() => handleMoveClick(move, currentPath)}
                     title={`Move ${moveNumber}: ${display} (Global Index: ${move.globalIndex})`}
@@ -90,7 +90,7 @@ const MoveList = (): ReactElement => {
             // Добавляем пробел после хода
             if (i < moves.length - 1 || (move.variations && move.variations.length > 0)) {
                 result.push(
-                    <span key={`space-${level}-${i}`} className="move-space"> </span>
+                    <span key={`space-${move.globalIndex}`} className="move-space"> </span>
                 );
             }
 
@@ -106,7 +106,7 @@ const MoveList = (): ReactElement => {
                     // Открывающая скобка
                     result.push(
                         <span
-                            key={`var-open-${level}-${i}-${varIndex}`}
+                            key={`var-open-${move.globalIndex}-${varIndex}`}
                             className="variation-bracket variation-bracket-open"
                         >
                             (
@@ -131,7 +131,7 @@ const MoveList = (): ReactElement => {
                     // Закрывающая скобка
                     result.push(
                         <span
-                            key={`var-close-${level}-${i}-${varIndex}`}
+                            key={`var-close-${move.globalIndex}-${varIndex}`}
                             className="variation-bracket variation-bracket-close"
                         >
                             )
