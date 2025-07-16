@@ -15,13 +15,13 @@ const GameHeader: React.FC<GameHeaderProps> = ({ className, compact = false }) =
     const formatResult: ResultFormatter = (result: GameResult): FormattedGameResult => {
         switch (result) {
             case '1-0':
-                return '1-0 (White wins)';
+                return '1-0';
             case '0-1':
-                return '0-1 (Black wins)';
+                return '0-1';
             case '1/2-1/2':
-                return '1/2-1/2 (Draw)';
+                return '1/2-1/2';
             case '*':
-                return 'Game not finished';
+                return '*';
             default:
                 return result;
         }
@@ -32,64 +32,81 @@ const GameHeader: React.FC<GameHeaderProps> = ({ className, compact = false }) =
     };
 
     const isValidField = (field: string | undefined): boolean => {
-        return field !== undefined && field !== '?';
+        return field !== undefined && field !== '?' && field !== '';
     };
+
+    // Build additional info (everything except players and result)
+    const buildAdditionalInfo = (): string => {
+        const infoParts: string[] = [];
+
+        // Add event (tournament name)
+        if (isValidField(pgnHeaders.Event)) {
+            infoParts.push(pgnHeaders.Event!);
+        }
+
+        // Add site
+        if (isValidField(pgnHeaders.Site)) {
+            infoParts.push(pgnHeaders.Site!);
+        }
+
+        // Add date
+        if (isValidDate(pgnHeaders.Date)) {
+            infoParts.push(pgnHeaders.Date!);
+        }
+
+        // Add round
+        if (isValidField(pgnHeaders.Round)) {
+            infoParts.push(`Round ${pgnHeaders.Round}`);
+        }
+
+        // Add opening
+        if (isValidField(pgnHeaders.Opening)) {
+            let openingInfo = pgnHeaders.Opening!;
+            if (isValidField(pgnHeaders.Variation)) {
+                openingInfo += ` - ${pgnHeaders.Variation}`;
+            }
+            infoParts.push(openingInfo);
+        }
+
+        // Add ECO code
+        if (isValidField(pgnHeaders.ECO)) {
+            infoParts.push(pgnHeaders.ECO!);
+        }
+
+        // Add time control
+        if (isValidField(pgnHeaders.TimeControl)) {
+            infoParts.push(`TC: ${pgnHeaders.TimeControl}`);
+        }
+
+        // Add termination
+        if (isValidField(pgnHeaders.Termination)) {
+            infoParts.push(pgnHeaders.Termination!);
+        }
+
+        return infoParts.join(', ');
+    };
+
+    const additionalInfo = buildAdditionalInfo();
 
     return (
         <div className={`game-header ${className || ''} ${compact ? 'compact' : ''}`}>
-            <div className="game-header-title">
-                <h3>{pgnHeaders.Event || 'Game'}</h3>
-                {isValidField(pgnHeaders.Site) && (
-                    <span className="game-site">{pgnHeaders.Site}</span>
-                )}
-            </div>
-            
-            <div className="game-players">
-                <div className="player white-player">
-                    <span className="player-label">White:</span>
-                    <span className="player-name">
-                        {pgnHeaders.White || '?'}
-                        {pgnHeaders.WhiteElo && ` (${pgnHeaders.WhiteElo})`}
-                    </span>
-                </div>
-                <div className="vs-separator">vs</div>
-                <div className="player black-player">
-                    <span className="player-label">Black:</span>
-                    <span className="player-name">
-                        {pgnHeaders.Black || '?'}
-                        {pgnHeaders.BlackElo && ` (${pgnHeaders.BlackElo})`}
-                    </span>
-                </div>
-            </div>
-
-            <div className="game-info">
-                {isValidDate(pgnHeaders.Date) && (
-                    <div className="game-date">
-                        <span className="info-label">Date:</span>
-                        <span>{pgnHeaders.Date}</span>
-                    </div>
-                )}
-                {isValidField(pgnHeaders.Round) && (
-                    <div className="game-round">
-                        <span className="info-label">Round:</span>
-                        <span>{pgnHeaders.Round}</span>
-                    </div>
-                )}
+            <div className="game-header-players">
+                <strong>{pgnHeaders.White || '?'}</strong>
+                {pgnHeaders.WhiteElo && ` (${pgnHeaders.WhiteElo})`}
+                <span className="vs-separator"> vs </span>
+                <strong>{pgnHeaders.Black || '?'}</strong>
+                {pgnHeaders.BlackElo && ` (${pgnHeaders.BlackElo})`}
                 {pgnHeaders.Result && (
-                    <div className="game-result">
-                        <span className="info-label">Result:</span>
-                        <span className="result-value">{formatResult(pgnHeaders.Result)}</span>
-                    </div>
+                    <span className="game-result">
+                        {' - '}
+                        <strong>{formatResult(pgnHeaders.Result)}</strong>
+                    </span>
                 )}
             </div>
 
-            {pgnHeaders.Opening && (
-                <div className="game-opening">
-                    <span className="info-label">Opening:</span>
-                    <span>{pgnHeaders.Opening}</span>
-                    {pgnHeaders.Variation && (
-                        <span className="opening-variation"> - {pgnHeaders.Variation}</span>
-                    )}
+            {additionalInfo && (
+                <div className="game-header-info">
+                    {additionalInfo}
                 </div>
             )}
         </div>

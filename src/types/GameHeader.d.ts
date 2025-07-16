@@ -1,4 +1,3 @@
-
 // PGN Headers interface
 export interface PgnHeaders {
     Event?: string;
@@ -12,6 +11,12 @@ export interface PgnHeaders {
     Result?: GameResult;
     Opening?: string;
     Variation?: string;
+    ECO?: string;
+    TimeControl?: string;
+    Termination?: string;
+    PlyCount?: string;
+    WhiteType?: string;
+    BlackType?: string;
     [key: string]: string | undefined; // Для дополнительных заголовков
 }
 
@@ -19,11 +24,11 @@ export interface PgnHeaders {
 export type GameResult = '1-0' | '0-1' | '1/2-1/2' | '*' | string;
 
 // Formatted result type
-export type FormattedGameResult = 
-    | '1-0 (White wins)'
-    | '0-1 (Black wins)'
-    | '1/2-1/2 (Draw)'
-    | 'Game not finished'
+export type FormattedGameResult =
+    | '1-0'
+    | '0-1'
+    | '1/2-1/2'
+    | '*'
     | string;
 
 // Player information interface
@@ -42,6 +47,9 @@ export interface GameInfo {
     result?: GameResult;
     opening?: string;
     variation?: string;
+    eco?: string;
+    timeControl?: string;
+    termination?: string;
     whitePlayer: PlayerInfo;
     blackPlayer: PlayerInfo;
 }
