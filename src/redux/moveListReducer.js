@@ -53,15 +53,8 @@ function handleAddMove(state, action) {
             return state;
         }
 
-        // Определяем индекс нового хода согласно новой логике
-        let newMoveIndex;
-        if (state.currentMove && state.currentMove.next !== undefined) {
-            // Если у текущего хода есть следующий ход
-            newMoveIndex = state.maxGlobalIndex + 1000;
-        } else {
-            // Если следующего хода нет
-            newMoveIndex = state.currentMove ? state.currentMove.globalIndex + 1 : 0;
-        }
+        // Определяем индекс нового хода
+        const newMoveIndex = state.currentMove ? state.currentMove.globalIndex + 1 : 0;
 
         // Определяем ply для нового хода
         const newPly = state.currentMove ? state.currentMove.ply + 1 : 1;
@@ -73,35 +66,60 @@ function handleAddMove(state, action) {
             ply: newPly
         };
 
-        // Обновляем максимальный глобальный индекс
-        const newMaxGlobalIndex = Math.max(state.maxGlobalIndex, newMoveIndex);
+        // Функция для обновления ссылки next в предыдущем ходе
+        function updatePreviousMoveNext(history, currentMove, newMove) {
+            if (!currentMove) return history;
+
+            function updateInHistory(moves) {
+                return moves.map(move => {
+                    if (move.globalIndex === currentMove.globalIndex) {
+                        return {
+                            ...move,
+                            next: newMove
+                        };
+                    }
+                    
+                    // Обновляем в вариациях
+                    if (move.variations && move.variations.length > 0) {
+                        return {
+                            ...move,
+                            variations: move.variations.map(variation => updateInHistory(variation))
+                        };
+                    }
+                    
+                    return move;
+                });
+            }
+
+            return updateInHistory(history);
+        }
 
         // If we're at the end of history, just add the move
         if (state.currentMoveIndex === state.history.length - 1) {
             const newHistory = [...state.history, newMove];
-
+            const updatedHistory = updatePreviousMoveNext(newHistory, state.currentMove, newMove);
+            
             return {
                 ...state,
                 game: newGame,
                 fen: newGame.fen(),
-                history: newHistory,
+                history: updatedHistory,
                 currentMoveIndex: newMoveIndex,
-                currentMove: newMove,
-                maxGlobalIndex: newMaxGlobalIndex
+                currentMove: newMove
             };
         } else {
             // If we're in the middle of history, truncate and add new move
             const truncatedHistory = state.history.slice(0, state.currentMoveIndex + 1);
             const newHistory = [...truncatedHistory, newMove];
-
+            const updatedHistory = updatePreviousMoveNext(newHistory, state.currentMove, newMove);
+            
             return {
                 ...state,
                 game: newGame,
                 fen: newGame.fen(),
-                history: newHistory,
+                history: updatedHistory,
                 currentMoveIndex: newMoveIndex,
-                currentMove: newMove,
-                maxGlobalIndex: newMaxGlobalIndex
+                currentMove: newMove
             };
         }
     } catch (error) {
@@ -109,7 +127,6 @@ function handleAddMove(state, action) {
         return state;
     }
 }
-
 
 // Goto move handler
 function handleGotoMove(state, action) {
