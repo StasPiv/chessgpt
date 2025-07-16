@@ -10,6 +10,7 @@ const initialState = {
     history: [],
     fullHistory: [],
     currentMoveIndex: -1,
+    currentMove: null, // Добавляем объект текущего хода
     currentVariationPath: [],
     currentVariationIndex: null,
     pgnHeaders: {},
@@ -29,6 +30,34 @@ function extractPgnHeaders(pgn) {
     }
     
     return headers;
+}
+
+// Function to find move object by global index
+function findMoveByGlobalIndex(history, globalIndex) {
+    if (globalIndex === -1) {
+        return null;
+    }
+    
+    function searchInHistory(moves) {
+        for (const move of moves) {
+            if (move.globalIndex === globalIndex) {
+                return move;
+            }
+            
+            // Search in variations
+            if (move.variations && move.variations.length > 0) {
+                for (const variation of move.variations) {
+                    const moveInVariation = searchInHistory(variation);
+                    if (moveInVariation) {
+                        return moveInVariation;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    return searchInHistory(history);
 }
 
 // Function to assign global indexes to moves
@@ -94,6 +123,10 @@ function handleLoadPgn(state, action) {
         // Assign global indexes to all moves and get max global index
         const { history: historyWithGlobalIndexes, maxGlobalIndex } = assignGlobalIndexes(loadedHistory);
         
+        // Определяем текущий ход после загрузки
+        const currentMoveIndex = historyWithGlobalIndexes.length - 1;
+        const currentMove = findMoveByGlobalIndex(historyWithGlobalIndexes, currentMoveIndex);
+        
         // Полный сброс состояния к начальному с новыми данными
         return {
             ...initialState, // Сначала берем все поля из initialState
@@ -101,7 +134,8 @@ function handleLoadPgn(state, action) {
             fen: newGame.fen(),
             history: historyWithGlobalIndexes,
             fullHistory: historyWithGlobalIndexes,
-            currentMoveIndex: historyWithGlobalIndexes.length - 1,
+            currentMoveIndex: currentMoveIndex,
+            currentMove: currentMove, // Устанавливаем объект текущего хода
             pgnHeaders: pgnHeaders,
             maxGlobalIndex: maxGlobalIndex
         };

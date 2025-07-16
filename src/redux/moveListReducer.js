@@ -8,9 +8,38 @@ const initialState = {
     fen: START_POSITION,
     history: [],
     currentMoveIndex: -1,
+    currentMove: null, // Добавляем объект текущего хода
     currentVariationPath: [],
     pgnHeaders: {}
 };
+
+// Function to find move object by global index
+function findMoveByGlobalIndex(history, globalIndex) {
+    if (globalIndex === -1) {
+        return null;
+    }
+    
+    function searchInHistory(moves) {
+        for (const move of moves) {
+            if (move.globalIndex === globalIndex) {
+                return move;
+            }
+            
+            // Search in variations
+            if (move.variations && move.variations.length > 0) {
+                for (const variation of move.variations) {
+                    const moveInVariation = searchInHistory(variation);
+                    if (moveInVariation) {
+                        return moveInVariation;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    return searchInHistory(history);
+}
 
 // Add move handler
 function handleAddMove(state, action) {
@@ -67,14 +96,19 @@ function handleGotoMove(state, action) {
                 ...state,
                 game: newGame,
                 fen: START_POSITION,
-                currentMoveIndex: -1
+                currentMoveIndex: -1,
+                currentMove: null
             };
         }
+
+        // Находим объект хода по глобальному индексу
+        const currentMove = findMoveByGlobalIndex(state.history, moveIndex);
 
         return {
             ...state,
             fen: fen,
             currentMoveIndex: moveIndex,
+            currentMove: currentMove,
             currentVariationPath: variationPath,
         };
     } catch (error) {
