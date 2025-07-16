@@ -124,3 +124,37 @@
 .variation-bracket-close {
     margin: 0;
 }
+
+/* Стили для номеров ходов после вариантов */
+.move-number-after-variation {
+    margin-right: 2px;
+    display: inline;
+}
+
+/* Главная линия - жирный черный */
+.move-number-after-variation:not(.variation-move) {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Вариации наследуют стили от своего уровня */
+.move-number-after-variation.variation-move {
+    font-weight: normal;
+}
+
+/* Цвета для номеров ходов в вариациях совпадают с цветами вариаций */
+.move-number-after-variation.variation-level-1 {
+    color: #1565c0;
+}
+
+.move-number-after-variation.variation-level-2 {
+    color: #1976d2;
+}
+
+.move-number-after-variation.variation-level-3 {
+    color: #42a5f5;
+}
+
+.move-number-after-variation.variation-level-4 {
+    color: #64b5f6;
+}

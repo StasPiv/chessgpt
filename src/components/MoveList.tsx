@@ -138,6 +138,42 @@ const MoveList = (): ReactElement => {
                         </span>
                     );
                 }
+                
+                // Добавляем пробел после всех вариантов
+                if (i < moves.length - 1) {
+                    result.push(
+                        <span key={`space-after-var-${move.globalIndex}`} className="move-space"> </span>
+                    );
+                }
+            }
+            
+            // Проверяем, есть ли следующий ход после вариантов
+            if (move.variations && move.variations.length > 0 && i < moves.length - 1) {
+                const nextMove = moves[i + 1];
+                if (nextMove) {
+                    const nextPly = nextMove.ply || (i + 2);
+                    const nextMoveNumber = Math.ceil(nextPly / 2);
+                    const isNextWhiteMove = nextPly % 2 === 1;
+                    
+                    // Если следующий ход черных, добавляем номер хода
+                    if (!isNextWhiteMove) {
+                        // Создаем классы для номера хода, наследуя стили от текущего уровня
+                        const moveNumberClasses = [
+                            'move-number-after-variation',
+                            level > 0 ? 'variation-move' : '',
+                            getVariationLevelClass(level)
+                        ].filter(Boolean).join(' ');
+                        
+                        result.push(
+                            <span
+                                key={`move-number-${nextMove.globalIndex}`}
+                                className={moveNumberClasses}
+                            >
+                                {nextMoveNumber}...
+                            </span>
+                        );
+                    }
+                }
             }
         }
 
