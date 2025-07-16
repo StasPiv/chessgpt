@@ -1,4 +1,3 @@
-
 // Типы для компонента ChessBoard
 export interface ChessBoardProps {
     isFlipped?: boolean;
@@ -8,6 +7,12 @@ export interface ChessBoardProps {
 export interface PieceDropEvent {
     sourceSquare: string;
     targetSquare: string | null;
+}
+
+// Типы для аргументов обработчика клика по клетке
+export interface SquareHandlerArgs {
+    piece: any;
+    square: string;
 }
 
 // Типы для стилей доски
@@ -28,7 +33,7 @@ export interface DropSquareStyle {
 export interface ChessboardOptions {
     position: string;
     onPieceDrop: (event: PieceDropEvent) => boolean;
-    onSquareClick: (square: string) => void;
+    onSquareClick: (args: SquareHandlerArgs) => void;
     boardWidth: number;
     customBoardStyle?: BoardStyle;
     customDarkSquareStyle?: SquareStyle;
@@ -40,4 +45,5 @@ export interface ChessboardOptions {
     boardOrientation?: 'white' | 'black';
     customDropSquareStyle?: DropSquareStyle;
     id?: string;
+    customSquareStyles?: { [square: string]: React.CSSProperties };
 }

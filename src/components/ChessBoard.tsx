@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Chessboard } from 'react-chessboard';
+import {Chessboard, SquareHandlerArgs} from 'react-chessboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMoveAction, addVariationAction } from '../redux/actions.js';
 import { startAnalysis } from '../redux/analysisReducer.js';
@@ -22,6 +22,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const [boardWidth, setBoardWidth] = useState<number>(400);
     const containerRef = useRef<HTMLDivElement>(null);
     const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    
+    // Состояние для обработки кликов
+    const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
+    const [customSquareStyles, setCustomSquareStyles] = useState<{ [square: string]: React.CSSProperties }>({});
 
     // Function to calculate board size
     const calculateBoardSize = (): void => {
@@ -89,21 +93,16 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
         };
     };
 
-    // Main function for handling moves - as in documentation
-    const onPieceDrop = useCallback(({ sourceSquare, targetSquare }: PieceDropEvent): boolean => {
-        // Check that targetSquare is not null (if piece is dropped off the board)
-        if (!targetSquare) {
-            return false;
-        }
-
+    // Функция для выполнения хода
+    const makeMove = useCallback((from: string, to: string): boolean => {
         try {
             // Create new game with current position
             const tempGame = new Chess(fen);
             
             // Try to make the move
             const move = tempGame.move({
-                from: sourceSquare,
-                to: targetSquare,
+                from: from,
+                to: to,
                 promotion: 'q' // always promote to queen for simplicity
             });
 
@@ -125,10 +124,70 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
                 return false;
             }
         } catch (error) {
-            console.error('Error in onPieceDrop:', error);
+            console.error('Error in makeMove:', error);
             return false;
         }
     }, [fen, dispatch, currentMove]);
+
+    // Main function for handling moves - as in documentation
+    const onPieceDrop = useCallback(({ sourceSquare, targetSquare }: PieceDropEvent): boolean => {
+        // Check that targetSquare is not null (if piece is dropped off the board)
+        if (!targetSquare) {
+            return false;
+        }
+
+        // Сбрасываем выбранную клетку при перетаскивании
+        setSelectedSquare(null);
+        setCustomSquareStyles({});
+
+        return makeMove(sourceSquare, targetSquare);
+    }, [makeMove]);
+
+    // Функция для обработки кликов по клеткам
+    const onSquareClick = useCallback(({ piece, square }: { piece: any; square: string }): void => {
+        const tempGame = new Chess(fen);
+        
+        if (selectedSquare === null) {
+            const pieceColor = piece.pieceType[0].toLowerCase();
+            // Первый клик - выбираем фигуру
+            if (piece && pieceColor === tempGame.turn()) {
+                console.log('highlight square');
+                setSelectedSquare(square);
+                setCustomSquareStyles({
+                    [square]: {
+                        backgroundColor: 'rgba(255, 255, 0, 0.4)',
+                    }
+                });
+            }
+        } else {
+            // Второй клик
+            if (selectedSquare === square) {
+                // Клик по той же клетке - отменяем выбор
+                setSelectedSquare(null);
+                setCustomSquareStyles({});
+            } else {
+                // Клик по другой клетке - пытаемся сделать ход
+                const moveSuccess = makeMove(selectedSquare, square);
+            
+                // Сбрасываем выбор независимо от результата
+                setSelectedSquare(null);
+                setCustomSquareStyles({});
+            
+                if (!moveSuccess) {
+                    // Если ход невозможен, попробуем выбрать новую фигуру
+                    if (piece && piece.color === tempGame.turn()) {
+                        setSelectedSquare(square);
+                        setCustomSquareStyles({
+                            [square]: {
+                                backgroundColor: 'rgba(255, 255, 0, 0.4)',
+                                border: '2px solid #ffff00'
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }, [selectedSquare, fen, makeMove]);
 
     // Effect to send position for analysis
     useEffect(() => {
@@ -147,8 +206,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const chessboardOptions: ChessboardOptions = {
         position: fen,
         onPieceDrop,
+        onSquareClick,
         boardOrientation: isFlipped ? 'black' : 'white',
-        id: 'chess-board'
+        id: 'chess-board',
+        squareStyles: customSquareStyles
     };
 
     return (
