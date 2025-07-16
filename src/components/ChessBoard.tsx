@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { useDispatch, useSelector } from 'react-redux';
-import { addMoveAction } from '../redux/actions.js';
+import { addMoveAction, addVariationAction } from '../redux/actions.js';
 import { startAnalysis } from '../redux/analysisReducer.js';
 import { sendPosition, stopAnalysisRequest } from '../websocket.js';
 import { Chess } from 'cm-chess';
@@ -17,6 +17,7 @@ import './ChessBoard.css';
 const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const dispatch = useDispatch();
     const fen = useSelector((state: RootState) => state.chess.fen);
+    const currentMove = useSelector((state: RootState) => state.chess.currentMove);
     const autoAnalysisEnabled = useSelector((state: RootState) => state.analysis.autoAnalysisEnabled);
     const [boardWidth, setBoardWidth] = useState<number>(400);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -84,6 +85,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
             before: move.before,
             after: move.after,
             fen: move.fen,
+            next: null,
         };
     };
 
@@ -108,7 +110,16 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
             if (move) {
                 // Create serializable move object
                 const serializableMove = createSerializableMove(move);
-                dispatch(addMoveAction(serializableMove));
+                
+                // Проверяем, есть ли у текущего хода следующий ход
+                if (currentMove && currentMove.next) {
+                    // Если есть следующий ход, добавляем вариацию
+                    dispatch(addVariationAction(serializableMove));
+                } else {
+                    // Иначе добавляем обычный ход
+                    dispatch(addMoveAction(serializableMove));
+                }
+                
                 return true;
             } else {
                 return false;
@@ -117,7 +128,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
             console.error('Error in onPieceDrop:', error);
             return false;
         }
-    }, [fen, dispatch]);
+    }, [fen, dispatch, currentMove]);
 
     // Effect to send position for analysis
     useEffect(() => {

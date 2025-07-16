@@ -22,6 +22,7 @@ export interface ChessMove {
     lan: string;
     before: string;
     after: string;
+    next: ?ChessMove;
 }
 
 // Основное состояние шахмат
@@ -30,7 +31,7 @@ export interface ChessState {
     currentFen: string;
     pgn: string;
     pgnHeaders: PgnHeaders;
-    currentMove: number;
+    currentMove: ChessMove;
     currentMoveIndex: number;
     gameHistory: string[];
     fullHistory: string[];

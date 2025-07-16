@@ -1,5 +1,6 @@
 export const LOAD_PGN = 'LOAD_PGN';
 export const ADD_MOVE = 'ADD_MOVE';
+export const ADD_VARIATION = 'ADD_VARIATION';
 export const UNDO_MOVE = 'UNDO_MOVE';
 export const GOTO_MOVE = 'GOTO_MOVE';
 export const GOTO_FIRST = 'GOTO_FIRST';
@@ -13,6 +14,10 @@ export function loadPGNAction(pgn) {
 
 export function addMoveAction(move) {
     return { type: ADD_MOVE, payload: move };
+}
+
+export function addVariationAction(move) {
+    return { type: ADD_VARIATION, payload: move };
 }
 
 export function gotoMoveAction(payload) {
