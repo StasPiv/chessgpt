@@ -45,6 +45,11 @@ function findMoveByGlobalIndex(history, globalIndex) {
 // Add move handler
 function handleAddMove(state, action) {
     try {
+        // if we're not at the end of the line, do nothing
+        if (state.currentMove && state.currentMove.next && state.history.length > 0) {
+            return state;
+        }
+
         const newGame = new Chess(state.fen);
         const move = newGame.move(action.payload);
 
@@ -66,6 +71,55 @@ function handleAddMove(state, action) {
             ply: newPly
         };
 
+        // Функция для добавления хода в нужное место
+        function addMoveToCorrectLocation(history, currentMove, newMove, currentVariationPath) {
+            if (!currentMove) {
+                // Если нет текущего хода, добавляем в начало главной линии
+                return [newMove];
+            }
+
+            // Если мы в главной линии (currentVariationPath пуст), добавляем в конец главной линии
+            if (currentMove.globalIndex < 1000) {
+                return [...history, newMove];
+            }
+
+            // Если мы в варианте, нужно добавить ход в конец этого варианта
+            function updateInHistory(moves) {
+                return moves.map(move => {
+                    if (move.globalIndex === currentMove.globalIndex) {
+                        return {
+                            ...move,
+                            next: newMove
+                        };
+                    }
+
+                    // Обновляем в вариациях
+                    if (move.variations && move.variations.length > 0) {
+                        return {
+                            ...move,
+                            variations: move.variations.map(variation => {
+                                // Проверяем, содержит ли эта вариация текущий ход
+                                const containsCurrentMove = variation.some(varMove => 
+                                    varMove.globalIndex === currentMove.globalIndex
+                                );
+                                
+                                if (containsCurrentMove) {
+                                    // Добавляем новый ход в конец этой вариации
+                                    return [...variation, newMove];
+                                }
+                                
+                                return updateInHistory(variation);
+                            })
+                        };
+                    }
+
+                    return move;
+                });
+            }
+
+            return updateInHistory(history);
+        }
+
         // Функция для обновления ссылки next в предыдущем ходе
         function updatePreviousMoveNext(history, currentMove, newMove) {
             if (!currentMove) return history;
@@ -78,7 +132,7 @@ function handleAddMove(state, action) {
                             next: newMove
                         };
                     }
-                    
+
                     // Обновляем в вариациях
                     if (move.variations && move.variations.length > 0) {
                         return {
@@ -86,7 +140,7 @@ function handleAddMove(state, action) {
                             variations: move.variations.map(variation => updateInHistory(variation))
                         };
                     }
-                    
+
                     return move;
                 });
             }
@@ -94,34 +148,18 @@ function handleAddMove(state, action) {
             return updateInHistory(history);
         }
 
-        // If we're at the end of history, just add the move
-        if (state.currentMoveIndex === state.history.length - 1) {
-            const newHistory = [...state.history, newMove];
-            const updatedHistory = updatePreviousMoveNext(newHistory, state.currentMove, newMove);
-            
-            return {
-                ...state,
-                game: newGame,
-                fen: newGame.fen(),
-                history: updatedHistory,
-                currentMoveIndex: newMoveIndex,
-                currentMove: newMove
-            };
-        } else {
-            // If we're in the middle of history, truncate and add new move
-            const truncatedHistory = state.history.slice(0, state.currentMoveIndex + 1);
-            const newHistory = [...truncatedHistory, newMove];
-            const updatedHistory = updatePreviousMoveNext(newHistory, state.currentMove, newMove);
-            
-            return {
-                ...state,
-                game: newGame,
-                fen: newGame.fen(),
-                history: updatedHistory,
-                currentMoveIndex: newMoveIndex,
-                currentMove: newMove
-            };
-        }
+        // Добавляем ход в нужное место
+        const newHistory = addMoveToCorrectLocation(state.history, state.currentMove, newMove, state.currentVariationPath);
+        const updatedHistory = updatePreviousMoveNext(newHistory, state.currentMove, newMove);
+
+        return {
+            ...state,
+            game: newGame,
+            fen: newGame.fen(),
+            history: updatedHistory,
+            currentMoveIndex: newMoveIndex,
+            currentMove: newMove
+        };
     } catch (error) {
         console.error('Error adding move:', error);
         return state;
@@ -195,6 +233,7 @@ function handleAddVariation(state, action) {
             maxGlobalIndex: newMaxGlobalIndex,
             currentMove: newMove,
             currentMoveIndex: newMove.globalIndex,
+            fen: newGame.fen(),
         };
     } catch (error) {
         console.error('Error adding variation:', error);
