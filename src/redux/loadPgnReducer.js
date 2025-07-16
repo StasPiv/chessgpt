@@ -12,7 +12,8 @@ const initialState = {
     currentMoveIndex: -1,
     currentVariationPath: [],
     currentVariationIndex: null,
-    pgnHeaders: {}
+    pgnHeaders: {},
+    maxGlobalIndex: 0
 };
 
 // Function to extract PGN headers
@@ -33,14 +34,17 @@ function extractPgnHeaders(pgn) {
 // Function to assign global indexes to moves
 function assignGlobalIndexes(history) {
     let globalVariationCounter = 0;
+    let maxGlobalIndex = 0;
     
     function processMove(move, variationLevel = 0) {
         if (variationLevel === 0) {
             // Main line: indexes from 0 to 999
             move.globalIndex = move.moveIndex || 0;
+            maxGlobalIndex = Math.max(maxGlobalIndex, move.globalIndex);
         } else {
             // Variations: each variation level gets its own 1000-based range
             move.globalIndex = variationLevel * 1000 + (move.moveIndex || 0);
+            maxGlobalIndex = Math.max(maxGlobalIndex, move.globalIndex);
         }
         
         // Process variations if they exist
@@ -60,7 +64,13 @@ function assignGlobalIndexes(history) {
         processMove(move);
     });
     
-    return history;
+    // Округляем maxGlobalIndex до ближайшего меньшего числа, кратного 1000
+    const roundedMaxGlobalIndex = Math.ceil((maxGlobalIndex) / 1000) * 1000;
+    
+    return { 
+        history, 
+        maxGlobalIndex: roundedMaxGlobalIndex
+    };
 }
 
 // PGN loading handler
@@ -77,8 +87,8 @@ function handleLoadPgn(state, action) {
         newGame.loadPgn(cleanedPgn, { sloppy: true });
         const loadedHistory = newGame.history({ verbose: true, variations: true });
         
-        // Assign global indexes to all moves
-        const historyWithGlobalIndexes = assignGlobalIndexes(loadedHistory);
+        // Assign global indexes to all moves and get max global index
+        const { history: historyWithGlobalIndexes, maxGlobalIndex } = assignGlobalIndexes(loadedHistory);
         
         return {
             ...state,
@@ -89,7 +99,8 @@ function handleLoadPgn(state, action) {
             currentMoveIndex: historyWithGlobalIndexes.length - 1,
             currentVariationPath: [],
             currentVariationIndex: null,
-            pgnHeaders: pgnHeaders
+            pgnHeaders: pgnHeaders,
+            maxGlobalIndex: maxGlobalIndex
         };
     } catch (error) {
         console.error('Error loading PGN:', error);

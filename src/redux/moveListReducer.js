@@ -12,20 +12,6 @@ const initialState = {
     pgnHeaders: {}
 };
 
-// Function to create game from history up to certain index
-function createGameFromHistory(history, moveIndex) {
-    const newGame = new Chess();
-    newGame.load(START_POSITION);
-    
-    if (moveIndex >= 0) {
-        for (let i = 0; i <= moveIndex && i < history.length; i++) {
-            newGame.move(history[i]);
-        }
-    }
-    
-    return newGame;
-}
-
 // Add move handler
 function handleAddMove(state, action) {
     try {
@@ -85,12 +71,8 @@ function handleGotoMove(state, action) {
             };
         }
 
-        // Create game state at the specified move
-        const gameAtMove = createGameFromHistory(state.history, moveIndex);
-        
         return {
             ...state,
-            game: gameAtMove,
             fen: fen,
             currentMoveIndex: moveIndex,
             currentVariationPath: variationPath,
