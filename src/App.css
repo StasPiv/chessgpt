@@ -3,6 +3,7 @@
     flex-direction: column;
     height: 100vh;
     background-color: #f5f5f5;
+    overflow: hidden;
 }
 
 .app-header {
@@ -13,6 +14,8 @@
     background: white;
     border-bottom: 1px solid #ddd;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    z-index: 10;
 }
 
 .app-title {
@@ -28,37 +31,9 @@
     gap: 15px;
 }
 
-/* Left panel - chess board with analysis (50% screen width) */
-.board-panel {
-    flex: 0 0 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-/* Right panel - moves (50% screen width) */
-.side-panel {
+.layout-container {
     flex: 1;
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
-    position: relative;
-}
-
-/* Header with Paste icon */
-.moves-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding: 0 10px;
-}
-
-.moves-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
 }
 
 .paste-icon {
@@ -79,7 +54,6 @@
     background: #0056b3;
 }
 
-/* Layout reset button */
 .reset-layout-btn {
     background: #28a745;
     color: white;
@@ -96,17 +70,6 @@
 
 .reset-layout-btn:hover {
     background: #218838;
-}
-
-/* Moves section */
-.moves-section {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 15px;
-    background-color: #fafafa;
 }
 
 /* PGN popup block */
@@ -168,59 +131,544 @@
     color: #333;
 }
 
-/* Hide regular PGN section */
-.pgn-section {
+/* Mobile Layout Styles - Default Hidden */
+.mobile-layout {
     display: none;
-    margin-bottom: 20px;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
 }
 
-/* Styles for board responsiveness */
-.chess-board-container {
+.mobile-block {
     width: 100%;
-    flex: 1;
-    padding: 5px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    overflow: hidden;
+    position: relative;
+}
+
+.mobile-block:last-child {
+    border-bottom: none;
+}
+
+.mobile-block-content {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+}
+
+/* Specific mobile block sizes */
+.mobile-chessboard {
+    height: auto;
+    flex: 0 0 auto;
+    max-height: calc(100vw + 15vw); /* Размер доски + навигация */
+}
+
+.mobile-moves {
+    height: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.mobile-analysis {
+    height: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Mobile navigation controls */
+.mobile-navigation {
+    flex-shrink: 0;
+    padding: 2vw;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    background: white;
+    border-top: 1px solid #ddd;
+}
+
+/* Mobile PGN button */
+.mobile-pgn-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 2vw;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5vw;
+    min-height: 12vw;
+    min-width: 12vw;
+    margin-left: 2vw;
+}
+
+.mobile-pgn-btn:hover {
+    background: #0056b3;
+}
+
+/* Mobile chess board area */
+.mobile-chess-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2vw;
+    box-sizing: border-box;
+    min-height: 0;
+}
+
+/* Desktop layout styles - Default Visible */
+.react-grid-layout {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.react-grid-item {
+    transition: all 200ms ease;
+    transition-property: left, top;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    padding: 10px;
     overflow: hidden;
     box-sizing: border-box;
-    min-height: 0; /* Important for flex containers */
 }
 
-/* Ensure correct behavior of the board itself */
-.chess-board-container > div {
-    max-width: 100%;
-    max-height: 100%;
+.react-grid-item.cssTransforms {
+    transition-property: transform;
 }
 
-/* Ensure the board doesn't go beyond container boundaries */
-.chess-board-container [data-testid="chessboard"] {
-    max-width: 100% !important;
-    max-height: 100% !important;
+.react-grid-item > .react-resizable-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    bottom: 0;
+    right: 0;
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNiA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiM0NDQiIG9wYWNpdHk9IjAuMzAyIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Im0xIDVoNHY0aC00em0yLTJoMnYyaC0yeiIvPjwvZz48L3N2Zz4=') no-repeat;
+    background-position: bottom right;
+    padding: 0 3px 3px 0;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    box-sizing: border-box;
+    cursor: se-resize;
 }
 
-/* Navigation controls */
-.navigation-controls {
-    width: 100%;
-    max-width: 100%;
-    flex-shrink: 0; /* Controls don't shrink */
-    margin-top: 10px;
+/* Force mobile layout when JS determines mobile */
+.app-container[data-mobile="true"] .mobile-layout {
+    display: flex !important;
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
+.app-container[data-mobile="true"] .react-grid-layout {
+    display: none !important;
+}
+
+/* Aggressive mobile media queries */
+@media (max-width: 768px),
+(max-device-width: 768px),
+(orientation: portrait) and (max-width: 1024px) {
+
+    /* Force mobile layout to be visible */
+    .mobile-layout {
+        display: flex !important;
+    }
+
+    /* Hide desktop layout on mobile */
+    .react-grid-layout {
+        display: none !important;
+    }
+
+    /* Hide desktop header on mobile */
     .app-header {
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px;
+        display: none !important;
     }
-    
-    .app-title {
-        font-size: 20px;
+
+    /* Ensure chessboard area takes optimal size */
+    .mobile-chessboard {
+        height: auto;
+        flex: 0 0 auto;
+        max-height: calc(100vw + 15vw);
     }
-    
-    .app-controls {
-        width: 100%;
+
+    .mobile-chess-area {
+        flex: 1;
+        display: flex;
+        align-items: center;
         justify-content: center;
+        padding: 2vw;
+        box-sizing: border-box;
+        min-height: 0;
+    }
+
+    /* Make sure the board fills the container properly */
+    .mobile-chess-area .chess-board-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mobile-chess-area .chess-board-container > div {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: calc(100vw - 4vw);
+        max-height: calc(100vw - 4vw);
+    }
+
+    /* Navigation controls in mobile */
+    .mobile-navigation {
+        flex-shrink: 0;
+        padding: 2vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: white;
+        border-top: 1px solid #ddd;
+    }
+
+    .mobile-navigation .navigation-controls {
+        display: flex;
+        gap: 2vw;
+        flex: 1;
+    }
+
+    .mobile-navigation .nav-button {
+        font-size: 5vw;
+        padding: 3vw 4vw;
+        min-height: 12vw;
+        min-width: 12vw;
+        border-radius: 2vw;
+        border: 2px solid #007bff;
+        background-color: white;
+        color: #007bff;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .mobile-navigation .nav-button:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .mobile-navigation .nav-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border-color: #dee2e6;
+    }
+
+    .mobile-navigation .nav-button:disabled:hover {
+        background-color: #f8f9fa;
+        color: #6c757d;
+    }
+
+    /* Modal adjustments for mobile */
+    .pgn-modal-content {
+        padding: 5vw;
+        margin: 4vw;
+        width: calc(100% - 8vw);
+        max-height: 85vh;
+        border-radius: 3vw;
+    }
+
+    .pgn-modal-title {
+        font-size: 5.5vw;
+    }
+
+    .pgn-modal-close {
+        font-size: 7vw;
+        width: 10vw;
+        height: 10vw;
+        border-radius: 50%;
+    }
+
+    /* Better touch targets for mobile */
+    .mobile-block-content * {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Scrollbar styling for mobile */
+    .mobile-moves .moves-container::-webkit-scrollbar {
+        width: 2vw;
+    }
+
+    .mobile-moves .moves-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 1vw;
+    }
+
+    .mobile-moves .moves-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 1vw;
+    }
+
+    .mobile-moves .moves-container::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
+    }
+
+    .mobile-analysis .analysis-panel::-webkit-scrollbar {
+        width: 2vw;
+    }
+
+    .mobile-analysis .analysis-panel::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 1vw;
+    }
+
+    .mobile-analysis .analysis-panel::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 1vw;
+    }
+
+    .mobile-analysis .analysis-panel::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
+    }
+
+    /* Special styling for very small screens */
+    @media (max-width: 360px) {
+        .mobile-navigation .nav-button {
+            font-size: 5.5vw;
+            min-height: 14vw;
+            min-width: 14vw;
+        }
+
+        .mobile-pgn-btn {
+            font-size: 5.5vw;
+            min-height: 14vw;
+            min-width: 14vw;
+        }
+    }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+    .app-header {
+        padding: 15px;
+    }
+
+    .app-controls {
+        gap: 10px;
+    }
+
+    /* Hide mobile layout on tablet */
+    .mobile-layout {
+        display: none !important;
+    }
+
+    /* Show desktop layout on tablet */
+    .react-grid-layout {
+        position: static !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+        flex: 1 !important;
+        padding: 15px !important;
+    }
+
+    .react-grid-item {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        transform: none !important;
+        left: auto !important;
+        top: auto !important;
+    }
+
+    .react-grid-item[data-key="chessboard"] {
+        min-height: 400px;
+        flex: 0 0 auto;
+    }
+
+    .react-grid-item[data-key="moves"] {
+        min-height: 250px;
+        flex: 1;
+    }
+
+    .react-grid-item[data-key="analysis"] {
+        min-height: 200px;
+        flex: 0 0 auto;
+    }
+
+    .react-grid-item > .react-resizable-handle {
+        display: none;
+    }
+}
+
+/* Large screens - desktop layout */
+@media (min-width: 1025px) {
+    /* Hide mobile layout on desktop */
+    .mobile-layout {
+        display: none !important;
+    }
+
+    /* Show desktop layout */
+    .react-grid-layout {
+        position: relative;
+        flex: 1;
+        display: block !important;
+    }
+
+    .react-grid-item {
+        position: absolute;
+    }
+
+    .react-grid-item > .react-resizable-handle {
+        display: block;
+    }
+}
+.App {
+    text-align: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    padding: 20px;
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* App layout styles */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Mobile layout styles */
+.mobile-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.mobile-header {
+    flex-shrink: 0;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    z-index: 100;
+}
+
+.mobile-chess-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.mobile-tabs {
+    flex-shrink: 0;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    display: flex;
+    height: 50px;
+    z-index: 100;
+}
+
+.mobile-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 12px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-tab:hover {
+    background-color: #e8f0fe;
+}
+
+.mobile-tab.active {
+    color: #1976d2;
+    border-bottom-color: #1976d2;
+    font-weight: 500;
+}
+
+.mobile-tab-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    position: relative;
+}
+
+.mobile-tab-content.hidden {
+    display: none;
+}
+
+/* Navigation controls для мобильной версии */
+.mobile-navigation {
+    flex-shrink: 0;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+    z-index: 100;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .mobile-chess-area {
+        padding: 5px;
+    }
+    
+    .mobile-tab {
+        font-size: 12px;
+        padding: 10px 6px;
     }
 }

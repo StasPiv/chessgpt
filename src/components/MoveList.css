@@ -76,8 +76,8 @@
 }
 
 .move-space {
-    display: inline;
-    width: auto;
+    display: inline-block;
+    width: 1vw;
 }
 
 .no-moves {
@@ -157,4 +157,100 @@
 
 .move-number-after-variation.variation-level-4 {
     color: #64b5f6;
+}
+
+/* Mobile-specific adjustments for move list */
+.mobile-moves .move-list-container {
+    height: 100%;
+    padding: 2vw 3vw;
+    box-sizing: border-box;
+}
+
+.mobile-moves .moves-container {
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Mobile moves styling */
+.mobile-moves {
+    flex: 1;
+    min-height: 0;
+}
+
+.mobile-moves .move-list-container {
+    font-size: 4.5vw;
+    padding: 2vw 3vw;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.mobile-moves .moves-container {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.mobile-moves .moves-list {
+    font-size: 4.5vw;
+    line-height: 1.8;
+}
+
+.mobile-moves .move-item {
+    font-size: 4vw;
+    border-radius: 1.5vw;
+    cursor: pointer;
+    display: inline-block;
+    min-height: 5vw;
+    line-height: 6vw;
+}
+
+.mobile-moves .move-item.current {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.mobile-moves .move-item:hover {
+    background-color: #f0f0f0;
+}
+
+.mobile-moves .move-item.current:hover {
+    background-color: #0056b3;
+}
+
+.mobile-moves .game-header {
+    margin-bottom: 2vw;
+    padding: 2vw 3vw;
+}
+
+.mobile-moves .game-header-players {
+    font-size: 5vw;
+    font-weight: bold;
+    line-height: 1.4;
+}
+
+.mobile-moves .game-header-info {
+    font-size: 3.5vw;
+    margin-top: 1vw;
+}
+
+.mobile-moves .game-result {
+    font-size: 4.5vw;
+    font-weight: bold;
+}
+
+.mobile-moves .variation-bracket {
+    font-size: 4vw;
+    color: #666;
+    font-weight: bold;
+}
+
+.mobile-moves .variation-move {
+    font-size: 4vw;
+    color: #666;
+    background-color: #f8f9fa;
+}
+
+.mobile-moves .no-moves {
+    font-size: 4.5vw;
+    padding: 5vw;
 }

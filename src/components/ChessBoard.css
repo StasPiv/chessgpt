@@ -25,8 +25,25 @@
 
 /* New styles moved from inline styles in ChessBoard.js */
 .react-grid-item .chess-board-container {
-    position: relative !important;
-    overflow: visible !important;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.chess-board-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: unset!important;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 /* Styles for react-chessboard */
@@ -72,4 +89,114 @@
 
 .react-chessboard [data-piece]:not([style*="cursor: grabbing"]) {
     animation: pieceSettle 0.3s ease-out;
+}
+
+#chess-board-board {
+    overflow: unset !important;
+}
+
+/* Mobile-specific styles for chess board */
+.mobile-chess-area .chess-board-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Mobile-specific styles for drag and drop */
+@media (max-width: 768px), 
+       (max-device-width: 768px),
+       (orientation: portrait) and (max-width: 1024px) {
+    
+    /* Mobile drag piece styles - keep normal size */
+    .react-chessboard [data-piece][style*="cursor: grabbing"] {
+        z-index: 10000 !important;
+        transform: translateY(-8px) scale(1.0) !important; /* Normal size instead of 1.15 */
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3) !important;
+        filter: brightness(1.1) !important;
+        transition: none !important;
+        opacity: 0.85 !important;
+    }
+    
+    /* Reduce hover effects on mobile */
+    .react-chessboard [data-piece]:hover {
+        transform: translateY(-2px) scale(1.02); /* Smaller scale on hover */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        filter: brightness(1.05);
+    }
+    
+    /* Disable hover effects on touch devices */
+    @media (hover: none) {
+        .react-chessboard [data-piece]:hover {
+            transform: none;
+            box-shadow: none;
+            filter: none;
+        }
+        
+        .piece:hover {
+            transform: none;
+        }
+    }
+    
+    /* Ensure dragged piece doesn't get too large */
+    .react-chessboard [data-piece] {
+        max-width: calc(100vw / 8 - 2px) !important;
+        max-height: calc(100vw / 8 - 2px) !important;
+    }
+    
+    /* Override any potential large drag preview */
+    .react-chessboard .drag-preview {
+        transform: scale(1.0) !important;
+        max-width: calc(100vw / 8) !important;
+        max-height: calc(100vw / 8) !important;
+    }
+}
+
+/* Touch-specific optimizations */
+@media (pointer: coarse) {
+    /* Styles for touch devices */
+    .react-chessboard [data-piece] {
+        cursor: pointer !important;
+    }
+    
+    .react-chessboard [data-piece][style*="cursor: grabbing"] {
+        cursor: grabbing !important;
+        transform: translateY(-5px) scale(1.0) !important;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.25) !important;
+    }
+}
+
+/* Specific styles for very small screens */
+@media (max-width: 360px) {
+    .react-chessboard [data-piece][style*="cursor: grabbing"] {
+        transform: translateY(-5px) scale(1.0) !important;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2) !important;
+    }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .mobile-chess-area {
+        padding: 5px;
+    }
+    
+    .mobile-chess-area .chess-board-container {
+        padding: 5px;
+    }
+}
+
+/* Prevent piece from scaling beyond board boundaries */
+.mobile-chess-area .react-chessboard [data-piece] {
+    max-width: 12.5vw !important;
+    max-height: 12.5vw !important;
+}
+
+.mobile-chess-area .react-chessboard [data-piece][style*="cursor: grabbing"] {
+    max-width: 12.5vw !important;
+    max-height: 12.5vw !important;
+    transform: translateY(-5px) scale(1.0) !important;
 }

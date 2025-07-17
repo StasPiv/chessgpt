@@ -1,157 +1,242 @@
 .analysis-panel {
+    width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    background-color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .analysis-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .checkbox-container {
     display: flex;
     align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
     cursor: pointer;
-    font-size: 0.9em;
-    color: #555;
-    user-select: none;
 }
 
-.checkbox-container input {
-    margin-right: 8px;
-    transform: scale(1.2);
+.checkbox-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #1976d2;
 }
 
 .total-nodes {
-    font-size: 0.8em;
-    color: #6c757d;
-    font-weight: 500;
+    font-size: 12px;
+    color: #666;
 }
 
 .analysis-lines {
-    flex: 1;
-    overflow-y: auto;
-    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .analysis-lines.inactive {
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
 .analysis-line {
-    background-color: white;
-    border: 1px solid #dee2e6;
+    padding: 6px 10px;
+    border-left: 3px solid #e0e0e0;
+    background-color: #f9f9f9;
     border-radius: 4px;
-    padding: 6px 8px;
-    margin-bottom: 2px;
+    font-size: 12px;
+    line-height: 1.2;
     transition: all 0.2s ease;
-    overflow-x: auto;
-    white-space: nowrap;
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 0.8em;
-    height: 28px;
-    min-height: 28px;
-    max-height: 28px;
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 .analysis-line:hover {
-    border-color: #007bff;
-    box-shadow: 0 1px 3px rgba(0,123,255,0.15);
+    background-color: #f0f0f0;
+    border-left-color: #1976d2;
+}
+
+.analysis-line:first-child {
+    border-left-color: #4caf50;
+    background-color: #f1f8e9;
+}
+
+.analysis-line:first-child:hover {
+    background-color: #e8f5e8;
 }
 
 .line-score {
-    font-weight: bold;
-    color: #007bff;
-    min-width: 45px;
+    font-weight: 600;
+    color: #333;
+    min-width: 50px;
+    font-size: 12px;
     flex-shrink: 0;
 }
 
 .line-depth {
-    color: #6c757d;
-    min-width: 18px;
+    font-size: 10px;
+    color: #666;
+    min-width: 35px;
     flex-shrink: 0;
 }
 
 .line-moves {
-    font-family: 'Courier New', monospace;
-    font-size: 0.85em;
-    color: #333;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    color: #1976d2;
+    cursor: pointer;
+    transition: color 0.2s ease;
     flex: 1;
-    min-width: 0;
-    overflow-x: auto;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.line-moves:hover {
+    color: #0d47a1;
+    text-decoration: underline;
 }
 
 .no-analysis {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: #6c757d;
-    font-style: italic;
     text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px 20px;
 }
 
-/* Inactive state styling */
-.analysis-lines.inactive .analysis-line {
-    background-color: #f8f9fa;
-    border-color: #e9ecef;
+/* Mobile-specific adjustments for analysis panel */
+.mobile-analysis .analysis-panel {
+    height: 100%;
+    padding: 2vw 3vw;
+    box-sizing: border-box;
 }
 
-.analysis-lines.inactive .line-score {
-    color: #adb5bd;
+.mobile-analysis .analysis-header {
+    margin-bottom: 12px;
+    padding: 6px 0;
 }
 
-.analysis-lines.inactive .line-moves {
-    color: #adb5bd;
+.mobile-analysis .checkbox-container {
+    font-size: 4.5vw;
+    gap: 3vw;
 }
 
-.analysis-lines.inactive .line-depth {
-    color: #ced4da;
+.mobile-analysis .checkbox-container input[type="checkbox"] {
+    width: 5vw;
+    height: 5vw;
+    min-width: 5vw;
+    min-height: 5vw;
 }
 
-/* Responsive design */
+.mobile-analysis .total-nodes {
+    font-size: 3.5vw;
+}
+
+.mobile-analysis .analysis-lines {
+    gap: 2vw;
+}
+
+.mobile-analysis .analysis-line {
+    padding: 2vw 2vw;
+    font-size: 3.5vw;
+    margin-bottom: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 3vw;
+    line-height: 1.1;
+}
+
+.mobile-analysis .line-score {
+    font-size: 3.5vw;
+    font-weight: bold;
+    min-width: 10vw;
+}
+
+.mobile-analysis .line-depth {
+    font-size: 3vw;
+    min-width: 7vw;
+}
+
+.mobile-analysis .line-moves {
+    font-size: 3.5vw;
+    line-height: 1.1;
+}
+
+.mobile-analysis .no-analysis {
+    font-size: 4.5vw;
+    padding: 8vw 4vw;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .analysis-panel {
-        padding: 8px;
+        padding: 12px;
+    }
+    
+    .analysis-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
     
     .checkbox-container {
-        font-size: 0.8em;
+        font-size: 18px;
+        gap: 12px;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        min-height: 24px;
     }
     
     .total-nodes {
-        font-size: 0.7em;
+        font-size: 14px;
+    }
+    
+    .analysis-lines {
+        gap: 6px;
     }
     
     .analysis-line {
-        gap: 8px;
-        font-size: 0.75em;
-        height: 24px;
-        min-height: 24px;
-        max-height: 24px;
-        padding: 4px 6px;
+        padding: 8px 8px;
+        font-size: 13px;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 12px;
+        line-height: 1.1;
     }
     
     .line-score {
-        min-width: 35px;
+        font-size: 13px;
+        min-width: 60px;
+        flex-shrink: 0;
     }
     
     .line-depth {
-        min-width: 15px;
+        font-size: 11px;
+        min-width: 40px;
+        flex-shrink: 0;
     }
     
     .line-moves {
-        font-size: 0.8em;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+    
+    .no-analysis {
+        font-size: 16px;
+        padding: 30px 15px;
     }
 }
