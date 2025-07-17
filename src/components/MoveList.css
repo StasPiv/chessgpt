@@ -13,7 +13,7 @@
 
 .moves-list {
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 13px;
+    font-size: 16px;
     line-height: 1.4;
     color: #000;
     white-space: pre-wrap;
@@ -53,19 +53,19 @@
 
 /* Цвета для разных уровней вариантов */
 .variation-level-1 {
-    color: #1565c0 !important;
+    color: #1565c0;
 }
 
 .variation-level-2 {
-    color: #1976d2 !important;
+    color: #1976d2;
 }
 
 .variation-level-3 {
-    color: #42a5f5 !important;
+    color: #42a5f5;
 }
 
 .variation-level-4 {
-    color: #64b5f6 !important;
+    color: #64b5f6;
 }
 
 .variation-bracket {
