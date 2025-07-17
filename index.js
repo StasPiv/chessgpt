@@ -1,8 +1,11 @@
 import WebSocket from 'ws';
 import { spawn } from 'child_process';
 import { Chess } from 'cm-chess';
+import config from './websocket.config.js';
+
 // Connect to WebSocket server
-const ws = new WebSocket('ws://localhost:8080');
+const ws = new WebSocket(config.websocketUrl);
+
 // Start Stockfish
 const stockfish = spawn('polyglot');
 let currentFen = 'startpos';

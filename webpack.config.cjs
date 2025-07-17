@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
     entry: './src/index.js',
@@ -16,17 +17,24 @@ module.exports = {
         }
     },
     resolve: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'] // Добавлены .ts и .tsx
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
     },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                'REACT_APP_WEBSOCKET_URL': JSON.stringify(process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080')
+            }
+        })
+    ],
     module: {
         rules: [
             {
-    test: /\.(js|jsx|ts|tsx)$/,
-    exclude: /node_modules/,
-    use: {
-        loader: 'babel-loader'
-    }
-},
+                test: /\.(js|jsx|ts|tsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader'
+                }
+            },
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']

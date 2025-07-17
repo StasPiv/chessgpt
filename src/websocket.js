@@ -3,7 +3,8 @@ import { stopAnalysis, updateAnalysis, startAnalysis } from './redux/analysisRed
 let socket = null;
 
 export function connectWebSocket(store) {
-    socket = new WebSocket('ws://localhost:8080');
+    const websocketUrl = process.env.REACT_APP_WEBSOCKET_URL;
+    socket = new WebSocket(websocketUrl);
 
     socket.onopen = () => {
         console.log('WebSocket connected');
