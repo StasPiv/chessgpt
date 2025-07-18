@@ -217,14 +217,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     // Effect to send position for analysis
     useEffect(() => {
         if (fen && autoAnalysisEnabled) {
-            dispatch(startAnalysis());
             sendPosition(fen);
         }
-        return () => {
-            if (autoAnalysisEnabled) {
-                stopAnalysisRequest();
-            }
-        };
     }, [fen, dispatch, autoAnalysisEnabled]);
 
     // Create board options object - as in documentation

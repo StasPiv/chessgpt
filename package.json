@@ -1,16 +1,18 @@
 {
   "name": "my-chess-app",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "description": "Chess PGN viewer with engine analysis and variation navigation built with React, Redux, and TypeScript",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
     "start": "webpack serve --open",
-    "build": "webpack",
+    "build": "NODE_ENV=production webpack --mode=production",
+    "build:dev": "NODE_ENV=development webpack --mode=development",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
     "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
     "analysis-server": "node index.js",
+    "analysis-server:prod": "NODE_ENV=production node index.js",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
