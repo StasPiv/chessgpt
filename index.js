@@ -1,7 +1,20 @@
 import WebSocket from 'ws';
 import { spawn } from 'child_process';
 import { Chess } from 'cm-chess';
-import config from './websocket.config.js';
+import dotenv from 'dotenv';
+
+// Загружаем правильный .env файл в зависимости от NODE_ENV
+if (process.env.NODE_ENV === 'production') {
+    dotenv.config({ path: '.env.production' });
+} else {
+    dotenv.config({ path: '.env' });
+}
+
+// Создаем config объект ПОСЛЕ загрузки переменных окружения
+const config = {
+    websocketUrl: process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080',
+    // Здесь можно добавить другие настройки
+};
 
 // Connect to WebSocket server
 const ws = new WebSocket(config.websocketUrl);
