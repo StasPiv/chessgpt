@@ -14,6 +14,12 @@ function App() {
     const [showPgnModal, setShowPgnModal] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [screenWidth, setScreenWidth] = useState(0);
+    const [isFlipped, setIsFlipped] = useState(false); // Добавляем состояние для поворота доски
+
+    // Добавляем функцию для поворота доски
+    const handleFlipBoard = () => {
+        setIsFlipped(!isFlipped);
+    };
 
     // More reliable mobile detection
     useEffect(() => {
@@ -153,17 +159,17 @@ function App() {
         </div>
     );
 
-    // Mobile layout component
+    // В MobileLayout компоненте заменяем ChessBoard и NavigationControls:
     const MobileLayout = () => {
         return (
             <div className="mobile-layout">
                 <div className="mobile-block mobile-chessboard">
                     <div className="mobile-block-content">
                         <div className="mobile-chess-area">
-                            <ChessBoard />
+                            <ChessBoard isFlipped={isFlipped} />
                         </div>
                         <div className="mobile-navigation">
-                            <NavigationControls />
+                            <NavigationControls onFlipBoard={handleFlipBoard} isFlipped={isFlipped} />
                             <button
                                 className="mobile-pgn-btn"
                                 onClick={handlePasteClick}
