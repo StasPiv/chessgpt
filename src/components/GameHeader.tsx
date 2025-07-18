@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../types';
 import { PgnHeaders, GameResult, FormattedGameResult, GameHeaderProps, ResultFormatter } from '../types';
@@ -6,6 +6,17 @@ import './GameHeader.css';
 
 const GameHeader: React.FC<GameHeaderProps> = ({ className, compact = false }) => {
     const pgnHeaders = useSelector((state: RootState) => state.chess.pgnHeaders);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // If no headers, don't display component
     if (!pgnHeaders || Object.keys(pgnHeaders).length === 0) {
@@ -104,7 +115,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({ className, compact = false }) =
                 )}
             </div>
 
-            {additionalInfo && (
+            {additionalInfo && !isMobile && (
                 <div className="game-header-info">
                     {additionalInfo}
                 </div>

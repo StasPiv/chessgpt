@@ -44,31 +44,35 @@
 /* Responsive design */
 @media (max-width: 768px) {
     .game-header {
-        padding: 2vw 3vw;
-        margin-bottom: 3vw;
+        padding: 1vw 2vw;
+        margin-bottom: 2vw;
     }
 
     .game-header-players {
-        font-size: 5vw;
+        font-size: 4.5vw;
         margin-bottom: 0;
         line-height: 1.4;
+        text-align: center;
+        word-wrap: break-word;
     }
 
     .game-header-players strong {
-        font-weight: 700;
+        font-weight: normal;
     }
 
     .vs-separator {
-        font-weight: 600;
+        font-weight: normal;
     }
 
     .game-result {
         margin-left: 1vw;
+        color: #ff0000;
     }
 
     .game-result strong {
-        font-weight: 800;
+        font-weight: bold;
         font-size: 1em;
+        color: #ff0000;
     }
 
     /* Скрыть дополнительную информацию на мобильных устройствах */
