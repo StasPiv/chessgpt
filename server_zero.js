@@ -1,6 +1,7 @@
 import http from 'http';
 import crypto from 'crypto';
 
+const host = '0.0.0.0';
 const port = 8080;
 const clients = new Set();
 
@@ -150,6 +151,6 @@ server.on('upgrade', (request, socket, head) => {
     });
 });
 
-server.listen(port, () => {
+server.listen(port, host, () => {
     console.log(`WebSocket server running on ws://localhost:${port}`);
 });
