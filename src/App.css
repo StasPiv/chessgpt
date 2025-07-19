@@ -672,3 +672,14 @@
         padding: 10px 6px;
     }
 }
+
+.app-container {
+    display: grid;
+    grid-template-rows: auto 1fr auto; /* header занимает минимум, main растягивается, footer минимум */
+    height: 100vh;
+}
+
+/* Никакого overflow здесь не нужно! */
+.main-content {
+    /* Контент автоматически займет всё доступное пространство */
+}
