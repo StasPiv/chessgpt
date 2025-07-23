@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {Chessboard} from 'react-chessboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMoveAction, addVariationAction } from '../redux/actions.js';
@@ -18,85 +18,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const fen = useSelector((state: RootState) => state.chess.fen);
     const currentMove = useSelector((state: RootState) => state.chess.currentMove);
     const autoAnalysisEnabled = useSelector((state: RootState) => state.analysis.autoAnalysisEnabled);
-    const [boardWidth, setBoardWidth] = useState<number>(400);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Состояние для обработки кликов
     const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
     const [customSquareStyles, setCustomSquareStyles] = useState<{ [square: string]: React.CSSProperties }>({});
-
-    // Mobile detection
-    const [isMobile, setIsMobile] = useState<boolean>(false);
-
-    // Check if device is mobile
-    useEffect(() => {
-        const checkMobile = () => {
-            const width = window.innerWidth;
-            const userAgent = navigator.userAgent;
-            const isMobileByWidth = width <= 768;
-            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            const isMobileByMediaQuery = window.matchMedia('(max-width: 768px)').matches;
-
-            const mobile = isMobileByWidth || isMobileByMediaQuery || (isTouchDevice && width < 1024);
-            setIsMobile(mobile);
-        };
-
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-
-        return () => {
-            window.removeEventListener('resize', checkMobile);
-        };
-    }, []);
-
-    // Function to calculate board size
-    const calculateBoardSize = (): void => {
-        const boardContainer = document.querySelector('.chess-board-container') as HTMLElement;
-        if (boardContainer) {
-            const containerWidth = boardContainer.offsetWidth;
-            const padding = 10;
-            const maxHeight = window.innerHeight * 0.7;
-            const newSize = Math.min(containerWidth - padding, maxHeight);
-            const calculatedSize = Math.max(350, newSize);
-
-            setBoardWidth(prevSize => {
-                if (Math.abs(prevSize - calculatedSize) > 5) {
-                    return calculatedSize;
-                }
-                return prevSize;
-            });
-        }
-    };
-
-    const debouncedCalculateBoardSize = (): void => {
-        if (resizeTimeoutRef.current) {
-            clearTimeout(resizeTimeoutRef.current);
-        }
-
-        resizeTimeoutRef.current = setTimeout(() => {
-            calculateBoardSize();
-        }, 100);
-    };
-
-    useEffect(() => {
-        calculateBoardSize();
-
-        const handleResize = (): void => {
-            debouncedCalculateBoardSize();
-        };
-
-        window.addEventListener('resize', handleResize);
-        const initialTimeout = setTimeout(calculateBoardSize, 100);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            clearTimeout(initialTimeout);
-            if (resizeTimeoutRef.current) {
-                clearTimeout(resizeTimeoutRef.current);
-            }
-        };
-    }, []);
 
     // Function to create serializable move object
     const createSerializableMove = (move: any): ChessMove => {
@@ -227,11 +152,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
         boardOrientation: isFlipped ? 'black' : 'white',
         id: 'chess-board',
         squareStyles: customSquareStyles,
-        canDragPiece: () => !isMobile,
     };
 
     return (
-        <div ref={containerRef} className="chess-board-container">
+        <div className="chess-board-container">
             <Chessboard options={chessboardOptions} />
         </div>
     );
