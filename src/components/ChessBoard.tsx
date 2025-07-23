@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import {Chessboard, PieceHandlerArgs, SquareHandlerArgs} from 'react-chessboard';
+import {Chessboard} from 'react-chessboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMoveAction, addVariationAction } from '../redux/actions.js';
-import { startAnalysis } from '../redux/analysisReducer.js';
-import { sendPosition, stopAnalysisRequest } from '../websocket.js';
+import { sendPosition } from '../websocket.js';
 import { Chess } from 'cm-chess';
 import {
     RootState,
@@ -36,7 +35,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
             const width = window.innerWidth;
             const userAgent = navigator.userAgent;
             const isMobileByWidth = width <= 768;
-            const isMobileByUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
             const isMobileByMediaQuery = window.matchMedia('(max-width: 768px)').matches;
 
@@ -219,7 +217,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
         if (fen && autoAnalysisEnabled) {
             sendPosition(fen);
         }
-    }, [fen, dispatch, autoAnalysisEnabled]);
+    }, [fen, autoAnalysisEnabled]);
 
     // Create board options object - as in documentation
     const chessboardOptions: ChessboardOptions = {
