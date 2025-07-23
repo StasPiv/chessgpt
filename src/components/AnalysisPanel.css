@@ -48,65 +48,6 @@
     opacity: 0.6;
 }
 
-.analysis-line {
-    padding: 6px 10px;
-    border-left: 3px solid #e0e0e0;
-    background-color: #f9f9f9;
-    border-radius: 4px;
-    font-size: 12px;
-    line-height: 1.2;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    overflow-x: auto;
-    white-space: nowrap;
-}
-
-.analysis-line:hover {
-    background-color: #f0f0f0;
-    border-left-color: #1976d2;
-}
-
-.analysis-line:first-child {
-    border-left-color: #4caf50;
-    background-color: #f1f8e9;
-}
-
-.analysis-line:first-child:hover {
-    background-color: #e8f5e8;
-}
-
-.line-score {
-    font-weight: 600;
-    color: #333;
-    min-width: 50px;
-    font-size: 12px;
-    flex-shrink: 0;
-}
-
-.line-depth {
-    font-size: 10px;
-    color: #666;
-    min-width: 35px;
-    flex-shrink: 0;
-}
-
-.line-moves {
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    color: #1976d2;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    flex: 1;
-    font-size: 12px;
-    flex-shrink: 0;
-}
-
-.line-moves:hover {
-    color: #0d47a1;
-    text-decoration: underline;
-}
-
 .no-analysis {
     text-align: center;
     color: #666;
@@ -146,32 +87,6 @@
     gap: 2vw;
 }
 
-.mobile-analysis .analysis-line {
-    padding: 2vw 2vw;
-    font-size: 3.5vw;
-    margin-bottom: 0;
-    overflow-x: auto;
-    white-space: nowrap;
-    gap: 3vw;
-    line-height: 1.1;
-}
-
-.mobile-analysis .line-score {
-    font-size: 3.5vw;
-    font-weight: bold;
-    min-width: 10vw;
-}
-
-.mobile-analysis .line-depth {
-    font-size: 3vw;
-    min-width: 7vw;
-}
-
-.mobile-analysis .line-moves {
-    font-size: 3.5vw;
-    line-height: 1.1;
-}
-
 .mobile-analysis .no-analysis {
     font-size: 4.5vw;
     padding: 8vw 4vw;
@@ -207,32 +122,6 @@
     
     .analysis-lines {
         gap: 6px;
-    }
-    
-    .analysis-line {
-        padding: 8px 8px;
-        font-size: 13px;
-        overflow-x: auto;
-        white-space: nowrap;
-        gap: 12px;
-        line-height: 1.1;
-    }
-    
-    .line-score {
-        font-size: 13px;
-        min-width: 60px;
-        flex-shrink: 0;
-    }
-    
-    .line-depth {
-        font-size: 11px;
-        min-width: 40px;
-        flex-shrink: 0;
-    }
-    
-    .line-moves {
-        font-size: 13px;
-        flex-shrink: 0;
     }
     
     .no-analysis {

@@ -2,7 +2,8 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleAutoAnalysis } from '../redux/analysisReducer.js';
 import { sendPosition, stopAnalysisRequest } from '../websocket.js';
-import { RootState, AnalysisLine } from '../types';
+import { RootState, AnalysisLine as AnalysisLineType } from '../types';
+import AnalysisLine from './AnalysisLine';
 import './AnalysisPanel.css';
 
 const AnalysisPanel: React.FC = () => {
@@ -26,7 +27,7 @@ const AnalysisPanel: React.FC = () => {
     const isInactive: boolean = !autoAnalysisEnabled || status === 'stopped';
 
     // Get total number of nodes from all lines
-    const totalNodes: number = lines.reduce((sum: number, line: AnalysisLine) => sum + line.nodes, 0);
+    const totalNodes: number = lines.reduce((sum: number, line: AnalysisLineType) => sum + line.nodes, 0);
 
     return (
         <div className="analysis-panel">
@@ -47,12 +48,13 @@ const AnalysisPanel: React.FC = () => {
 
             <div className={`analysis-lines ${isInactive ? 'inactive' : ''}`}>
                 {lines.length > 0 ? (
-                    lines.map((line: AnalysisLine, index: number) => (
-                        <div key={index} className="analysis-line">
-                            <span className="line-score">{line.score}</span>
-                            <span className="line-depth">{line.depth}</span>
-                            <span className="line-moves">{line.moves}</span>
-                        </div>
+                    lines.map((line: AnalysisLineType, index: number) => (
+                        <AnalysisLine
+                            key={index}
+                            line={line}
+                            index={index}
+                            isInactive={isInactive}
+                        />
                     ))
                 ) : (
                     <div className="no-analysis">
