@@ -96,16 +96,18 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false, isMobile = f
         const tempGame = new Chess(fen);
 
         if (selectedSquare === null) {
-            const pieceColor = piece.pieceType[0].toLowerCase();
-            // Первый клик - выбираем фигуру
-            if (piece && pieceColor === tempGame.turn()) {
-                console.log('highlight square');
-                setSelectedSquare(square);
-                setCustomSquareStyles({
-                    [square]: {
-                        backgroundColor: 'rgba(255, 255, 0, 0.4)',
-                    }
-                });
+            // Первый клик - выбираем фигуру только если она существует
+            if (piece && piece.pieceType) {
+                const pieceColor = piece.pieceType[0].toLowerCase();
+                if (pieceColor === tempGame.turn()) {
+                    console.log('highlight square');
+                    setSelectedSquare(square);
+                    setCustomSquareStyles({
+                        [square]: {
+                            backgroundColor: 'rgba(255, 255, 0, 0.4)',
+                        }
+                    });
+                }
             }
         } else {
             // Второй клик
@@ -123,14 +125,17 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false, isMobile = f
 
                 if (!moveSuccess) {
                     // Если ход невозможен, попробуем выбрать новую фигуру
-                    if (piece && piece.color === tempGame.turn()) {
-                        setSelectedSquare(square);
-                        setCustomSquareStyles({
-                            [square]: {
-                                backgroundColor: 'rgba(255, 255, 0, 0.4)',
-                                border: '2px solid #ffff00'
-                            }
-                        });
+                    if (piece && piece.pieceType) {
+                        const pieceColor = piece.pieceType[0].toLowerCase();
+                        if (pieceColor === tempGame.turn()) {
+                            setSelectedSquare(square);
+                            setCustomSquareStyles({
+                                [square]: {
+                                    backgroundColor: 'rgba(255, 255, 0, 0.4)',
+                                    border: '2px solid #ffff00'
+                                }
+                            });
+                        }
                     }
                 }
             }
