@@ -77,7 +77,7 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
                     </div>
                     <div className="panel-content">
                         <div className="chess-board-wrapper">
-                            <ChessBoard isFlipped={isFlipped} />
+                            <ChessBoard isFlipped={isFlipped} isMobile={false} />
                         </div>
                         <div className="navigation-wrapper">
                             <NavigationControls onFlipBoard={handleFlipBoard} isFlipped={isFlipped} />

@@ -166,7 +166,7 @@ function App() {
                 <div className="mobile-block mobile-chessboard">
                     <div className="mobile-block-content">
                         <div className="mobile-chess-area">
-                            <ChessBoard isFlipped={isFlipped} />
+                            <ChessBoard isFlipped={isFlipped} isMobile={isMobile} />
                         </div>
                         <div className="mobile-navigation">
                             <NavigationControls onFlipBoard={handleFlipBoard} isFlipped={isFlipped} />

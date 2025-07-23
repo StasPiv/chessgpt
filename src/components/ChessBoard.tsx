@@ -13,7 +13,7 @@ import {
 import { ChessboardOptions } from 'react-chessboard';
 import './ChessBoard.css';
 
-const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
+const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false, isMobile = false }) => {
     const dispatch = useDispatch();
     const fen = useSelector((state: RootState) => state.chess.fen);
     const currentMove = useSelector((state: RootState) => state.chess.currentMove);
@@ -152,6 +152,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
         boardOrientation: isFlipped ? 'black' : 'white',
         id: 'chess-board',
         squareStyles: customSquareStyles,
+        canDragPiece: () => !isMobile
     };
 
     return (
