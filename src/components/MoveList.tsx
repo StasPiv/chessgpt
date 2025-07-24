@@ -9,7 +9,7 @@ const MoveList = (): ReactElement => {
     const dispatch = useDispatch();
     const history = useSelector((state: RootState) => state.chess.history);
     const currentMoveIndex = useSelector((state: RootState) => state.chess.currentMoveIndex);
-    
+
     // Ref for long press timeout
     const longPressTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -52,12 +52,12 @@ const MoveList = (): ReactElement => {
 
         try {
             console.log('Loading PGN from clipboard...');
-            
+
             // Use the same Redux action as LoadPgn component
             dispatch(loadPGNAction(pgnText));
-            
+
             console.log('PGN loaded successfully');
-            
+
         } catch (error) {
             console.error('Error loading PGN:', error);
         }
@@ -74,7 +74,7 @@ const MoveList = (): ReactElement => {
 
             // Read text from clipboard
             const clipboardText = await navigator.clipboard.readText();
-            
+
             if (!clipboardText || !clipboardText.trim()) {
                 console.log('Clipboard is empty');
                 return;
@@ -84,10 +84,10 @@ const MoveList = (): ReactElement => {
 
             // Load PGN using the same function logic as LoadPgn component
             loadPgnFromText(clipboardText);
-            
+
         } catch (error) {
             console.error('Failed to read clipboard:', error);
-            
+
             // Handle different types of errors
             if (error instanceof Error) {
                 if (error.name === 'NotAllowedError') {
@@ -182,13 +182,6 @@ const MoveList = (): ReactElement => {
                 </span>
             );
 
-            // Добавляем пробел после хода
-            if (i < moves.length - 1 || (move.variations && move.variations.length > 0)) {
-                result.push(
-                    <span key={`space-${move.globalIndex}`} className="move-space"> </span>
-                );
-            }
-
             // Обработка вариантов
             if (move.variations && Array.isArray(move.variations) && move.variations.length > 0) {
                 for (let varIndex = 0; varIndex < move.variations.length; varIndex++) {
@@ -233,13 +226,6 @@ const MoveList = (): ReactElement => {
                         </span>
                     );
                 }
-                
-                // Добавляем пробел после всех вариантов
-                if (i < moves.length - 1) {
-                    result.push(
-                        <span key={`space-after-var-${move.globalIndex}`} className="move-space"> </span>
-                    );
-                }
             }
         }
 
@@ -256,7 +242,7 @@ const MoveList = (): ReactElement => {
 
     return (
         <div className="move-list-container">
-            <div 
+            <div
                 className="moves-container"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
