@@ -4,6 +4,7 @@ import { toggleAutoAnalysis } from '../redux/analysisReducer.js';
 import { sendPosition, stopAnalysisRequest } from '../websocket.js';
 import { RootState, AnalysisLine as AnalysisLineType } from '../types';
 import AnalysisLine from './AnalysisLine';
+import { convertUciToSan, formatMovesWithNumbers } from '../utils/ChessMoveConverter';
 import './AnalysisPanel.css';
 
 const AnalysisPanel: React.FC = () => {
@@ -14,20 +15,36 @@ const AnalysisPanel: React.FC = () => {
     const handleToggleAutoAnalysis = (): void => {
         const newAutoEnabled = !autoAnalysisEnabled;
         dispatch(toggleAutoAnalysis());
-        
+
         if (!newAutoEnabled) {
-            // If auto-analysis is being disabled, stop current analysis
             stopAnalysisRequest();
         } else if (currentFen) {
-            // If auto-analysis is being enabled, start analyzing current position
             sendPosition(currentFen);
         }
     };
 
     const isInactive: boolean = !autoAnalysisEnabled || status === 'stopped';
-
-    // Get total number of nodes from all lines
     const totalNodes: number = lines.reduce((sum: number, line: AnalysisLineType) => sum + line.nodes, 0);
+
+    // Конвертируем UCI ходы в отформатированные ходы
+    const processedLines = lines.map((line, index) => {
+        try {
+            const sanMoves = convertUciToSan(line.uciMoves, line.fen);
+            const formattedMoves = formatMovesWithNumbers(sanMoves, line.fen);
+
+            return {
+                ...line,
+                moves: formattedMoves
+            };
+
+        } catch (error) {
+            console.error(`Error processing analysis line ${index}:`, error);
+            return {
+                ...line,
+                moves: 'Error processing moves'
+            };
+        }
+    });
 
     return (
         <div className="analysis-panel">
@@ -47,8 +64,8 @@ const AnalysisPanel: React.FC = () => {
             </div>
 
             <div className={`analysis-lines ${isInactive ? 'inactive' : ''}`}>
-                {lines.length > 0 ? (
-                    lines.map((line: AnalysisLineType, index: number) => (
+                {processedLines.length > 0 ? (
+                    processedLines.map((line, index: number) => (
                         <AnalysisLine
                             key={index}
                             line={line}

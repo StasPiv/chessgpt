@@ -3,7 +3,8 @@ export interface AnalysisLine {
   score: string;
   depth: number;
   nodes: number;
-  moves: string;
+  uciMoves: string;    // Raw UCI moves from engine (e.g., "e2e4 e7e5")
+  fen: string;         // Current position FEN
 }
 
 // Тип для состояния анализа

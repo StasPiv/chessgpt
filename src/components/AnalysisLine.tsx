@@ -2,17 +2,23 @@ import React from 'react';
 import { AnalysisLine as AnalysisLineType } from '../types';
 import './AnalysisLine.css';
 
+interface ProcessedLine extends AnalysisLineType {
+    moves: string;
+}
+
 interface AnalysisLineProps {
-    line: AnalysisLineType;
+    line: ProcessedLine;
     index: number;
     isInactive: boolean;
 }
 
 const AnalysisLine: React.FC<AnalysisLineProps> = ({ line, index, isInactive }) => {
     const handleMovesClick = (): void => {
-        // Здесь можно добавить логику для обработки клика по ходам
-        // Например, воспроизведение линии на доске
-        console.log('Moves clicked:', line.moves);
+        console.log('Line clicked:', {
+            moves: line.moves,
+            uciMoves: line.uciMoves,
+            fen: line.fen
+        });
     };
 
     return (

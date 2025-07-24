@@ -1,6 +1,5 @@
 import WebSocket from 'ws';
 import { spawn } from 'child_process';
-import { Chess } from 'cm-chess';
 import dotenv from 'dotenv';
 
 // Загружаем правильный .env файл в зависимости от NODE_ENV
@@ -13,7 +12,6 @@ if (process.env.NODE_ENV === 'production') {
 // Создаем config объект ПОСЛЕ загрузки переменных окружения
 const config = {
     websocketUrl: process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080',
-    // Здесь можно добавить другие настройки
 };
 
 // Connect to WebSocket server
@@ -44,44 +42,6 @@ function broadcastAnalysis() {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify(analysisData));
     }
-}
-
-function formatMovesWithNumbers(sanMoves, startFen) {
-    if (!sanMoves || sanMoves.length === 0) return '';
-    
-    const chess = new Chess(startFen);
-    
-    // Get move number and turn from FEN
-    const fenParts = startFen.split(' ');
-    const isWhiteToMove = fenParts[1] === 'w';
-    const moveNumber = parseInt(fenParts[5]) || 1;
-    
-    const result = [];
-    let currentMoveNumber = moveNumber;
-    let isCurrentWhite = isWhiteToMove;
-    
-    for (let i = 0; i < sanMoves.length; i++) {
-        const move = sanMoves[i];
-        
-        if (isCurrentWhite) {
-            result.push(`${currentMoveNumber}. ${move}`);
-        } else {
-            if (i === 0) {
-                // First black move
-                result.push(`${currentMoveNumber}... ${move}`);
-            } else {
-                result.push(move);
-            }
-        }
-        
-        if (!isCurrentWhite) {
-            currentMoveNumber++;
-        }
-        
-        isCurrentWhite = !isCurrentWhite;
-    }
-    
-    return result.join(' ');
 }
 
 ws.on('open', () => {
@@ -124,23 +84,7 @@ stockfish.stdout.on('data', (data) => {
             const match = line.match(/info.*?depth (\d+).*?seldepth (\d+).*?multipv (\d+).*?score (cp|mate) (-?\d+).*?nodes (\d+).*?pv (.+)/);
             if (match) {
                 const [_, depth, seldepth, pvNum, scoreType, scoreValue, nodes, moves] = match;
-                const chess = new Chess(currentFen);
                 const moveList = moves.trim().split(' ');
-                const sanMoves = [];
-                
-                for (const move of moveList) {
-                    try {
-                        let result = chess.move(move);
-                        if (!result) {
-                            result = chess.move(move, { sloppy: true });
-                        }
-                        if (!result) break;
-                        sanMoves.push(result.san);
-                    } catch (e) {
-                        console.error('Invalid move:', move);
-                        break;
-                    }
-                }
 
                 // Determine whose turn it is
                 const fenParts = currentFen.split(' ');
@@ -167,7 +111,8 @@ stockfish.stdout.on('data', (data) => {
                     score: score,
                     depth: parseInt(depth),
                     nodes: parseInt(nodes),
-                    moves: formatMovesWithNumbers(sanMoves, currentFen)
+                    uciMoves: moveList.join(' '), // Raw UCI moves from engine
+                    fen: currentFen // Current position FEN
                 };
             }
             broadcastAnalysis();
