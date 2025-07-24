@@ -1,8 +1,15 @@
+// Остальные типы остаются без изменений...
 import { AnalysisState } from './Analysis';
 import { ChessState } from './ChessState';
 
-// Тип для корневого состояния Redux
+// WebSocket State Type
+export interface WebSocketState {
+    isConnected: boolean;
+}
+
+// Root State Type (обновляем существующий)
 export interface RootState {
-  analysis: AnalysisState;
-  chess: ChessState;
+    chess: ChessState;
+    analysis: AnalysisState;
+    websocket: WebSocketState;
 }

@@ -1,4 +1,5 @@
-import { stopAnalysis, updateAnalysis, startAnalysis } from './redux/analysisReducer.js';
+import { updateAnalysis, stopAnalysis } from './redux/analysisReducer.js';
+import { setWebSocketConnected } from './redux/websocketReducer.js';
 
 let socket = null;
 
@@ -8,6 +9,8 @@ export function connectWebSocket(store) {
 
     socket.onopen = () => {
         console.log('WebSocket connected');
+        // Устанавливаем состояние "подключено"
+        store.dispatch(setWebSocketConnected(true));
     };
 
     socket.onmessage = async (event) => {
@@ -33,11 +36,15 @@ export function connectWebSocket(store) {
 
     socket.onclose = () => {
         console.log('WebSocket disconnected');
+        // Устанавливаем состояние "отключено"
+        store.dispatch(setWebSocketConnected(false));
         store.dispatch(stopAnalysis());
     };
 
     socket.onerror = (error) => {
         console.error('WebSocket error:', error);
+        // Устанавливаем состояние "отключено" при ошибке
+        store.dispatch(setWebSocketConnected(false));
         store.dispatch(stopAnalysis());
     };
 }

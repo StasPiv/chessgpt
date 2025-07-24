@@ -11,6 +11,9 @@ const AnalysisPanel: React.FC = () => {
     const dispatch = useDispatch();
     const { lines, status, autoAnalysisEnabled } = useSelector((state: RootState) => state.analysis);
     const { currentFen } = useSelector((state: RootState) => state.chess);
+    
+    // Получаем состояние WebSocket из Redux
+    const { isConnected } = useSelector((state: RootState) => state.websocket);
 
     const handleToggleAutoAnalysis = (): void => {
         const newAutoEnabled = !autoAnalysisEnabled;
@@ -49,18 +52,29 @@ const AnalysisPanel: React.FC = () => {
     return (
         <div className="analysis-panel">
             <div className="analysis-header">
-                <label className="checkbox-container">
-                    <input
-                        type="checkbox"
-                        checked={autoAnalysisEnabled}
-                        onChange={handleToggleAutoAnalysis}
-                    />
-                    <span className="checkmark"></span>
-                    Auto-analyze moves
-                </label>
-                {totalNodes > 0 && (
-                    <span className="total-nodes">{totalNodes.toLocaleString()}</span>
-                )}
+                <div className="header-left">
+                    <label className="checkbox-container">
+                        <input
+                            type="checkbox"
+                            checked={autoAnalysisEnabled}
+                            onChange={handleToggleAutoAnalysis}
+                        />
+                        <span className="checkmark"></span>
+                        Auto-analyze moves
+                    </label>
+                </div>
+                
+                <div className="header-right">
+                    {totalNodes > 0 && (
+                        <span className="total-nodes">{totalNodes.toLocaleString()}</span>
+                    )}
+                    <div className="connection-indicator">
+                        <div className={`connection-dot ${isConnected ? 'connected' : 'disconnected'}`}></div>
+                        <span className="connection-text">
+                            {isConnected ? 'Connected' : 'Disconnected'}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <div className={`analysis-lines ${isInactive ? 'inactive' : ''}`}>
