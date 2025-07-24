@@ -80,19 +80,7 @@ Common paths:
 
 The application consists of three components that need to be running simultaneously:
 
-### 1. Start the WebSocket Server
-```bash
-node server.js
-```
-This starts the WebSocket server on `ws://localhost:8080`
-
-### 2. Start the Chess Analysis Service
-```bash
-node index.js
-```
-This connects Stockfish to the WebSocket server for real-time analysis
-
-### 3. Start the React Development Server
+### 1. Start the React Development Server
 ```bash
 npm start
 ```
@@ -102,16 +90,6 @@ This starts the web application on `http://localhost:9000`
 For convenience, you can run all services in separate terminals:
 
 **Terminal 1:**
-```bash
-node server.js
-```
-
-**Terminal 2:**
-```bash
-node index.js
-```
-
-**Terminal 3:**
 ```bash
 npm start
 ```
@@ -155,8 +133,6 @@ chessgpt/
 │   └── index.js               # Application entry point
 ├── public/
 │   └── index.html             # HTML template
-├── server.js                  # WebSocket server
-├── index.js                   # Stockfish analysis service
 ├── polyglot.ini               # Stockfish configuration
 ├── webpack.config.cjs         # Webpack configuration
 ├── package.json               # Node.js dependencies
@@ -213,7 +189,6 @@ Skill Level = 20      # Engine strength (0-20)
 - Check port 8080 is not blocked by firewall
 
 **"No analysis appearing"**
-- Verify `node index.js` is running
 - Check Stockfish path in `polyglot.ini`
 - Ensure auto-analysis checkbox is enabled
 

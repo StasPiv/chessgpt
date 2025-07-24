@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>com.chessgpt</groupId>
-    <artifactId>chess-engine-client</artifactId>
+    <artifactId>chess-engine-server</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     
@@ -55,7 +55,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.chessgpt.ChessEngineClient</mainClass>
+                                    <mainClass>com.chessgpt.ChessEngineWebSocketServer</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
