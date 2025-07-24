@@ -28,6 +28,7 @@ public class ChessEngineClient {
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> analysisTimeout;
     private Gson gson = new Gson();
+    private StatusWindow statusWindow;
 
     public static void main(String[] args) {
         String websocketUrl = System.getenv("REACT_APP_WEBSOCKET_URL");
@@ -41,6 +42,9 @@ public class ChessEngineClient {
 
     public void start(String websocketUrl) {
         try {
+            // Initialize GUI
+            statusWindow = new StatusWindow();
+            
             // Start Stockfish process
             startStockfish();
 
@@ -73,6 +77,11 @@ public class ChessEngineClient {
                 System.out.println("  - Status: " + handshake.getHttpStatus());
                 System.out.println("  - Message: " + handshake.getHttpStatusMessage());
                 System.out.println("Initializing chess engine...");
+                
+                if (statusWindow != null) {
+                    statusWindow.updateWebSocketStatus(true);
+                }
+                
                 sendToEngine("uci");
                 sendToEngine("setoption name MultiPV value 4");
                 sendToEngine("isready");
@@ -102,12 +111,20 @@ public class ChessEngineClient {
                 System.out.println("  - Code: " + code);
                 System.out.println("  - Reason: " + reason);
                 System.out.println("  - Remote: " + remote);
+                
+                if (statusWindow != null) {
+                    statusWindow.updateWebSocketStatus(false);
+                }
             }
 
             @Override
             public void onError(Exception ex) {
                 System.err.println("🚨 WebSocket ERROR: " + ex.getMessage());
                 ex.printStackTrace();
+                
+                if (statusWindow != null) {
+                    statusWindow.updateWebSocketStatus(false);
+                }
             }
         };
 
@@ -130,20 +147,31 @@ public class ChessEngineClient {
     }
 
     private void startStockfish() throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("polyglot");
-        stockfishProcess = pb.start();
+        try {
+            ProcessBuilder pb = new ProcessBuilder("polyglot");
+            stockfishProcess = pb.start();
 
-        engineWriter = new PrintWriter(new OutputStreamWriter(stockfishProcess.getOutputStream()), true);
+            engineWriter = new PrintWriter(new OutputStreamWriter(stockfishProcess.getOutputStream()), true);
 
-        // Start reading engine output
-        Thread outputReader = new Thread(this::readEngineOutput);
-        outputReader.setDaemon(true);
-        outputReader.start();
+            // Start reading engine output
+            Thread outputReader = new Thread(this::readEngineOutput);
+            outputReader.setDaemon(true);
+            outputReader.start();
 
-        // Handle process errors
-        Thread errorReader = new Thread(this::readEngineErrors);
-        errorReader.setDaemon(true);
-        errorReader.start();
+            // Handle process errors
+            Thread errorReader = new Thread(this::readEngineErrors);
+            errorReader.setDaemon(true);
+            errorReader.start();
+            
+            System.out.println("✓ Chess engine process started successfully");
+            
+        } catch (IOException e) {
+            System.err.println("❌ Failed to start chess engine: " + e.getMessage());
+            if (statusWindow != null) {
+                statusWindow.updateEngineStatus(false);
+            }
+            throw e;
+        }
     }
 
     private void handleWebSocketMessage(String message) {
@@ -212,6 +240,15 @@ public class ChessEngineClient {
             }
         } catch (IOException e) {
             System.err.println("Error reading engine output: " + e.getMessage());
+            if (statusWindow != null) {
+                statusWindow.updateEngineStatus(false);
+            }
+        }
+        
+        // If we reach here, the engine process has terminated
+        System.err.println("❌ Chess engine process terminated");
+        if (statusWindow != null) {
+            statusWindow.updateEngineStatus(false);
         }
     }
 
@@ -227,7 +264,15 @@ public class ChessEngineClient {
     }
 
     private void processEngineOutput(String line) {
-        if (line.startsWith("info") && line.contains("multipv")) {
+        // Handle UCI responses
+        if ("uciok".equals(line.trim())) {
+            System.out.println("✓ Chess engine UCI initialized");
+            if (statusWindow != null) {
+                statusWindow.updateEngineStatus(true);
+            }
+        } else if ("readyok".equals(line.trim())) {
+            System.out.println("✓ Chess engine ready");
+        } else if (line.startsWith("info") && line.contains("multipv")) {
             Matcher matcher = INFO_PATTERN.matcher(line);
             if (matcher.find()) {
                 String depth = matcher.group(1);
