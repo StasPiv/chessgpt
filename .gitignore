@@ -46,3 +46,16 @@ polyglot.ini
 # Temporary files
 *.tmp
 *.temp
+
+# Maven builds
+java/**/target/
+java/**/dependency-reduced-pom.xml
+
+# IDE files
+java/**/.idea/
+java/**/*.iml
+java/**/.vscode/
+
+# OS files
+java/**/.DS_Store
+java/**/Thumbs.db
