@@ -4,12 +4,14 @@ const STOP_ANALYSIS = 'STOP_ANALYSIS';
 const UPDATE_ANALYSIS = 'UPDATE_ANALYSIS';
 const CLEAR_ANALYSIS = 'CLEAR_ANALYSIS';
 const TOGGLE_AUTO_ANALYSIS = 'TOGGLE_AUTO_ANALYSIS';
+const DISABLE_AUTO_ANALYSIS = 'DISABLE_AUTO_ANALYSIS'; // ✅ Новое действие
 
 export const startAnalysis = () => ({ type: START_ANALYSIS });
 export const stopAnalysis = () => ({ type: STOP_ANALYSIS });
 export const updateAnalysis = (lines) => ({ type: UPDATE_ANALYSIS, payload: lines });
 export const clearAnalysis = () => ({ type: CLEAR_ANALYSIS });
 export const toggleAutoAnalysis = () => ({ type: TOGGLE_AUTO_ANALYSIS });
+export const disableAutoAnalysis = () => ({ type: DISABLE_AUTO_ANALYSIS }); // ✅ Новый экспорт
 
 const initialState = {
     status: 'idle', // 'idle', 'analyzing', 'stopped'
@@ -31,6 +33,12 @@ export function analysisReducer(state = initialState, action) {
                 autoAnalysisEnabled: newAutoEnabled,
                 // If auto-analysis is being disabled, stop current analysis
                 status: newAutoEnabled ? 'idle' : 'stopped'
+            };
+        case DISABLE_AUTO_ANALYSIS: // ✅ Новый случай
+            return {
+                ...state,
+                autoAnalysisEnabled: false,
+                status: 'stopped'
             };
         case UPDATE_ANALYSIS:
             return { 
