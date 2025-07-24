@@ -309,7 +309,7 @@ public class ChessEngineClient {
                 AnalysisLine analysisLine = new AnalysisLine();
                 analysisLine.score = score;
                 analysisLine.depth = Integer.parseInt(depth);
-                analysisLine.nodes = Integer.parseInt(nodes);
+                analysisLine.nodes = Long.parseLong(nodes); // Changed from Integer.parseInt to Long.parseLong
                 analysisLine.uciMoves = String.join(" ", moveList);
                 analysisLine.fen = currentFen;
 
@@ -357,7 +357,7 @@ public class ChessEngineClient {
     public static class AnalysisLine {
         public String score;
         public int depth;
-        public int nodes;
+        public long nodes; // Changed from int to long
         public String uciMoves;
         public String fen;
     }
