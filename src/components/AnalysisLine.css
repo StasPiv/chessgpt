@@ -9,8 +9,9 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    overflow-x: auto;
     white-space: nowrap;
+    /* Всегда показываем горизонтальный скролл для стабильной высоты */
+    overflow-x: scroll;
 }
 
 .analysis-line.inactive {
@@ -66,10 +67,11 @@
     padding: 2vw 2vw;
     font-size: 3.5vw;
     margin-bottom: 0;
-    overflow-x: auto;
     white-space: nowrap;
     gap: 3vw;
     line-height: 1.1;
+    /* Всегда показываем горизонтальный скролл для мобильных */
+    overflow-x: scroll;
 }
 
 .mobile-analysis .line-score {
@@ -93,10 +95,11 @@
     .analysis-line {
         padding: 8px 8px;
         font-size: 13px;
-        overflow-x: auto;
         white-space: nowrap;
         gap: 12px;
         line-height: 1.1;
+        /* Всегда показываем горизонтальный скролл для планшетов */
+        overflow-x: scroll;
     }
     
     .line-score {
