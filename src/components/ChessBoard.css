@@ -23,14 +23,14 @@
     transform: translateY(-2px);
 }
 
-/* New styles moved from inline styles in ChessBoard.js */
+/* Fixed chess board container styles to fit width and maintain square aspect ratio */
 .react-grid-item .chess-board-container {
     width: 100%;
     height: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible;
     padding: 10px;
     box-sizing: border-box;
 }
@@ -39,14 +39,42 @@
     width: 100%;
     height: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    overflow: unset!important;
+    overflow: visible;
     padding: 10px;
     box-sizing: border-box;
 }
 
-/* Styles for react-chessboard */
+/* Container for the actual chessboard - fits width, maintains square aspect ratio */
+.chess-board-container > div {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    max-width: calc(100% - 20px) !important;
+}
+
+/* Ensure the chessboard itself maintains square shape and fits container width */
+.chess-board-container > div > div {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+}
+
+/* Override any height stretching from react-chessboard */
+.chess-board-container .react-chessboard {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+}
+
+/* Ensure board squares maintain proper proportions */
+.react-chessboard [data-square] {
+    transition: background-color 0.2s ease;
+    aspect-ratio: 1 / 1 !important;
+}
+
+/* Styles for react-chessboard pieces */
 .react-chessboard [data-piece] {
     transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, filter 0.15s ease-out;
     cursor: grab !important;
@@ -67,11 +95,6 @@
     filter: brightness(1.2) !important;
     transition: none !important;
     opacity: 0.9 !important;
-}
-
-/* Styles for squares */
-.react-chessboard [data-square] {
-    transition: background-color 0.2s ease;
 }
 
 /* Animation for move completion */
