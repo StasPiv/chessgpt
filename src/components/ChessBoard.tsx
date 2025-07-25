@@ -13,7 +13,7 @@ import {
 import { ChessboardOptions } from 'react-chessboard';
 import './ChessBoard.css';
 
-const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false, isMobile = false }) => {
+const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const dispatch = useDispatch();
     const fen = useSelector((state: RootState) => state.chess.fen);
     const currentMove = useSelector((state: RootState) => state.chess.currentMove);
@@ -77,7 +77,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false, isMobile = f
         }
     }, [fen, dispatch, currentMove]);
 
-    // Main function for handling moves - as in documentation
+    // Main function for handling moves
     const onPieceDrop = useCallback(({ sourceSquare, targetSquare }: PieceDropEvent): boolean => {
         // Check that targetSquare is not null (if piece is dropped off the board)
         if (!targetSquare) {
@@ -149,15 +149,14 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false, isMobile = f
         }
     }, [fen, autoAnalysisEnabled]);
 
-    // Create board options object - as in documentation
+    // Create board options object
     const chessboardOptions: ChessboardOptions = {
         position: fen,
         onPieceDrop,
         onSquareClick,
         boardOrientation: isFlipped ? 'black' : 'white',
         id: 'chess-board',
-        squareStyles: customSquareStyles,
-        canDragPiece: () => !isMobile
+        squareStyles: customSquareStyles
     };
 
     return (

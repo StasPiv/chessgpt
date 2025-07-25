@@ -1,6 +1,6 @@
 import { Layout, Layouts } from 'react-grid-layout';
 
-export type BreakpointKey = 'lg' | 'md' | 'sm' | 'xs' | 'xxs';
+export type BreakpointKey = 'lg';
 
 export interface LayoutItem {
     i: string;
@@ -14,8 +14,6 @@ export interface LayoutItem {
 
 export interface CustomLayouts {
     lg: LayoutItem[];
-    md: LayoutItem[];
-    sm: LayoutItem[];
 }
 
 export interface CustomLayoutProps {

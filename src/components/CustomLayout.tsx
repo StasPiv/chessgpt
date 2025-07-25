@@ -10,7 +10,6 @@ import './CustomLayout.css';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
-    // Используем стандартный тип Layouts
     const [layouts, setLayouts] = useState<Layouts>({
         lg: [
             { i: 'chessboard', x: 0, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
@@ -21,11 +20,6 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
             { i: 'chessboard', x: 0, y: 0, w: 6, h: 6, minW: 4, minH: 5 },
             { i: 'moves', x: 6, y: 0, w: 6, h: 6, minW: 3, minH: 4 },
             { i: 'analysis', x: 0, y: 6, w: 12, h: 4, minW: 6, minH: 3 }
-        ],
-        sm: [
-            { i: 'chessboard', x: 0, y: 0, w: 12, h: 6, minW: 6, minH: 5 },
-            { i: 'moves', x: 0, y: 6, w: 12, h: 4, minW: 6, minH: 3 },
-            { i: 'analysis', x: 0, y: 10, w: 12, h: 4, minW: 6, minH: 3 }
         ]
     });
 
@@ -60,8 +54,8 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
                 className="layout"
                 layouts={layouts}
                 onLayoutChange={handleLayoutChange}
-                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
+                breakpoints={{ lg: 1200, md: 996 }}
+                cols={{ lg: 12, md: 12 }}
                 rowHeight={60}
                 isDraggable={true}
                 isResizable={true}
@@ -77,7 +71,7 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
                     </div>
                     <div className="panel-content">
                         <div className="chess-board-wrapper">
-                            <ChessBoard isFlipped={isFlipped} isMobile={false} />
+                            <ChessBoard isFlipped={isFlipped} />
                         </div>
                         <div className="navigation-wrapper">
                             <NavigationControls onFlipBoard={handleFlipBoard} isFlipped={isFlipped} />

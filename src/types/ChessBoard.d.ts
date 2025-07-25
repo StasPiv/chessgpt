@@ -1,7 +1,6 @@
 // Типы для компонента ChessBoard
 export interface ChessBoardProps {
     isFlipped?: boolean;
-    isMobile?: boolean;
 }
 
 // Типы для событий доски

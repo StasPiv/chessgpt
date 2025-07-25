@@ -27,3 +27,48 @@ if (isProduction) {
 
 console.log('Final REACT_APP_WEBSOCKET_URL:', process.env.REACT_APP_WEBSOCKET_URL);
 console.log('========================');
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+        clean: true
+    },
+    mode: isProduction ? 'production' : 'development',
+    devtool: isProduction ? 'source-map' : 'eval-source-map',
+    devServer: {
+        static: path.join(__dirname, 'public'),
+        compress: true,
+        port: 9000,
+        headers: {
+            'Content-Security-Policy': "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;"
+        }
+    },
+    resolve: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+                'REACT_APP_WEBSOCKET_URL': JSON.stringify(process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080')
+            }
+        })
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.(js|jsx|ts|tsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader'
+                }
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            }
+        ]
+    }
+};

@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useRef } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction, loadPGNAction } from '../redux/actions.js';
 import {ChessMove, RootState} from '../types';
@@ -10,9 +10,6 @@ const MoveList = (): ReactElement => {
     const history = useSelector((state: RootState) => state.chess.history);
     const currentMoveIndex = useSelector((state: RootState) => state.chess.currentMoveIndex);
 
-    // Ref for long press timeout
-    const longPressTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
     const handleMoveClick = (move: ChessMove, variationPath?: any[]): void => {
         dispatch(gotoMoveAction({
             moveIndex: move.globalIndex,
@@ -20,28 +17,6 @@ const MoveList = (): ReactElement => {
             variationPath: variationPath
         }));
     };
-
-    // Long press handlers
-    const handleTouchStart = useCallback((event: React.TouchEvent) => {
-        longPressTimeoutRef.current = setTimeout(() => {
-            handleLongPress();
-        }, 600); // 600ms for long press
-    }, []);
-
-    const handleTouchEnd = useCallback(() => {
-        if (longPressTimeoutRef.current) {
-            clearTimeout(longPressTimeoutRef.current);
-            longPressTimeoutRef.current = null;
-        }
-    }, []);
-
-    const handleTouchMove = useCallback(() => {
-        // Cancel long press if user moves finger
-        if (longPressTimeoutRef.current) {
-            clearTimeout(longPressTimeoutRef.current);
-            longPressTimeoutRef.current = null;
-        }
-    }, []);
 
     // PGN loading function - same logic as in LoadPgn component
     const loadPgnFromText = useCallback((pgnText: string) => {
@@ -52,19 +27,17 @@ const MoveList = (): ReactElement => {
 
         try {
             console.log('Loading PGN from clipboard...');
-
-            // Use the same Redux action as LoadPgn component
             dispatch(loadPGNAction(pgnText));
-
             console.log('PGN loaded successfully');
-
         } catch (error) {
             console.error('Error loading PGN:', error);
         }
     }, [dispatch]);
 
-    // Long press handler - paste PGN from clipboard
-    const handleLongPress = useCallback(async () => {
+    // Right-click handler - paste PGN from clipboard (desktop feature)
+    const handleContextMenu = useCallback(async (event: React.MouseEvent) => {
+        event.preventDefault();
+        
         try {
             // Check if clipboard API is available
             if (!navigator.clipboard) {
@@ -81,14 +54,11 @@ const MoveList = (): ReactElement => {
             }
 
             console.log('Clipboard content received, processing...');
-
-            // Load PGN using the same function logic as LoadPgn component
             loadPgnFromText(clipboardText);
 
         } catch (error) {
             console.error('Failed to read clipboard:', error);
 
-            // Handle different types of errors
             if (error instanceof Error) {
                 if (error.name === 'NotAllowedError') {
                     console.error('Clipboard access denied');
@@ -108,11 +78,6 @@ const MoveList = (): ReactElement => {
     const getVariationLevelClass = (level: number): string => {
         if (level === 0) return '';
         return `variation-level-${Math.min(level, 4)}`;
-    };
-
-    const getVariationIndentClass = (level: number): string => {
-        if (level === 0) return '';
-        return `variation-indent-${Math.min(level, 4)}`;
     };
 
     const renderRecursiveHistory = (moves: ChessMove[], parentPath: any[] = [], level: number = 0): ReactElement[] => {
@@ -153,7 +118,6 @@ const MoveList = (): ReactElement => {
                     display = `${moveNumber}...${move.san}`;
                 }
             } else if (needsMoveNumberAfterVariation) {
-                // Включаем номер хода в сам элемент хода
                 display = `${moveNumber}...${move.san}`;
             } else {
                 if (isWhiteMove) {
@@ -244,9 +208,7 @@ const MoveList = (): ReactElement => {
         <div className="move-list-container">
             <div
                 className="moves-container"
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-                onTouchMove={handleTouchMove}
+                onContextMenu={handleContextMenu}
             >
                 {!history || history.length === 0 ? (
                     <div className="no-moves">No moves yet</div>
