@@ -54,26 +54,6 @@ function App() {
     return (
         <Provider store={store}>
             <div className="app-container">
-                <div className="app-header">
-                    <h1 className="app-title">Chess Analyzer</h1>
-                    <div className="app-controls">
-                        <button
-                            className="reset-layout-btn"
-                            onClick={handleResetLayout}
-                            title="Reset Layout"
-                        >
-                            🔄 Reset Layout
-                        </button>
-                        <button
-                            className="paste-icon"
-                            onClick={handlePasteClick}
-                            title="Load PGN"
-                        >
-                            📋 Load PGN
-                        </button>
-                    </div>
-                </div>
-
                 <div className="layout-container">
                     <CustomLayout />
                 </div>
