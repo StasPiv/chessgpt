@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction, loadPGNAction } from '../redux/actions.js';
 import {ChessMove, RootState} from '../types';
@@ -9,6 +9,11 @@ const MoveList = (): ReactElement => {
     const dispatch = useDispatch();
     const history = useSelector((state: RootState) => state.chess.history);
     const currentMoveIndex = useSelector((state: RootState) => state.chess.currentMoveIndex);
+    const isMobile = useSelector((state: RootState) => state.ui.isMobile);
+    
+    // Ref для отслеживания долгого нажатия
+    const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+    const isLongPress = useRef<boolean>(false);
 
     const handleMoveClick = (move: ChessMove, variationPath?: any[]): void => {
         dispatch(gotoMoveAction({
@@ -70,6 +75,70 @@ const MoveList = (): ReactElement => {
             }
         }
     }, [loadPgnFromText]);
+
+    // Обработчик начала касания для мобильных устройств
+    const handleTouchStart = useCallback((event: React.TouchEvent) => {
+        if (!isMobile) return;
+        
+        isLongPress.current = false;
+        
+        // Запускаем таймер для определения долгого нажатия
+        longPressTimer.current = setTimeout(async () => {
+            isLongPress.current = true;
+            
+            // Виброотклик для подтверждения долгого нажатия
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+            
+            // Выполняем ту же логику, что и в handleContextMenu
+            try {
+                if (!navigator.clipboard) {
+                    console.warn('Clipboard API not available');
+                    return;
+                }
+
+                const clipboardText = await navigator.clipboard.readText();
+
+                if (!clipboardText || !clipboardText.trim()) {
+                    console.log('Clipboard is empty');
+                    return;
+                }
+
+                console.log('Clipboard content received, processing...');
+                loadPgnFromText(clipboardText);
+
+            } catch (error) {
+                console.error('Failed to read clipboard:', error);
+            }
+        }, 800); // 800ms для долгого нажатия
+    }, [isMobile, loadPgnFromText]);
+
+    // Обработчик окончания касания
+    const handleTouchEnd = useCallback((event: React.TouchEvent) => {
+        if (!isMobile) return;
+        
+        // Отменяем таймер если касание закончилось раньше
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+        
+        // Предотвращаем обычный клик если было долгое нажатие
+        if (isLongPress.current) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, [isMobile]);
+
+    // Обработчик отмены касания (например, при скролле)
+    const handleTouchCancel = useCallback(() => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+        isLongPress.current = false;
+    }, []);
 
     const isCurrentMove = (globalIndex: number, variationPath?: any[]): boolean => {
         return globalIndex === currentMoveIndex;
@@ -209,9 +278,14 @@ const MoveList = (): ReactElement => {
             <div
                 className="moves-container"
                 onContextMenu={handleContextMenu}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onTouchCancel={handleTouchCancel}
             >
                 {!history || history.length === 0 ? (
-                    <div className="no-moves">No moves yet</div>
+                    <div className="no-moves">
+                        {isMobile ? 'No moves yet (Long press to load PGN)' : 'No moves yet (Right-click to load PGN)'}
+                    </div>
                 ) : (
                     <div className="moves-list">
                         <GameHeader />
