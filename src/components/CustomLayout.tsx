@@ -8,7 +8,7 @@ import ChessBoard from './ChessBoard';
 import MoveList from './MoveList';
 import AnalysisPanel from './AnalysisPanel';
 import NavigationControls from './NavigationControls';
-import './CustomLayout.css';
+import './CustomLayout.scss';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
