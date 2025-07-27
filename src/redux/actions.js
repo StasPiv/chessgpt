@@ -7,6 +7,7 @@ export const GOTO_FIRST = 'GOTO_FIRST';
 export const GOTO_LAST = 'GOTO_LAST';
 export const GOTO_PREVIOUS = 'GOTO_PREVIOUS';
 export const GOTO_NEXT = 'GOTO_NEXT';
+export const SET_IS_MOBILE = 'SET_IS_MOBILE';
 
 export function loadPGNAction(pgn) {
     return { type: LOAD_PGN, payload: pgn };
@@ -38,4 +39,8 @@ export function gotoPreviousAction() {
 
 export function gotoNextAction() {
     return { type: GOTO_NEXT };
+}
+
+export function setIsMobileAction(isMobile) {
+    return { type: SET_IS_MOBILE, payload: isMobile };
 }

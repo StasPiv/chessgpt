@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Responsive, WidthProvider, Layout, Layouts } from 'react-grid-layout';
-import { CustomLayoutProps, LayoutChangeCallback } from '../types';
+import React, {useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {Layout, Layouts, Responsive, WidthProvider} from 'react-grid-layout';
+import {CustomLayoutProps, LayoutChangeCallback} from '../types';
+import {setIsMobileAction} from '../redux/actions.js';
+import {addResizeListener, isMobileDevice} from '../utils/DeviceUtilities.js';
 import ChessBoard from './ChessBoard';
 import MoveList from './MoveList';
 import AnalysisPanel from './AnalysisPanel';
@@ -10,6 +13,8 @@ import './CustomLayout.css';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
+    const dispatch = useDispatch();
+    
     const [layouts, setLayouts] = useState<Layouts>({
         lg: [
             { i: 'chessboard', x: 0, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
@@ -20,10 +25,33 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
             { i: 'chessboard', x: 0, y: 0, w: 6, h: 6, minW: 4, minH: 5 },
             { i: 'moves', x: 6, y: 0, w: 6, h: 6, minW: 3, minH: 4 },
             { i: 'analysis', x: 0, y: 6, w: 12, h: 4, minW: 6, minH: 3 }
+        ],
+        // Добавляем макет для мобильных устройств
+        sm: [
+            { i: 'chessboard', x: 0, y: 0, w: 12, h: 6, minW: 12, minH: 5 },
+            { i: 'moves', x: 0, y: 6, w: 12, h: 4, minW: 12, minH: 3 },
+            { i: 'analysis', x: 0, y: 10, w: 12, h: 3, minW: 12, minH: 2 }
         ]
     });
 
     const [isFlipped, setIsFlipped] = useState<boolean>(false);
+
+    // Инициализация определения мобильного устройства
+    useEffect(() => {
+        // Определяем мобильное устройство при первой загрузке
+        const mobile = isMobileDevice();
+        dispatch(setIsMobileAction(mobile));
+
+        // Добавляем обработчик изменения размера экрана
+        const removeResizeListener = addResizeListener((isMobile: boolean) => {
+            dispatch(setIsMobileAction(isMobile));
+        });
+
+        // Очистка обработчика при размонтировании компонента
+        return () => {
+            removeResizeListener();
+        };
+    }, [dispatch]);
 
     // Load saved layout from localStorage
     useEffect(() => {
@@ -54,8 +82,8 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
                 className="layout"
                 layouts={layouts}
                 onLayoutChange={handleLayoutChange}
-                breakpoints={{ lg: 1200, md: 996 }}
-                cols={{ lg: 12, md: 12 }}
+                breakpoints={{ lg: 1200, md: 996, sm: 768 }}
+                cols={{ lg: 12, md: 12, sm: 12 }}
                 rowHeight={60}
                 isDraggable={true}
                 isResizable={true}
