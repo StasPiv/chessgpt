@@ -1,4 +1,3 @@
-
 @use '../styles/variables' as v;
 @use '../styles/mixins' as m;
 
@@ -16,9 +15,13 @@
   border-bottom: 1px solid v.$border-color;
   
   @include m.mobile {
-    flex-direction: column;
-    gap: v.$spacing-sm;
-    align-items: flex-start;
+    & {
+      flex-direction: column;
+      gap: v.$spacing-sm-mobile;
+      align-items: flex-start;
+      margin-bottom: v.$spacing-md-mobile;
+      padding-bottom: v.$spacing-xs-mobile;
+    }
   }
 }
 
@@ -28,6 +31,12 @@
     cursor: pointer;
     user-select: none;
     gap: v.$spacing-sm;
+    
+    @include m.mobile {
+      & {
+        gap: v.$spacing-sm-mobile;
+      }
+    }
   }
 
   input[type="checkbox"] {
@@ -56,6 +65,22 @@
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
     }
+    
+    @include m.mobile {
+      & {
+        width: 3.5vw;
+        height: 3.5vw;
+        border-radius: v.$border-radius-sm-mobile;
+        
+        &::after {
+          left: 1.2vw;
+          top: 0.4vw;
+          width: 0.8vw;
+          height: 1.6vw;
+          border-width: 0 0.4vw 0.4vw 0;
+        }
+      }
+    }
   }
 
   input[type="checkbox"]:checked + .checkmark {
@@ -74,8 +99,11 @@
   gap: v.$spacing-lg;
   
   @include m.mobile {
-    align-self: stretch;
-    justify-content: space-between;
+    & {
+      align-self: stretch;
+      justify-content: space-between;
+      gap: v.$spacing-md-mobile;
+    }
   }
 }
 
@@ -85,7 +113,9 @@
   font-weight: bold;
   
   @include m.mobile {
-    font-size: 11px;
+    & {
+      font-size: 2.8vw;
+    }
   }
 }
 
@@ -93,6 +123,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  
+  @include m.mobile {
+    & {
+      gap: 1.2vw;
+    }
+  }
 }
 
 .connection-dot {
@@ -107,7 +143,14 @@
   }
 
   &.disconnected {
-    background-color: #f44336; // Добавим в переменные как $error-color
+    background-color: v.$error-color;
+  }
+  
+  @include m.mobile {
+    & {
+      width: 1.8vw;
+      height: 1.8vw;
+    }
   }
 }
 
@@ -116,7 +159,9 @@
   color: v.$text-muted;
   
   @include m.mobile {
-    font-size: 11px;
+    & {
+      font-size: 2.5vw;
+    }
   }
 }
 
@@ -145,6 +190,17 @@
     cursor: not-allowed;
     animation: spin 1s linear infinite;
   }
+  
+  @include m.mobile {
+    & {
+      padding: v.$spacing-xs-mobile v.$spacing-sm-mobile;
+      border-radius: v.$border-radius-sm-mobile;
+      font-size: 2.2vw;
+      margin-left: 1.2vw;
+      min-width: 6vw;
+      height: 5vw;
+    }
+  }
 }
 
 @keyframes spin {
@@ -165,8 +221,12 @@
     opacity: 0.6;
   }
   
+  @include m.custom-scrollbar;
+  
   @include m.mobile {
-    max-height: 200px;
+    & {
+      max-height: 40vh; // Адаптивная высота на мобильных
+    }
   }
 }
 
@@ -178,11 +238,15 @@
   border: 1px dashed v.$border-color;
   border-radius: v.$border-radius-sm;
   margin-top: v.$spacing-lg;
-  background-color: #fafafa; // Добавим в переменные как $background-alt
+  background-color: v.$background-secondary;
 
   @include m.mobile {
-    padding: v.$spacing-md;
-    font-size: 14px;
+    & {
+      padding: v.$spacing-lg-mobile;
+      font-size: 3.2vw;
+      margin-top: v.$spacing-md-mobile;
+      border-radius: v.$border-radius-sm-mobile;
+    }
   }
 }
 
@@ -202,16 +266,37 @@
   &.inactive {
     opacity: 0.5;
   }
+  
+  @include m.mobile {
+    & {
+      border-radius: v.$border-radius-md-mobile;
+      padding: v.$spacing-sm-mobile;
+      margin-bottom: v.$spacing-xs-mobile;
+      border-left-width: 0.6vw;
+    }
+  }
 }
 
 .line-header {
   @include m.flex-between;
   margin-bottom: v.$spacing-sm;
+  
+  @include m.mobile {
+    & {
+      margin-bottom: v.$spacing-xs-mobile;
+    }
+  }
 }
 
 .line-evaluation {
   font-weight: bold;
   color: v.$success-color;
+  
+  @include m.mobile {
+    & {
+      font-size: 3vw;
+    }
+  }
 }
 
 .line-info {
@@ -219,6 +304,13 @@
   color: v.$text-muted;
   display: flex;
   gap: 10px;
+  
+  @include m.mobile {
+    & {
+      font-size: 2.5vw;
+      gap: 2vw;
+    }
+  }
 }
 
 .line-moves {
@@ -229,7 +321,10 @@
   word-wrap: break-word;
   
   @include m.mobile {
-    font-size: 12px;
+    & {
+      font-size: 3.2vw;
+      line-height: 1.3;
+    }
   }
 }
 
@@ -246,4 +341,98 @@
 .black-move {
   color: v.$text-color;
   font-weight: 500;
+}
+
+// Дополнительные адаптивные стили для планшетов
+@include m.tablet {
+  .analysis-header {
+    margin-bottom: v.$spacing-md;
+    padding-bottom: v.$spacing-sm;
+  }
+  
+  .total-nodes {
+    font-size: 2.5vw;
+  }
+  
+  .connection-text {
+    font-size: 2.2vw;
+  }
+  
+  .reconnect-btn {
+    font-size: 2vw;
+    min-width: 5vw;
+    height: 4.5vw;
+  }
+  
+  .no-analysis {
+    font-size: 2.8vw;
+  }
+  
+  .line-evaluation {
+    font-size: 2.8vw;
+  }
+  
+  .line-info {
+    font-size: 2.2vw;
+  }
+  
+  .line-moves {
+    font-size: 2.8vw;
+  }
+}
+
+// Улучшения для десктопа
+@include m.desktop {
+  .analysis-panel {
+    font-size: 14px;
+  }
+  
+  .analysis-header {
+    &:hover {
+      border-bottom-color: v.$border-hover;
+    }
+  }
+  
+  .reconnect-btn {
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px v.$shadow-light;
+    }
+  }
+  
+  .analysis-lines {
+    max-height: 350px; // Больше места на десктопе
+  }
+  
+  .analysis-line {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px v.$shadow-light;
+    }
+  }
+}
+
+// Специальные стили для очень маленьких экранов
+@media (max-width: 320px) {
+  .total-nodes {
+    font-size: 3.2vw !important;
+  }
+  
+  .connection-text {
+    font-size: 2.8vw !important;
+  }
+  
+  .reconnect-btn {
+    font-size: 2.5vw !important;
+    min-width: 7vw !important;
+    height: 5.5vw !important;
+  }
+  
+  .line-evaluation {
+    font-size: 3.5vw !important;
+  }
+  
+  .line-moves {
+    font-size: 3.5vw !important;
+  }
 }
