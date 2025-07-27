@@ -10,7 +10,22 @@ function getWebSocketUrl() {
     
     if (wsUrl) {
         console.log('Using WebSocket URL from query params:', wsUrl);
+        
+        // Сохраняем WebSocket URL в localStorage
+        localStorage.setItem('chessgpt_websocket_url', wsUrl);
+        console.log('WebSocket URL saved to localStorage:', wsUrl);
+        
+        // Удаляем GET-параметр из URL
+        cleanUrlFromParams();
+        
         return wsUrl;
+    }
+    
+    // Проверяем localStorage
+    const storedUrl = localStorage.getItem('chessgpt_websocket_url');
+    if (storedUrl) {
+        console.log('Using WebSocket URL from localStorage:', storedUrl);
+        return storedUrl;
     }
     
     // Fallback к переменной окружения
@@ -26,16 +41,70 @@ function getWebSocketUrl() {
     return defaultUrl;
 }
 
+/**
+ * Удаляет GET-параметры из URL без перезагрузки страницы
+ */
+function cleanUrlFromParams() {
+    try {
+        // Получаем текущий URL без параметров
+        const currentUrl = window.location.protocol + '//' + 
+                          window.location.host + 
+                          window.location.pathname;
+        
+        // Обновляем URL в браузере без перезагрузки страницы
+        window.history.replaceState({}, document.title, currentUrl);
+        
+        console.log('URL cleaned from GET parameters. New URL:', currentUrl);
+    } catch (error) {
+        console.warn('Failed to clean URL from parameters:', error);
+    }
+}
+
+/**
+ * Очищает сохраненный WebSocket URL из localStorage
+ */
+export function clearStoredWebSocketUrl() {
+    localStorage.removeItem('chessgpt_websocket_url');
+    console.log('Stored WebSocket URL cleared from localStorage');
+}
+
+/**
+ * Получает текущий сохраненный WebSocket URL
+ */
+export function getStoredWebSocketUrl() {
+    return localStorage.getItem('chessgpt_websocket_url');
+}
+
+/**
+ * Устанавливает новый WebSocket URL и сохраняет его
+ */
+export function setWebSocketUrl(url) {
+    if (url && url.trim()) {
+        localStorage.setItem('chessgpt_websocket_url', url.trim());
+        console.log('New WebSocket URL set and saved:', url.trim());
+        return true;
+    }
+    return false;
+}
+
 export function connectWebSocket(store) {
     const websocketUrl = getWebSocketUrl();
+    
+    // Показываем пользователю, какой URL используется
+    console.log('Connecting to WebSocket:', websocketUrl);
+    
     socket = new WebSocket(websocketUrl);
 
     socket.onopen = () => {
         console.log('WebSocket connected to:', websocketUrl);
         store.dispatch(setWebSocketConnected(true));
+        
+        // Дополнительно логируем успешное подключение
+        if (getStoredWebSocketUrl()) {
+            console.log('Connected using stored WebSocket URL');
+        }
     };
 
-    // Остальной код остается без изменений...
     socket.onmessage = async (event) => {
         try {
             let messageData = event.data;
@@ -66,6 +135,12 @@ export function connectWebSocket(store) {
         console.error('WebSocket error:', error);
         store.dispatch(setWebSocketConnected(false));
         store.dispatch(stopAnalysis());
+        
+        // При ошибке подключения к сохраненному URL, можно предложить очистить его
+        const storedUrl = getStoredWebSocketUrl();
+        if (storedUrl && websocketUrl === storedUrl) {
+            console.warn('Connection failed with stored URL. Consider clearing it with clearStoredWebSocketUrl()');
+        }
     };
 }
 
