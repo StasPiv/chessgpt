@@ -7,9 +7,15 @@ export interface WebSocketState {
     isConnected: boolean;
 }
 
+// UI State Type
+export interface UIState {
+    isMobile: boolean;
+}
+
 // Root State Type (обновляем существующий)
 export interface RootState {
     chess: ChessState;
     analysis: AnalysisState;
     websocket: WebSocketState;
+    ui: UIState;
 }

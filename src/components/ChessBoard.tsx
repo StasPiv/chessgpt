@@ -18,6 +18,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const fen = useSelector((state: RootState) => state.chess.fen);
     const currentMove = useSelector((state: RootState) => state.chess.currentMove);
     const autoAnalysisEnabled = useSelector((state: RootState) => state.analysis.autoAnalysisEnabled);
+    const isMobile = useSelector((state: RootState) => state.ui.isMobile);
 
     // Состояние для обработки кликов
     const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
@@ -156,7 +157,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
         onSquareClick,
         boardOrientation: isFlipped ? 'black' : 'white',
         id: 'chess-board',
-        squareStyles: customSquareStyles
+        squareStyles: customSquareStyles,
+        canDragPiece: () => !isMobile
     };
 
     return (
