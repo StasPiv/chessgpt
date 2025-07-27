@@ -11,7 +11,7 @@ export function cleanPgn(pgn) {
         .replace(/\uFEFF/g, '')  // Remove BOM (Byte Order Mark)
         .trim();
     
-    // Rest of the function remains the same...
+    // Split into headers and moves sections
     const parts = cleanedPgn.split(/\n\s*\n/);
     let headers = '', moves = '';
     
@@ -28,20 +28,35 @@ export function cleanPgn(pgn) {
         }
     }
 
+    // Add default headers if missing
     if (!headers.includes('[Event')) {
         headers = '[Event "Casual Game"]\n[Site "?"]\n[Date "????.??.??"]\n[Round "?"]\n[White "?"]\n[Black "?"]\n[Result "*"]';
     }
 
     if (moves) {
+        // Remove all comments in curly braces (simple version)
+        // This regex removes { ... } including nested content
+        moves = moves.replace(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g, '');
+        
+        // For more complex nested comments, use this more robust approach:
+        moves = moves.replace(/\{(?:[^{}]|\{[^{}]*\})*\}/g, '');
+        
+        // Clean up extra whitespace after comment removal
+        moves = moves.replace(/\s+/g, ' ').trim();
+        
+        // Fix move notation  
         moves = moves.replace(/(\d+)\.\s*\.\./g, '$1...');
         
+        // Ensure game has a result
         if (!moves.match(/1-0|0-1|1\/2-1\/2|\*$/)) {
             moves += ' *';
         }
         
+        // Final cleanup
         moves = moves.replace(/\s+$/, '\n');
     }
 
+    // Return formatted PGN
     if (parts.length >= 2) {
         return headers + '\n\n' + moves;
     } else {
