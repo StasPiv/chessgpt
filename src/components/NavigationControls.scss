@@ -6,69 +6,220 @@
 }
 
 .nav-button {
-  // Сначала все обычные свойства
+  // Базовые стили для десктопа (пиксели)
+  min-width: 35px;
+  height: 35px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
   opacity: 1;
   pointer-events: auto;
+  transition: all 0.2s ease;
   
-  // Затем миксины
-  @include m.nav-button;
   @include m.nav-button-keyboard;
   
-  // Enhanced visual feedback
+  &:hover:not(:disabled) {
+    background: #0056b3;
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
   &:active:not(:disabled) {
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
   }
   
-  // Loading state (if needed)
   &.loading {
     opacity: 0.7;
     pointer-events: none;
   }
+  
+  // МОБИЛЬНЫЕ СТИЛИ В VW
+  @include m.mobile {
+    & {
+      min-width: 12vw !important;
+      height: 12vw !important;
+      padding: 3vw 4vw !important;
+      font-size: 4vw !important;
+      border-radius: 1.5vw !important;
+      margin: 0.5vw !important;
+    }
+    
+    &:active:not(:disabled) {
+      transform: scale(0.95) !important;
+      box-shadow: inset 0 1vw 2vw rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    // Минимальные размеры для очень маленьких экранов
+    @media (max-width: 320px) {
+      & {
+        min-width: 48px !important;
+        height: 48px !important;
+        font-size: 16px !important;
+        padding: 12px 16px !important;
+        border-radius: 8px !important;
+      }
+    }
+  }
 }
 
-// Icon-specific nav buttons (for ⏮, ⏭, etc.)
+// Icon-specific nav buttons (для символов ⏮, ⏭, etc.)
 .nav-button.icon-button {
-  @include m.nav-icon-button;
+  // Базовые стили для десктопа
+  min-width: 35px;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  @include m.mobile {
+    & {
+      min-width: 12vw !important;
+      width: 12vw !important;
+      height: 12vw !important;
+      font-size: 4vw !important;
+      font-weight: bold !important;
+      padding: 0 !important;
+    }
+    
+    @media (max-width: 320px) {
+      & {
+        min-width: 48px !important;
+        width: 48px !important;
+        height: 48px !important;
+        font-size: 18px !important;
+      }
+    }
+  }
 }
 
 .flip-button {
-  // Сначала обычные свойства
-  transition: all v.$transition-fast ease;
+  // Базовые стили для десктопа
+  min-width: 80px;
+  height: 35px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: white;
+  color: black;
+  border: 2px solid #333333;
+  cursor: pointer;
+  margin-left: 12px;
+  transition: all 0.2s ease;
   
-  // Затем миксины
-  @include m.flip-button;
   @include m.nav-button-keyboard;
   
-  // Убираем CSS-контент - будем использовать только JSX контент
-  // &::before удален чтобы избежать дублирования
+  &:hover:not(:disabled) {
+    background: #f0f0f0;
+    border-color: #555555;
+  }
   
   &.flipped {
-    // Можно добавить дополнительные стили для перевернутого состояния
     transform: scaleY(-1);
+    background: #333333;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #555555;
+    }
+  }
+  
+  // МОБИЛЬНЫЕ СТИЛИ В VW
+  @include m.mobile {
+    & {
+      min-width: 20vw !important;
+      height: 12vw !important;
+      padding: 3vw 4vw !important;
+      font-size: 4vw !important;
+      border-radius: 1.5vw !important;
+      border-width: 0.8vw !important;
+      margin-left: 3vw !important;
+    }
+    
+    &:active:not(:disabled) {
+      transform: scale(0.95) !important;
+    }
+    
+    &.flipped {
+      transform: scaleY(-1) !important;
+      
+      &:active:not(:disabled) {
+        transform: scale(0.95) scaleY(-1) !important;
+      }
+    }
+    
+    @media (max-width: 320px) {
+      & {
+        min-width: 80px !important;
+        height: 48px !important;
+        font-size: 16px !important;
+        border-width: 3px !important;
+        padding: 12px 16px !important;
+        border-radius: 8px !important;
+        margin-left: 12px !important;
+      }
+    }
   }
 }
 
 .position-indicator {
-  // Сначала обычные свойства
+  // Базовые стили для десктопа
   font-family: v.$font-mono;
+  font-size: 12px;
+  color: v.$text-muted;
+  padding: 0 12px;
   letter-spacing: 0.5px;
-  
-  // Затем миксины
-  @include m.position-indicator;
+  display: flex;
+  align-items: center;
   
   // Responsive text
   @include m.tablet {
-    font-size: 13px;
+    & {
+      font-size: 13px;
+    }
   }
   
   @include m.desktop {
-    font-size: v.$position-indicator-size;
+    & {
+      font-size: 14px;
+    }
+  }
+  
+  // МОБИЛЬНЫЕ СТИЛИ В VW
+  @include m.mobile {
+    & {
+      font-size: 3.5vw !important;
+      padding: 0 3vw !important;
+      letter-spacing: 0.2vw !important;
+    }
+    
+    @media (max-width: 320px) {
+      & {
+        font-size: 14px !important;
+        padding: 0 12px !important;
+        letter-spacing: 1px !important;
+      }
+    }
   }
 }
 
 // Button groupings for better organization
 .nav-controls-group {
-  @include m.nav-button-group;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   
   // Separator between groups
   &:not(:last-child)::after {
@@ -76,10 +227,18 @@
     width: 1px;
     height: 20px;
     background-color: v.$border-color;
-    margin: 0 v.$spacing-xs;
+    margin: 0 8px;
     
     @include m.mobile {
-      display: none;
+      & {
+        display: none;
+      }
+    }
+  }
+  
+  @include m.mobile {
+    & {
+      gap: 1vw;
     }
   }
 }
@@ -88,18 +247,37 @@
 .nav-button {
   // First move button
   &.first-move {
-    border-radius: v.$border-radius-sm 0 0 v.$border-radius-sm;
+    border-radius: 4px 0 0 4px;
+    
+    @include m.mobile {
+      & {
+        border-radius: 1.5vw !important;
+      }
+    }
   }
   
   // Last move button  
   &.last-move {
-    border-radius: 0 v.$border-radius-sm v.$border-radius-sm 0;
+    border-radius: 0 4px 4px 0;
+    
+    @include m.mobile {
+      & {
+        border-radius: 1.5vw !important;
+      }
+    }
   }
   
   // Middle buttons in group
   &.middle-button {
     border-radius: 0;
     margin-left: -1px;
+    
+    @include m.mobile {
+      & {
+        border-radius: 1.5vw !important;
+        margin-left: 0 !important;
+      }
+    }
   }
 }
 
@@ -115,41 +293,7 @@
   }
   
   .flip-button.flipped {
-    transform: none;
-  }
-}
-
-// High contrast mode
-@media (prefers-contrast: high) {
-  .navigation-controls {
-    border: 2px solid v.$border-color;
-  }
-  
-  .nav-button {
-    border: 1px solid v.$nav-button-bg;
-    
-    &:disabled {
-      border-color: v.$nav-button-disabled;
-    }
-  }
-  
-  .flip-button {
-    border-width: 3px;
-    
-    &.flipped {
-      border-width: 3px;
-    }
-  }
-}
-
-// Dark mode support (future-ready)
-@media (prefers-color-scheme: dark) {
-  .navigation-controls {
-    background-color: #2a2a2a;
-  }
-  
-  .position-indicator {
-    color: #e0e0e0;
+    transform: scaleY(-1);
   }
 }
 
@@ -157,19 +301,16 @@
 @media (hover: none) and (pointer: coarse) {
   .nav-button,
   .flip-button {
-    // Larger touch targets
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 48px;
+    min-width: 48px;
     
-    // Remove hover effects on touch devices
     &:hover {
       background-color: inherit;
       transform: none;
     }
     
-    // Enhanced touch feedback
     &:active {
-      background-color: v.$nav-button-hover;
+      background-color: #0056b3;
       transform: scale(0.95);
     }
   }
@@ -180,67 +321,88 @@
     }
     
     &.flipped:active {
-      background-color: v.$flip-button-flipped-hover;
+      background-color: #555555;
       transform: scale(0.95) scaleY(-1);
     }
   }
-}
-
-// Print styles
-@media print {
-  .navigation-controls {
-    display: none;
-  }
-}
-
-// Focus management for keyboard navigation
-.navigation-controls {
-  // Skip link for screen readers
-  &::before {
-    content: '';
-    position: absolute;
-    left: -9999px;
-    
-    &:focus {
-      position: static;
-      content: 'Navigation controls';
-      background: v.$info-background;
-      color: v.$info-color;
-      padding: v.$spacing-xs v.$spacing-sm;
-      border-radius: v.$border-radius-sm;
-      font-size: 12px;
-      
-      @include m.flex-center;
-    }
-  }
-}
-
-// Tooltip support (if tooltips are added later)
-.nav-button,
-.flip-button {
-  position: relative;
   
-  &[data-tooltip] {
-    &::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: v.$text-color;
-      color: v.$white;
-      padding: v.$spacing-xs v.$spacing-sm;
-      border-radius: v.$border-radius-sm;
-      font-size: 11px;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity v.$transition-fast;
-      z-index: v.$z-header;
+  .nav-controls-group {
+    gap: 12px;
+    
+    @include m.mobile {
+      & {
+        gap: 3vw;
+      }
+    }
+  }
+}
+
+// Дополнительные стили для очень маленьких экранов
+@media (max-width: 320px) {
+  .navigation-controls {
+    padding: 8px;
+    gap: 4px;
+  }
+  
+  .nav-controls-group {
+    gap: 4px;
+  }
+}
+
+// Для больших мобильных экранов (ландшафтная ориентация)
+@media (min-width: 568px) and (max-width: 767px) and (orientation: landscape) {
+  .navigation-controls {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 2vw;
+  }
+  
+  .nav-button,
+  .flip-button {
+    min-width: 10vw !important;
+    height: 10vw !important;
+    font-size: 3.5vw !important;
+  }
+  
+  .position-indicator {
+    font-size: 3vw !important;
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .nav-button {
+    border: 1px solid #007bff;
+    
+    &:disabled {
+      border-color: #cccccc;
     }
     
-    &:hover::after {
-      opacity: 1;
+    @include m.mobile {
+      & {
+        border-width: 0.3vw;
+      }
+    }
+  }
+  
+  .flip-button {
+    border-width: 3px;
+    
+    @include m.mobile {
+      & {
+        border-width: 1vw !important;
+      }
+    }
+    
+    &.flipped {
+      border-width: 3px;
+      
+      @include m.mobile {
+        & {
+          border-width: 1vw !important;
+        }
+      }
     }
   }
 }

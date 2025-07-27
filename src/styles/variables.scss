@@ -50,7 +50,7 @@ $shadow-dark: rgba(0, 0, 0, 0.3);
 // Modal
 $modal-overlay: rgba(0, 0, 0, 0.5);
 
-// Spacing
+// Spacing - desktop sizes
 $spacing-xxs: 2px;
 $spacing-xs: 4px;
 $spacing-sm: 8px;
@@ -59,13 +59,29 @@ $spacing-lg: 16px;
 $spacing-xl: 20px;
 $spacing-xxl: 24px;
 
-// Border radius
+// Spacing - mobile sizes (vw) - МИНИМАЛЬНЫЕ ЗНАЧЕНИЯ
+$spacing-xxs-mobile: 0.1vw;
+$spacing-xs-mobile: 0.2vw;
+$spacing-sm-mobile: 0.4vw;
+$spacing-md-mobile: 0.6vw;
+$spacing-lg-mobile: 0.8vw;
+$spacing-xl-mobile: 1vw;
+$spacing-xxl-mobile: 1.2vw;
+
+// Border radius - desktop
 $border-radius-xxs: 2px;
 $border-radius-sm: 4px;
 $border-radius-md: 6px;
 $border-radius-lg: 8px;
 $border-radius-xl: 12px;
 $border-radius-round: 50%;
+
+// Border radius - mobile (vw) - МИНИМАЛЬНЫЕ ЗНАЧЕНИЯ
+$border-radius-xxs-mobile: 0.1vw;
+$border-radius-sm-mobile: 0.2vw;
+$border-radius-md-mobile: 0.3vw;
+$border-radius-lg-mobile: 0.4vw;
+$border-radius-xl-mobile: 0.6vw;
 
 // Transitions
 $transition-fast: 0.2s;
@@ -96,18 +112,24 @@ $variation-level-4: #64b5f6;
 
 // Move list specific
 $move-font-size: 16px;
-$move-font-size-mobile: 4.5vw; // Используем vw для лучшей читаемости на мобильных
+$move-font-size-mobile: 4.5vw;
 $move-line-height: 1.4;
 $variation-bracket-size: 13px;
-$variation-bracket-size-mobile: 3.5vw; // Также для скобок вариаций
+$variation-bracket-size-mobile: 3.5vw;
 
-// Navigation controls
+// Navigation controls - desktop
 $nav-controls-bg: #f0f0f0;
 $nav-button-size: 35px;
 $nav-button-min-width: 35px;
 $nav-button-bg: #007bff;
 $nav-button-hover: #0056b3;
 $nav-button-disabled: #cccccc;
+
+// Navigation controls - mobile (vw) - ОЧЕНЬ МАЛЕНЬКИЕ РАЗМЕРЫ
+$nav-button-size-mobile: 3.5vw;
+$nav-button-min-width-mobile: 3.5vw;
+$nav-button-font-size-mobile: 1.4vw;
+$nav-button-padding-mobile: 0.6vw 0.8vw;
 
 // Flip button
 $flip-button-bg: #ffffff;
@@ -119,3 +141,4 @@ $flip-button-flipped-hover: #555555;
 
 // Position indicator
 $position-indicator-size: 12px;
+$position-indicator-size-mobile: 1.2vw;

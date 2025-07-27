@@ -8,7 +8,9 @@
   background-color: v.$background-color;
   
   @include m.mobile {
-    padding: v.$spacing-sm;
+    & {
+      padding: v.$spacing-sm;
+    }
   }
 }
 
@@ -20,16 +22,16 @@
   padding: 0 10px;
   
   @include m.mobile {
-    padding: 0 v.$spacing-sm;
+    & {
+      padding: 0 v.$spacing-sm;
+    }
   }
 }
 
 .reset-layout-btn {
+  gap: v.$spacing-xs;
+  
   @include m.button-secondary;
-  // Переносим gap после включения миксина
-  & {
-    gap: v.$spacing-xs;
-  }
   
   &:hover {
     background: v.$background-hover;
@@ -42,7 +44,9 @@
   height: calc(100vh - 80px);
   
   @include m.mobile {
-    height: calc(100vh - 60px);
+    & {
+      height: calc(100vh - 60px);
+    }
   }
 }
 
@@ -55,12 +59,13 @@
 }
 
 .react-grid-item {
-  @include m.card;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: all v.$transition-fast ease;
   transition-property: left, top, box-shadow;
+  
+  @include m.card;
   
   &:hover {
     box-shadow: 0 4px 8px v.$shadow-light;
@@ -124,50 +129,29 @@
     }
     
     @include m.mobile {
-      width: 15px;
-      height: 15px;
-      padding: 0 2px 2px 0;
-      
-      &::after {
-        right: 3px;
-        bottom: 3px;
-        width: 5px;
-        height: 5px;
+      & {
+        display: none; // Скрываем ручку изменения размера на мобильных
       }
-    }
-  }
-  
-  // Специальные стили для юго-восточной ручки
-  > .react-resizable-handle-se {
-    width: v.$grid-handle-size;
-    height: v.$grid-handle-size;
-    right: 3px;
-    bottom: 3px;
-    background: v.$border-color;
-    border-radius: v.$border-radius-sm;
-    
-    &:hover {
-      background: v.$border-hover;
     }
   }
 }
 
 // Layout items - общие стили для панелей
 .layout-item {
-  @include m.card;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: box-shadow v.$transition-fast ease;
+  
+  @include m.card;
   
   &:hover {
     box-shadow: 0 4px 8px v.$shadow-light;
   }
 }
 
-// Drag handle - заголовок панели
+// Drag handle - заголовок панели - СКРЫВАЕМ НА МОБИЛЬНЫХ
 .drag-handle {
-  @include m.flex-center;
   background: v.$background-secondary;
   border-bottom: 1px solid v.$border-color;
   padding: v.$spacing-sm v.$spacing-md;
@@ -180,13 +164,16 @@
   user-select: none;
   transition: background-color v.$transition-fast ease;
   
+  @include m.flex-center;
+  
   &:hover {
     background: v.$background-hover;
   }
   
   @include m.mobile {
-    padding: v.$spacing-xs v.$spacing-sm;
-    font-size: 13px;
+    & {
+      display: none; // ПОЛНОСТЬЮ СКРЫВАЕМ НА МОБИЛЬНЫХ УСТРОЙСТВАХ
+    }
   }
 }
 
@@ -196,7 +183,9 @@
   line-height: 1;
   
   @include m.mobile {
-    font-size: 10px;
+    & {
+      font-size: 10px;
+    }
   }
 }
 
@@ -208,48 +197,58 @@
 
 // Panel content - основное содержимое панели
 .panel-content {
-  @include m.custom-scrollbar;
   flex: 1;
   overflow: auto;
   padding: 10px;
   display: flex;
   flex-direction: column;
   
+  @include m.custom-scrollbar;
+  
   @include m.mobile {
-    padding: v.$spacing-sm;
+    & {
+      padding: v.$spacing-sm;
+    }
   }
 }
 
 // Специальные стили для панели шахматной доски
 .chessboard-item {
   .panel-content {
-    @include m.flex-column-center;
     justify-content: center;
     padding: 10px;
     gap: v.$spacing-lg;
     
+    @include m.flex-column-center;
+    
     @include m.mobile {
-      gap: v.$spacing-sm;
-      padding: v.$spacing-sm;
+      & {
+        gap: v.$spacing-sm;
+        padding: v.$spacing-sm;
+      }
     }
   }
 }
 
 .chess-board-wrapper {
-  @include m.flex-center;
   flex: 1;
   width: 100%;
   min-height: 0;
+  
+  @include m.flex-center;
 }
 
 .navigation-wrapper {
-  @include m.flex-center;
   flex-shrink: 0;
   width: 100%;
   margin-top: 10px;
   
+  @include m.flex-center;
+  
   @include m.mobile {
-    margin-top: v.$spacing-sm;
+    & {
+      margin-top: v.$spacing-sm;
+    }
   }
 }
 
@@ -266,7 +265,9 @@
     padding: 10px;
     
     @include m.mobile {
-      padding: v.$spacing-sm;
+      & {
+        padding: v.$spacing-sm;
+      }
     }
   }
 }
@@ -279,21 +280,15 @@
   }
   
   .layout {
-    height: calc(100vh - 40px);
+    height: calc(100vh - 20px); // УМЕНЬШАЕМ ВЫСОТУ БЕЗ DRAG-HANDLE
   }
   
   .react-grid-item {
-    // Упрощенные тени для мобильных
     box-shadow: 0 1px 2px v.$shadow-light;
     
     &:hover {
       box-shadow: 0 2px 4px v.$shadow-light;
     }
-  }
-  
-  .drag-handle {
-    // На мобильных может быть сложно перетаскивать, делаем область больше
-    min-height: 40px;
   }
 }
 

@@ -2,13 +2,16 @@
 @use '../styles/mixins' as m;
 
 .game-header {
-  @include m.card;
   padding: v.$spacing-sm v.$spacing-md;
   margin-bottom: v.$spacing-md;
   
+  @include m.card;
+  
   @include m.mobile {
-    padding: v.$spacing-xs v.$spacing-sm;
-    margin-bottom: v.$spacing-sm;
+    & {
+      padding: v.$spacing-xs v.$spacing-sm;
+      margin-bottom: v.$spacing-sm;
+    }
   }
 }
 
@@ -24,8 +27,10 @@
   }
   
   @include m.mobile {
-    font-size: 1em;
-    line-height: 1.2;
+    & {
+      font-size: 1em;
+      line-height: 1.2;
+    }
   }
 }
 
@@ -45,7 +50,9 @@
   }
   
   @include m.mobile {
-    margin-left: v.$spacing-xxs;
+    & {
+      margin-left: v.$spacing-xxs;
+    }
     
     strong {
       font-size: 1em;
@@ -60,8 +67,9 @@
   line-height: 1.2;
   
   @include m.mobile {
-    font-size: 0.8em;
-    line-height: 1.1;
+    & {
+      display: none; // СКРЫВАЕМ НА МОБИЛЬНЫХ УСТРОЙСТВАХ
+    }
   }
 }
 
@@ -107,8 +115,7 @@
   }
   
   .game-header-info {
-    font-size: 3.2vw !important; // Немного меньше основного текста
-    line-height: 1.1 !important;
+    display: none !important; // ПРИНУДИТЕЛЬНО СКРЫВАЕМ НА МОБИЛЬНЫХ
   }
 }
 
@@ -119,7 +126,7 @@
   }
   
   .game-header-info {
-    font-size: 3.8vw !important;
+    display: none !important; // СКРЫВАЕМ И НА МАЛЕНЬКИХ ЭКРАНАХ
   }
 }
 
@@ -130,7 +137,7 @@
   }
   
   .game-header-info {
-    font-size: 3.0vw !important;
+    display: none !important; // СКРЫВАЕМ И НА СРЕДНИХ МОБИЛЬНЫХ
   }
 }
 
@@ -141,7 +148,7 @@
   }
   
   .game-header-info {
-    font-size: 3.2vw !important;
+    display: none !important; // СКРЫВАЕМ И НА БОЛЬШИХ МОБИЛЬНЫХ
   }
 }
 

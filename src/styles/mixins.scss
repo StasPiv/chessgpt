@@ -1,26 +1,30 @@
 @use 'variables' as v;
 
-// Responsive breakpoint mixins
+// Responsive breakpoint mixins - ИСПРАВЛЕННЫЕ ДЛЯ РЕАЛЬНЫХ УСТРОЙСТВ
 @mixin mobile {
-  @media (max-width: #{v.$mobile - 1px}) {
+  @media (max-device-width: #{v.$mobile - 1px}), 
+         (max-width: #{v.$mobile - 1px}) and (pointer: coarse) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
+  @media (min-device-width: #{v.$mobile}) and (max-device-width: #{v.$tablet - 1px}),
+         (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) and (pointer: coarse) {
     @content;
   }
 }
 
 @mixin desktop {
-  @media (min-width: #{v.$desktop}) {
+  @media (min-device-width: #{v.$desktop}),
+         (min-width: #{v.$desktop}) and (pointer: fine) {
     @content;
   }
 }
 
 @mixin mobile-up {
-  @media (min-width: #{v.$mobile}) {
+  @media (min-device-width: #{v.$mobile}),
+         (min-width: #{v.$mobile}) {
     @content;
   }
 }
@@ -139,8 +143,11 @@
   }
 
   @include mobile {
-    padding: v.$spacing-sm;
-    font-size: 13px;
+    & {
+      padding: v.$spacing-sm-mobile;
+      font-size: 3.5vw;
+      border-radius: v.$border-radius-lg-mobile;
+    }
   }
 }
 
@@ -169,8 +176,11 @@
   border: 1px solid v.$warning-color;
 
   @include mobile {
-    padding: v.$spacing-sm;
-    margin-bottom: v.$spacing-md;
+    & {
+      padding: v.$spacing-md-mobile;
+      margin-bottom: v.$spacing-lg-mobile;
+      border-radius: v.$border-radius-md-mobile;
+    }
   }
 }
 
@@ -178,12 +188,24 @@
   color: v.$error-color;
   font-weight: 500;
   margin-bottom: v.$spacing-sm;
+
+  @include mobile {
+    & {
+      margin-bottom: v.$spacing-sm-mobile;
+    }
+  }
 }
 
 @mixin validation-warning {
   color: v.$warning-color;
   font-weight: 500;
   margin-bottom: v.$spacing-xs;
+
+  @include mobile {
+    & {
+      margin-bottom: v.$spacing-xs-mobile;
+    }
+  }
 }
 
 // Loading state mixin
@@ -197,8 +219,11 @@
   margin-bottom: v.$spacing-lg;
 
   @include mobile {
-    padding: v.$spacing-md;
-    margin-bottom: v.$spacing-md;
+    & {
+      padding: v.$spacing-lg-mobile;
+      margin-bottom: v.$spacing-lg-mobile;
+      border-radius: v.$border-radius-md-mobile;
+    }
   }
 }
 
@@ -223,7 +248,9 @@
   gap: v.$spacing-sm;
 
   @include mobile {
-    gap: v.$spacing-xs;
+    & {
+      gap: v.$spacing-sm-mobile;
+    }
   }
 }
 
@@ -245,12 +272,24 @@
   border: 1px solid v.$border-color;
   border-radius: v.$border-radius-md;
   box-shadow: 0 2px 4px v.$shadow-light;
+
+  @include mobile {
+    & {
+      border-radius: v.$border-radius-md-mobile;
+    }
+  }
 }
 
 // Custom scrollbar mixin
 @mixin custom-scrollbar {
   &::-webkit-scrollbar {
     width: 6px;
+    
+    @include mobile {
+      & {
+        width: 2vw;
+      }
+    }
   }
   
   &::-webkit-scrollbar-track {
@@ -263,6 +302,12 @@
     
     &:hover {
       background: v.$text-muted;
+    }
+    
+    @include mobile {
+      & {
+        border-radius: 1vw;
+      }
     }
   }
 }
@@ -291,16 +336,25 @@
   width: 90%;
   max-width: none;
 
-  @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
+  @media (min-device-width: #{v.$mobile}) and (max-device-width: #{v.$tablet - 1px}),
+         (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) and (pointer: coarse) {
     padding: v.$spacing-xxl;
     width: 80%;
     max-width: 500px;
   }
 
-  @media (min-width: #{v.$desktop}) {
+  @media (min-device-width: #{v.$desktop}),
+         (min-width: #{v.$desktop}) and (pointer: fine) {
     padding: v.$spacing-xxl;
     width: auto;
     max-width: 500px;
+  }
+
+  @include mobile {
+    & {
+      padding: v.$spacing-xl-mobile;
+      border-radius: v.$border-radius-lg-mobile;
+    }
   }
 }
 
@@ -324,6 +378,14 @@
     color: v.$move-current-color;
     font-weight: bold;
   }
+
+  @include mobile {
+    & {
+      padding: v.$spacing-xxs-mobile v.$spacing-xxs-mobile;
+      margin-right: 1vw;
+      border-radius: v.$border-radius-xxs-mobile;
+    }
+  }
 }
 
 @mixin move-main-line {
@@ -346,6 +408,16 @@
   &.variation-bracket-close {
     margin-right: 0.5em;
   }
+
+  @include mobile {
+    & {
+      font-size: v.$variation-bracket-size-mobile;
+    }
+    
+    &.variation-bracket-close {
+      margin-right: 1vw;
+    }
+  }
 }
 
 @mixin move-number {
@@ -366,8 +438,10 @@
   @include flex-center;
   
   @include mobile {
-    padding: v.$spacing-lg;
-    min-height: 80px;
+    & {
+      padding: v.$spacing-xl-mobile;
+      min-height: 25vw;
+    }
   }
 }
 
@@ -407,34 +481,39 @@
   margin: 0;
 }
 
-// Navigation controls mixins
+// Navigation controls mixins - ИСПРАВЛЕННЫЕ С VW ДЛЯ МОБИЛЬНЫХ
 @mixin navigation-controls-container {
-  gap: v.$spacing-md;
   background-color: v.$nav-controls-bg;
-  padding: v.$spacing-md;
   border-radius: v.$border-radius-lg;
   box-shadow: 0 2px 5px v.$shadow-light;
   margin: v.$spacing-md 0;
+  padding: v.$spacing-md;
+  gap: v.$spacing-md;
   
   @include flex-center;
   
   @include mobile {
-    gap: v.$spacing-sm;
-    padding: v.$spacing-sm;
-    margin: v.$spacing-sm 0;
-    flex-wrap: wrap;
+    & {
+      padding: v.$spacing-md-mobile;
+      gap: v.$spacing-md-mobile;
+      margin: v.$spacing-md-mobile 0;
+      border-radius: v.$border-radius-lg-mobile;
+      flex-wrap: wrap;
+    }
   }
 }
 
 @mixin nav-button-base {
+  border: none;
+  cursor: pointer;
+  transition: background-color v.$transition-fast, transform 0.1s ease;
+  
+  // Desktop размеры
   min-width: v.$nav-button-min-width;
   height: v.$nav-button-size;
   padding: v.$spacing-sm v.$spacing-md;
   font-size: 14px;
   border-radius: v.$border-radius-sm;
-  border: none;
-  cursor: pointer;
-  transition: background-color v.$transition-fast, transform 0.1s ease;
   
   @include flex-center;
   
@@ -444,11 +523,15 @@
     transform: none;
   }
   
+  // МОБИЛЬНЫЕ РАЗМЕРЫ В VW
   @include mobile {
-    min-width: 32px;
-    height: 32px;
-    padding: v.$spacing-xs v.$spacing-sm;
-    font-size: 12px;
+    & {
+      min-width: v.$nav-button-min-width-mobile;
+      height: v.$nav-button-size-mobile;
+      padding: v.$spacing-md-mobile v.$spacing-lg-mobile;
+      font-size: v.$nav-button-font-size-mobile;
+      border-radius: v.$border-radius-md-mobile;
+    }
   }
 }
 
@@ -465,6 +548,12 @@
 
   &:active:not(:disabled) {
     transform: translateY(0);
+  }
+  
+  @include mobile {
+    &:active:not(:disabled) {
+      transform: scale(0.95);
+    }
   }
 }
 
@@ -491,7 +580,10 @@
   }
   
   @include mobile {
-    margin-left: v.$spacing-sm;
+    & {
+      margin-left: v.$spacing-md-mobile;
+      border-width: 0.8vw;
+    }
   }
 }
 
@@ -503,8 +595,10 @@
   white-space: nowrap;
   
   @include mobile {
-    font-size: 11px;
-    padding: 0 v.$spacing-sm;
+    & {
+      font-size: v.$position-indicator-size-mobile;
+      padding: 0 v.$spacing-md-mobile;
+    }
   }
 }
 
@@ -526,7 +620,9 @@
   gap: v.$spacing-xs;
   
   @include mobile {
-    gap: v.$spacing-xxs;
+    & {
+      gap: v.$spacing-sm-mobile;
+    }
   }
 }
 
@@ -540,7 +636,10 @@
   @include nav-button;
   
   @include mobile {
-    min-width: 28px;
-    font-size: 16px;
+    & {
+      min-width: v.$nav-button-size-mobile;
+      font-size: v.$nav-button-font-size-mobile;
+      font-weight: bold;
+    }
   }
 }

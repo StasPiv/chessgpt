@@ -12,18 +12,19 @@
 
 // App header
 .app-header {
-  @include m.flex-between;
   background: v.$white;
   border-bottom: 1px solid v.$border-color;
   box-shadow: 0 2px 4px v.$shadow-light;
   flex-shrink: 0;
   z-index: v.$z-header;
-  
-  // Адаптивный padding
   padding: v.$spacing-md v.$spacing-lg;
   
+  @include m.flex-between;
+  
   @media (min-width: #{v.$mobile}) {
-    padding: v.$spacing-md v.$spacing-xl;
+    & {
+      padding: v.$spacing-md v.$spacing-xl;
+    }
   }
 }
 
@@ -31,28 +32,30 @@
   font-weight: bold;
   color: v.$text-color;
   margin: 0;
-  
-  // Адаптивный размер шрифта
   font-size: 20px;
   
   @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
-    font-size: 22px;
+    & {
+      font-size: 22px;
+    }
   }
   
   @media (min-width: #{v.$desktop}) {
-    font-size: 24px;
+    & {
+      font-size: 24px;
+    }
   }
 }
 
 .app-controls {
   display: flex;
   align-items: center;
-  
-  // Адаптивный gap
   gap: v.$spacing-md;
   
   @media (min-width: #{v.$mobile}) {
-    gap: v.$spacing-lg;
+    & {
+      gap: v.$spacing-lg;
+    }
   }
 }
 
@@ -81,23 +84,26 @@
 }
 
 .pgn-modal-header {
-  @include m.flex-between;
   margin-bottom: v.$spacing-xl;
   
+  @include m.flex-between;
+  
   @include m.mobile {
-    margin-bottom: v.$spacing-lg;
+    & {
+      margin-bottom: v.$spacing-lg;
+    }
   }
 }
 
 .pgn-modal-title {
   font-weight: bold;
   color: v.$text-color;
-  
-  // Адаптивный размер шрифта
   font-size: 18px;
   
   @media (min-width: #{v.$mobile}) {
-    font-size: 20px;
+    & {
+      font-size: 20px;
+    }
   }
 }
 
@@ -109,18 +115,18 @@
   padding: 0;
   border-radius: v.$border-radius-round;
   transition: all v.$transition-fast;
-  
-  @include m.flex-center;
-  
-  // Адаптивные размеры
   width: 25px;
   height: 25px;
   font-size: 20px;
   
+  @include m.flex-center;
+  
   @media (min-width: #{v.$mobile}) {
-    width: 30px;
-    height: 30px;
-    font-size: 24px;
+    & {
+      width: 30px;
+      height: 30px;
+      font-size: 24px;
+    }
   }
   
   &:hover {
@@ -138,17 +144,18 @@
 }
 
 .react-grid-item {
-  @include m.card;
-  transition: all v.$transition-medium ease;
-  transition-property: left, top;
   overflow: hidden;
   box-sizing: border-box;
-  
-  // Адаптивный padding
   padding: v.$spacing-sm;
+  transition: all v.$transition-medium ease;
+  transition-property: left, top;
+  
+  @include m.card;
   
   @media (min-width: #{v.$mobile}) {
-    padding: v.$spacing-md;
+    & {
+      padding: v.$spacing-md;
+    }
   }
   
   &.cssTransforms {
@@ -165,16 +172,16 @@
     background-origin: content-box;
     box-sizing: border-box;
     cursor: se-resize;
-    
-    // Адаптивные размеры
     width: 15px;
     height: 15px;
     padding: 0 2px 2px 0;
     
     @media (min-width: #{v.$mobile}) {
-      width: v.$grid-handle-size;
-      height: v.$grid-handle-size;
-      padding: 0 3px 3px 0;
+      & {
+        width: v.$grid-handle-size;
+        height: v.$grid-handle-size;
+        padding: 0 3px 3px 0;
+      }
     }
   }
 }
@@ -230,7 +237,6 @@
   }
   
   .react-grid-item {
-    // Упрощенные стили для мобильных
     box-shadow: 0 1px 2px v.$shadow-light;
   }
 }
