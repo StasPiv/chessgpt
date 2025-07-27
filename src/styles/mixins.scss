@@ -39,18 +39,18 @@
   border-radius: v.$border-radius-sm;
   padding: 6px 12px;
   font-size: 12px;
-  
+
   // Затем псевдо-селекторы
   &:hover {
     background: v.$primary-hover;
   }
-  
+
   // Затем медиа-запросы
   @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
     padding: v.$spacing-sm 12px;
     font-size: 14px;
   }
-  
+
   @media (min-width: #{v.$desktop}) {
     padding: v.$spacing-sm 16px;
     font-size: 14px;
@@ -70,18 +70,18 @@
   border-radius: v.$border-radius-sm;
   padding: 6px 12px;
   font-size: 12px;
-  
+
   // Затем псевдо-селекторы
   &:hover {
     background: v.$success-hover;
   }
-  
+
   // Затем медиа-запросы
   @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
     padding: v.$spacing-sm 12px;
     font-size: 14px;
   }
-  
+
   @media (min-width: #{v.$desktop}) {
     padding: v.$spacing-sm 16px;
     font-size: 14px;
@@ -132,13 +132,13 @@
   padding: v.$spacing-xl;
   width: 90%;
   max-width: none;
-  
+
   @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
     padding: v.$spacing-xxl;
     width: 80%;
     max-width: 500px;
   }
-  
+
   @media (min-width: #{v.$desktop}) {
     padding: v.$spacing-xxl;
     width: auto;

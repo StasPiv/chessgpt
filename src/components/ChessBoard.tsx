@@ -11,7 +11,7 @@ import {
     PieceDropEvent
 } from '../types';
 import { ChessboardOptions } from 'react-chessboard';
-import './ChessBoard.css';
+import './ChessBoard.scss';
 
 const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const dispatch = useDispatch();

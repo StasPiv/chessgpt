@@ -1,0 +1,205 @@
+
+@use '../styles/variables' as v;
+@use '../styles/mixins' as m;
+
+// Drag & Drop стили для фигур
+.piece {
+  transition: transform 0.1s ease-out;
+  cursor: grab;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &.dragging {
+    transform: translateY(-10px) !important;
+    z-index: 10000 !important;
+    pointer-events: none !important;
+    cursor: grabbing !important;
+  }
+}
+
+// Специальные стили для фигур внутри react-grid-item
+.react-grid-item .piece.dragging {
+  z-index: 10000 !important;
+  pointer-events: none !important;
+  transform: translateY(-10px) !important;
+  position: fixed !important;
+  cursor: grabbing !important;
+}
+
+// Контейнер шахматной доски
+.chess-board-container {
+  width: 100%;
+  height: 100%;
+  @include m.flex-center;
+  align-items: flex-start;
+  overflow: visible;
+  padding: 10px;
+  box-sizing: border-box;
+
+  // Основные стили для шахматной доски
+  > div:not([style*="position: fixed"]) {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    max-width: calc(100% - 20px) !important;
+    
+    // Вложенные div элементы
+    > div {
+      width: 100% !important;
+      height: 100% !important;
+      aspect-ratio: 1 / 1 !important;
+    }
+  }
+
+  @include m.mobile {
+    padding: v.$spacing-sm;
+    
+    > div:not([style*="position: fixed"]) {
+      max-width: calc(100% - 16px) !important;
+    }
+  }
+}
+
+// Специальные стили для react-grid-item
+.react-grid-item .chess-board-container {
+  width: 100%;
+  height: 100%;
+  @include m.flex-center;
+  align-items: flex-start;
+  overflow: visible;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+// Стили для react-chessboard компонента
+.react-chessboard {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+
+  // Стили для клеток доски
+  [data-square] {
+    transition: background-color v.$transition-fast ease;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  // Стили для фигур
+  [data-piece] {
+    transition: 
+      transform 0.15s ease-out,
+      box-shadow 0.15s ease-out,
+      filter 0.15s ease-out;
+    cursor: grab !important;
+    border-radius: v.$border-radius-sm;
+
+    &:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 12px v.$shadow-medium;
+      filter: brightness(1.1);
+    }
+
+    // Анимация после завершения хода
+    &:not([style*="cursor: grabbing"]) {
+      animation: pieceSettle 0.3s ease-out;
+    }
+  }
+}
+
+// Анимация установки фигуры после хода
+@keyframes pieceSettle {
+  0% {
+    transform: translateY(-5px) scale(1.0);
+  }
+  50% {
+    transform: translateY(2px) scale(1.0);
+  }
+  100% {
+    transform: translateY(0) scale(1.0);
+  }
+}
+
+// Специальный селектор для переопределения overflow
+#chess-board-board {
+  overflow: unset !important;
+}
+
+// Адаптивные стили для мобильных устройств
+@include m.mobile {
+  .chess-board-container {
+    .react-chessboard [data-piece] {
+      &:hover {
+        // Убираем hover эффекты на мобильных для лучшей производительности
+        transform: none;
+        box-shadow: none;
+        filter: none;
+      }
+    }
+  }
+
+  // Увеличиваем размер тач-таргетов на мобильных
+  .react-chessboard [data-square] {
+    min-height: 40px;
+    min-width: 40px;
+  }
+}
+
+// Стили для подсветки выбранных клеток
+.square-highlight {
+  background-color: rgba(255, 255, 0, 0.4) !important;
+  border: 2px solid #ffff00 !important;
+}
+
+// Стили для возможных ходов
+.possible-move {
+  background-color: rgba(0, 255, 0, 0.2) !important;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20%;
+    height: 20%;
+    background-color: rgba(0, 255, 0, 0.6);
+    border-radius: v.$border-radius-round;
+    transform: translate(-50%, -50%);
+  }
+}
+
+// Стили для последнего хода
+.last-move {
+  background-color: rgba(255, 255, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 0, 0.6) !important;
+}
+
+// Стили для атакованного короля (шах)
+.king-in-check {
+  background-color: rgba(255, 0, 0, 0.4) !important;
+  border: 2px solid #ff0000 !important;
+  animation: checkPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes checkPulse {
+  0% {
+    background-color: rgba(255, 0, 0, 0.3);
+  }
+  100% {
+    background-color: rgba(255, 0, 0, 0.5);
+  }
+}
+
+// Улучшенные стили для планшетов
+@include m.tablet {
+  .chess-board-container {
+    padding: v.$spacing-md;
+    
+    .react-chessboard [data-piece] {
+      &:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 4px 8px v.$shadow-light;
+      }
+    }
+  }
+}
