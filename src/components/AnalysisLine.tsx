@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnalysisLine as AnalysisLineType } from '../types';
-import './AnalysisLine.css';
+import './AnalysisLine.scss';
 
 interface ProcessedLine extends AnalysisLineType {
     moves: string;

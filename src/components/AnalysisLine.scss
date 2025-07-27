@@ -1,0 +1,90 @@
+
+@use '../styles/variables' as v;
+@use '../styles/mixins' as m;
+
+.analysis-line {
+  // Основные свойства
+  padding: 6px 10px;
+  border-left: 3px solid v.$border-color;
+  background-color: v.$background-secondary;
+  border-radius: v.$border-radius-sm;
+  font-size: 12px;
+  line-height: 1.2;
+  transition: all v.$transition-fast ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  overflow-x: scroll;
+  
+  // Состояния
+  &.inactive {
+    opacity: 0.6;
+  }
+  
+  &:hover {
+    background-color: v.$background-hover;
+    border-left-color: v.$primary-color;
+  }
+  
+  // Первая линия (лучший ход)
+  &:first-child {
+    border-left-color: v.$success-color;
+    background-color: v.$success-background;
+    
+    &:hover {
+      background-color: v.$success-background-hover;
+    }
+  }
+  
+  // Адаптивные изменения для мобильных
+  @include m.mobile {
+    padding: 8px;
+    gap: 8px;
+    font-size: 11px;
+  }
+}
+
+.line-score {
+  font-weight: 600;
+  color: v.$text-color;
+  min-width: 50px;
+  font-size: 12px;
+  flex-shrink: 0;
+  
+  @include m.mobile {
+    min-width: 40px;
+    font-size: 11px;
+  }
+}
+
+.line-depth {
+  font-size: 10px;
+  color: v.$text-muted;
+  min-width: 35px;
+  flex-shrink: 0;
+  
+  @include m.mobile {
+    min-width: 30px;
+    font-size: 9px;
+  }
+}
+
+.line-moves {
+  font-family: v.$font-mono;
+  color: v.$primary-color;
+  cursor: pointer;
+  transition: color v.$transition-fast ease;
+  flex: 1;
+  font-size: 12px;
+  flex-shrink: 0;
+  
+  &:hover {
+    color: v.$primary-hover;
+    text-decoration: underline;
+  }
+  
+  @include m.mobile {
+    font-size: 11px;
+  }
+}
