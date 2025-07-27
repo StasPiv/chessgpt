@@ -28,9 +28,9 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
         ],
         // Добавляем макет для мобильных устройств
         sm: [
-            { i: 'chessboard', x: 0, y: 0, w: 12, h: 6, minW: 12, minH: 5 },
-            { i: 'moves', x: 0, y: 6, w: 12, h: 4, minW: 12, minH: 3 },
-            { i: 'analysis', x: 0, y: 10, w: 12, h: 3, minW: 12, minH: 2 }
+            { i: 'chessboard', x: 0, y: 0, w: 12, h: 15, minW: 12, minH: 5 },
+            { i: 'moves', x: 0, y: 6, w: 12, h: 6, minW: 12, minH: 3 },
+            { i: 'analysis', x: 0, y: 10, w: 12, h: 5, minW: 12, minH: 2 }
         ]
     });
 

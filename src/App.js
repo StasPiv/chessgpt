@@ -14,41 +14,8 @@ function App() {
         connectWebSocket(store);
     }, []);
 
-    const handlePasteClick = () => {
-        setShowPgnModal(true);
-    };
-
     const handleClosePgnModal = () => {
         setShowPgnModal(false);
-    };
-
-    // Function to reset layout
-    const handleResetLayout = () => {
-        const defaultLayouts = {
-            lg: [
-                { i: 'chessboard', x: 0, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
-                { i: 'moves', x: 6, y: 0, w: 6, h: 8, minW: 3, minH: 4 },
-                { i: 'analysis', x: 0, y: 8, w: 12, h: 4, minW: 6, minH: 3 }
-            ],
-            md: [
-                { i: 'chessboard', x: 0, y: 0, w: 8, h: 6, minW: 4, minH: 5 },
-                { i: 'moves', x: 8, y: 0, w: 4, h: 6, minW: 3, minH: 4 },
-                { i: 'analysis', x: 0, y: 6, w: 12, h: 4, minW: 6, minH: 3 }
-            ],
-            sm: [
-                { i: 'chessboard', x: 0, y: 0, w: 12, h: 6, minW: 6, minH: 5 },
-                { i: 'moves', x: 0, y: 6, w: 12, h: 4, minW: 6, minH: 3 },
-                { i: 'analysis', x: 0, y: 10, w: 12, h: 4, minW: 6, minH: 3 }
-            ],
-            xs: [
-                { i: 'chessboard', x: 0, y: 0, w: 12, h: 6, minW: 6, minH: 5 },
-                { i: 'moves', x: 0, y: 6, w: 12, h: 4, minW: 6, minH: 3 },
-                { i: 'analysis', x: 0, y: 10, w: 12, h: 4, minW: 6, minH: 3 }
-            ]
-        };
-        localStorage.setItem('chessapp-layouts', JSON.stringify(defaultLayouts));
-        // Reload page to apply new layout
-        window.location.reload();
     };
 
     return (
