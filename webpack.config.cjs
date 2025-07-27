@@ -1,4 +1,3 @@
-
 const path = require('path');
 const webpack = require('webpack');
 
@@ -66,8 +65,25 @@ module.exports = {
                 }
             },
             {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                test: /\.(css|scss|sass)$/,
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            sourceMap: !isProduction
+                        }
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: !isProduction,
+                            sassOptions: {
+                                outputStyle: isProduction ? 'compressed' : 'expanded'
+                            }
+                        }
+                    }
+                ]
             }
         ]
     }

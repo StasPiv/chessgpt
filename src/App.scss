@@ -1,0 +1,252 @@
+@use './styles/variables' as v;
+@use './styles/mixins' as m;
+
+// Main app container
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: v.$background-color;
+  overflow: hidden;
+}
+
+// App header
+.app-header {
+  @include m.flex-between;
+  background: v.$white;
+  border-bottom: 1px solid v.$border-color;
+  box-shadow: 0 2px 4px v.$shadow-light;
+  flex-shrink: 0;
+  z-index: v.$z-header;
+  
+  // Адаптивный padding
+  padding: v.$spacing-md v.$spacing-lg;
+  
+  @media (min-width: #{v.$mobile}) {
+    padding: v.$spacing-md v.$spacing-xl;
+  }
+}
+
+.app-title {
+  font-weight: bold;
+  color: v.$text-color;
+  margin: 0;
+  
+  // Адаптивный размер шрифта
+  font-size: 20px;
+  
+  @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
+    font-size: 22px;
+  }
+  
+  @media (min-width: #{v.$desktop}) {
+    font-size: 24px;
+  }
+}
+
+.app-controls {
+  display: flex;
+  align-items: center;
+  
+  // Адаптивный gap
+  gap: v.$spacing-md;
+  
+  @media (min-width: #{v.$mobile}) {
+    gap: v.$spacing-lg;
+  }
+}
+
+// Layout container
+.layout-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+// Buttons
+.paste-icon {
+  @include m.button-primary;
+}
+
+.reset-layout-btn {
+  @include m.button-success;
+}
+
+// PGN Modal
+.pgn-modal {
+  @include m.modal-overlay;
+}
+
+.pgn-modal-content {
+  @include m.modal-content;
+}
+
+.pgn-modal-header {
+  @include m.flex-between;
+  margin-bottom: v.$spacing-xl;
+  
+  @include m.mobile {
+    margin-bottom: v.$spacing-lg;
+  }
+}
+
+.pgn-modal-title {
+  font-weight: bold;
+  color: v.$text-color;
+  
+  // Адаптивный размер шрифта
+  font-size: 18px;
+  
+  @media (min-width: #{v.$mobile}) {
+    font-size: 20px;
+  }
+}
+
+.pgn-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: v.$text-muted;
+  padding: 0;
+  border-radius: v.$border-radius-round;
+  transition: all v.$transition-fast;
+  
+  @include m.flex-center;
+  
+  // Адаптивные размеры
+  width: 25px;
+  height: 25px;
+  font-size: 20px;
+  
+  @media (min-width: #{v.$mobile}) {
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+  }
+  
+  &:hover {
+    background-color: #f0f0f0;
+    color: v.$text-color;
+  }
+}
+
+// Grid Layout
+.react-grid-layout {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.react-grid-item {
+  @include m.card;
+  transition: all v.$transition-medium ease;
+  transition-property: left, top;
+  overflow: hidden;
+  box-sizing: border-box;
+  
+  // Адаптивный padding
+  padding: v.$spacing-sm;
+  
+  @media (min-width: #{v.$mobile}) {
+    padding: v.$spacing-md;
+  }
+  
+  &.cssTransforms {
+    transition-property: transform;
+  }
+  
+  > .react-resizable-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNiA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiM0NDQiIG9wYWNpdHk9IjAuMzAyIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Im0xIDVoNHY0aC00em0yLTJoMnYyaC0yeiIvPjwvZz48L3N2Zz4=') no-repeat;
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    box-sizing: border-box;
+    cursor: se-resize;
+    
+    // Адаптивные размеры
+    width: 15px;
+    height: 15px;
+    padding: 0 2px 2px 0;
+    
+    @media (min-width: #{v.$mobile}) {
+      width: v.$grid-handle-size;
+      height: v.$grid-handle-size;
+      padding: 0 3px 3px 0;
+    }
+  }
+}
+
+// Legacy App component styles (можно удалить если не используются)
+.App {
+  text-align: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: v.$spacing-xl;
+  color: v.$white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Main content
+.main-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+// Mobile-specific overrides
+@include m.mobile {
+  .app-header {
+    flex-wrap: wrap;
+    
+    .app-controls {
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: center;
+      margin-top: v.$spacing-sm;
+    }
+  }
+  
+  .react-grid-item {
+    // Упрощенные стили для мобильных
+    box-shadow: 0 1px 2px v.$shadow-light;
+  }
+}
+
+// Tablet-specific styles
+@include m.tablet {
+  .app-controls {
+    gap: v.$spacing-md;
+  }
+}
+
+// Desktop-specific enhancements
+@include m.desktop {
+  .react-grid-item {
+    &:hover {
+      box-shadow: 0 4px 8px v.$shadow-light;
+    }
+  }
+}

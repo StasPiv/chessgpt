@@ -4,7 +4,7 @@ import { store } from './redux/store.js';
 import CustomLayout from './components/CustomLayout.tsx';
 import LoadPgn from './components/LoadPgn.tsx';
 import { connectWebSocket } from './websocket.js';
-import './App.css';
+import './App.scss';
 
 function App() {
     const [showPgnModal, setShowPgnModal] = useState(false);
