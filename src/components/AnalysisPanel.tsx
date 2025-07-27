@@ -6,7 +6,7 @@ import { store } from '../redux/store.js';
 import { RootState, AnalysisLine as AnalysisLineType } from '../types';
 import AnalysisLine from './AnalysisLine';
 import { convertUciToSan, formatMovesWithNumbers } from '../utils/ChessMoveConverter';
-import './AnalysisPanel.css';
+import './AnalysisPanel.scss';
 
 const AnalysisPanel: React.FC = () => {
     const dispatch = useDispatch();

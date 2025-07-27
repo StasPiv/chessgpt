@@ -1,0 +1,249 @@
+
+@use '../styles/variables' as v;
+@use '../styles/mixins' as m;
+
+.analysis-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: v.$font-system;
+}
+
+.analysis-header {
+  @include m.flex-between;
+  margin-bottom: v.$spacing-lg;
+  padding-bottom: 10px;
+  border-bottom: 1px solid v.$border-color;
+  
+  @include m.mobile {
+    flex-direction: column;
+    gap: v.$spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+.header-left {
+  .checkbox-container {
+    @include m.flex-center;
+    cursor: pointer;
+    user-select: none;
+    gap: v.$spacing-sm;
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  .checkmark {
+    width: 18px;
+    height: 18px;
+    background-color: v.$white;
+    border: 2px solid v.$border-hover;
+    border-radius: v.$border-radius-sm;
+    position: relative;
+    transition: all v.$transition-fast ease;
+    flex-shrink: 0;
+
+    &::after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 5px;
+      top: 2px;
+      width: 4px;
+      height: 8px;
+      border: solid v.$white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  input[type="checkbox"]:checked + .checkmark {
+    background-color: v.$success-color;
+    border-color: v.$success-color;
+
+    &::after {
+      display: block;
+    }
+  }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-lg;
+  
+  @include m.mobile {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+}
+
+.total-nodes {
+  font-size: 12px;
+  color: v.$text-muted;
+  font-weight: bold;
+  
+  @include m.mobile {
+    font-size: 11px;
+  }
+}
+
+.connection-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.connection-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: v.$border-radius-round;
+  transition: background-color v.$transition-medium ease;
+  flex-shrink: 0;
+
+  &.connected {
+    background-color: v.$success-color;
+  }
+
+  &.disconnected {
+    background-color: #f44336; // Добавим в переменные как $error-color
+  }
+}
+
+.connection-text {
+  font-size: 12px;
+  color: v.$text-muted;
+  
+  @include m.mobile {
+    font-size: 11px;
+  }
+}
+
+.reconnect-btn {
+  background: v.$white;
+  border: 1px solid v.$border-hover;
+  color: v.$text-muted;
+  padding: 4px v.$spacing-sm;
+  border-radius: v.$border-radius-sm;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all v.$transition-fast ease;
+  margin-left: 6px;
+  min-width: 28px;
+  height: 24px;
+  @include m.flex-center;
+
+  &:hover:not(:disabled) {
+    background-color: v.$background-color;
+    border-color: v.$text-secondary;
+    color: v.$text-color;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+.analysis-lines {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 300px;
+
+  &.inactive {
+    opacity: 0.6;
+  }
+  
+  @include m.mobile {
+    max-height: 200px;
+  }
+}
+
+.no-analysis {
+  text-align: center;
+  color: v.$text-secondary;
+  font-style: italic;
+  padding: v.$spacing-xl;
+  border: 1px dashed v.$border-color;
+  border-radius: v.$border-radius-sm;
+  margin-top: v.$spacing-lg;
+  background-color: #fafafa; // Добавим в переменные как $background-alt
+
+  @include m.mobile {
+    padding: v.$spacing-md;
+    font-size: 14px;
+  }
+}
+
+// Стили для анализа (если они все еще нужны в этом файле)
+.analysis-line {
+  background: v.$background-secondary;
+  border-radius: v.$border-radius-md;
+  padding: 10px;
+  margin-bottom: v.$spacing-sm;
+  border-left: 3px solid v.$success-color;
+  transition: background-color v.$transition-fast ease;
+
+  &:hover {
+    background: v.$background-hover;
+  }
+
+  &.inactive {
+    opacity: 0.5;
+  }
+}
+
+.line-header {
+  @include m.flex-between;
+  margin-bottom: v.$spacing-sm;
+}
+
+.line-evaluation {
+  font-weight: bold;
+  color: v.$success-color;
+}
+
+.line-info {
+  font-size: 11px;
+  color: v.$text-muted;
+  display: flex;
+  gap: 10px;
+}
+
+.line-moves {
+  font-family: v.$font-mono;
+  font-size: 13px;
+  line-height: 1.4;
+  color: v.$text-color;
+  word-wrap: break-word;
+  
+  @include m.mobile {
+    font-size: 12px;
+  }
+}
+
+.move-number {
+  color: v.$text-secondary;
+  font-weight: normal;
+}
+
+.white-move {
+  color: v.$black;
+  font-weight: 500;
+}
+
+.black-move {
+  color: v.$text-color;
+  font-weight: 500;
+}
