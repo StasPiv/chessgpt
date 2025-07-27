@@ -1,12 +1,22 @@
 package com.chessgpt;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StatusWindow extends JFrame {
     private JPanel webSocketStatusPanel;
@@ -15,11 +25,14 @@ public class StatusWindow extends JFrame {
     private JTextField ngrokUrlField;
     private JTextArea ngrokStatusArea;
     private JScrollPane ngrokStatusScrollPane;
+    private JLabel qrCodeLabel;
     private JButton copyButton;
     private JButton openButton;
+    private JButton saveQRButton;
     private boolean webSocketConnected = false;
     private boolean engineConnected = false;
     private String ngrokUrl = null;
+    private BufferedImage qrCodeImage = null;
     
     public StatusWindow() {
         initializeUI();
@@ -28,7 +41,7 @@ public class StatusWindow extends JFrame {
     private void initializeUI() {
         setTitle("Chess Engine Client - Status");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 450);
+        setSize(600, 600);
         setLocationRelativeTo(null);
         setResizable(true);
         
@@ -94,10 +107,10 @@ public class StatusWindow extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createTitledBorder("ngrok Tunnel Status"));
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 400));
         
         // Status text area
-        ngrokStatusArea = new JTextArea(8, 50);
+        ngrokStatusArea = new JTextArea(6, 50);
         ngrokStatusArea.setEditable(false);
         ngrokStatusArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
         ngrokStatusArea.setBackground(new Color(248, 248, 248));
@@ -108,6 +121,14 @@ public class StatusWindow extends JFrame {
         ngrokStatusScrollPane = new JScrollPane(ngrokStatusArea);
         ngrokStatusScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         ngrokStatusScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        // URL and QR Code panel
+        JPanel urlQrPanel = new JPanel(new BorderLayout());
+        
+        // Left side - URL and buttons
+        JPanel urlPanel = new JPanel();
+        urlPanel.setLayout(new BoxLayout(urlPanel, BoxLayout.Y_AXIS));
+        urlPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         
         // URL field
         ngrokUrlField = new JTextField();
@@ -137,17 +158,49 @@ public class StatusWindow extends JFrame {
             }
         });
         
+        saveQRButton = new JButton("💾 Save QR Code");
+        saveQRButton.setEnabled(false);
+        saveQRButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveQRCode();
+            }
+        });
+        
         buttonsPanel.add(copyButton);
         buttonsPanel.add(openButton);
+        buttonsPanel.add(saveQRButton);
+        
+        urlPanel.add(new JLabel("🔗 Ready URL:"));
+        urlPanel.add(Box.createVerticalStrut(2));
+        urlPanel.add(ngrokUrlField);
+        urlPanel.add(Box.createVerticalStrut(5));
+        urlPanel.add(buttonsPanel);
+        
+        // Right side - QR Code
+        JPanel qrPanel = new JPanel();
+        qrPanel.setLayout(new BoxLayout(qrPanel, BoxLayout.Y_AXIS));
+        qrPanel.setBorder(BorderFactory.createTitledBorder("📱 QR Code"));
+        qrPanel.setPreferredSize(new Dimension(180, 160));
+        
+        qrCodeLabel = new JLabel();
+        qrCodeLabel.setHorizontalAlignment(JLabel.CENTER);
+        qrCodeLabel.setVerticalAlignment(JLabel.CENTER);
+        qrCodeLabel.setPreferredSize(new Dimension(150, 150));
+        qrCodeLabel.setBorder(BorderFactory.createLoweredBevelBorder());
+        qrCodeLabel.setText("<html><center>📱<br>QR Code<br>will appear<br>here</center></html>");
+        qrCodeLabel.setHorizontalTextPosition(JLabel.CENTER);
+        qrCodeLabel.setVerticalTextPosition(JLabel.CENTER);
+        
+        qrPanel.add(qrCodeLabel);
+        
+        urlQrPanel.add(urlPanel, BorderLayout.CENTER);
+        urlQrPanel.add(qrPanel, BorderLayout.EAST);
         
         panel.add(Box.createVerticalStrut(5));
         panel.add(ngrokStatusScrollPane);
         panel.add(Box.createVerticalStrut(5));
-        panel.add(new JLabel("🔗 Ready URL:"));
-        panel.add(Box.createVerticalStrut(2));
-        panel.add(ngrokUrlField);
-        panel.add(Box.createVerticalStrut(5));
-        panel.add(buttonsPanel);
+        panel.add(urlQrPanel);
         
         return panel;
     }
@@ -242,6 +295,37 @@ public class StatusWindow extends JFrame {
         });
     }
     
+    /**
+     * Generate QR code image from URL
+     */
+    private BufferedImage generateQRCode(String url) {
+        try {
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            hints.put(EncodeHintType.MARGIN, 1);
+            
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 150, 150, hints);
+            
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            BufferedImage qrImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    qrImage.setRGB(x, y, bitMatrix.get(x, y) ? Color.BLACK.getRGB() : Color.WHITE.getRGB());
+                }
+            }
+            
+            return qrImage;
+            
+        } catch (WriterException e) {
+            System.err.println("❌ Error generating QR code: " + e.getMessage());
+            return null;
+        }
+    }
+    
     public void updateNgrokUrl(String url) {
         SwingUtilities.invokeLater(() -> {
             this.ngrokUrl = url;
@@ -251,12 +335,36 @@ public class StatusWindow extends JFrame {
                 ngrokUrlField.setBackground(new Color(230, 255, 230)); // Light green
                 copyButton.setEnabled(true);
                 openButton.setEnabled(true);
+                
+                // Generate and display QR code
+                addNgrokStatusMessage("📱 Generating QR code...");
+                qrCodeImage = generateQRCode(url);
+                if (qrCodeImage != null) {
+                    ImageIcon qrIcon = new ImageIcon(qrCodeImage);
+                    qrCodeLabel.setIcon(qrIcon);
+                    qrCodeLabel.setText("");
+                    saveQRButton.setEnabled(true);
+                    addNgrokStatusMessage("✅ QR code generated successfully!");
+                } else {
+                    qrCodeLabel.setIcon(null);
+                    qrCodeLabel.setText("<html><center>❌<br>QR Code<br>generation<br>failed</center></html>");
+                    saveQRButton.setEnabled(false);
+                    addNgrokStatusMessage("❌ Failed to generate QR code");
+                }
+                
                 setNgrokStatusColor("success");
             } else {
                 ngrokUrlField.setText("No ngrok URL available");
                 ngrokUrlField.setBackground(new Color(255, 230, 230)); // Light red
                 copyButton.setEnabled(false);
                 openButton.setEnabled(false);
+                saveQRButton.setEnabled(false);
+                
+                // Clear QR code
+                qrCodeLabel.setIcon(null);
+                qrCodeLabel.setText("<html><center>📱<br>QR Code<br>not available</center></html>");
+                qrCodeImage = null;
+                
                 setNgrokStatusColor("error");
             }
         });
@@ -310,6 +418,53 @@ public class StatusWindow extends JFrame {
             }
         } else {
             addNgrokStatusMessage("⚠️  No URL available to open");
+        }
+    }
+    
+    private void saveQRCode() {
+        if (qrCodeImage == null) {
+            addNgrokStatusMessage("⚠️  No QR code available to save");
+            return;
+        }
+        
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save QR Code");
+        fileChooser.setSelectedFile(new java.io.File("chess-ngrok-qr.png"));
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("PNG Images", "png"));
+        
+        int userSelection = fileChooser.showSaveDialog(this);
+        
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            java.io.File fileToSave = fileChooser.getSelectedFile();
+            
+            // Ensure .png extension
+            if (!fileToSave.getName().toLowerCase().endsWith(".png")) {
+                fileToSave = new java.io.File(fileToSave.getAbsolutePath() + ".png");
+            }
+            
+            try {
+                javax.imageio.ImageIO.write(qrCodeImage, "PNG", fileToSave);
+                addNgrokStatusMessage("💾 QR code saved to: " + fileToSave.getAbsolutePath());
+                
+                // Show temporary feedback
+                String originalText = saveQRButton.getText();
+                saveQRButton.setText("✅ Saved!");
+                saveQRButton.setEnabled(false);
+                
+                Timer timer = new Timer(2000, e -> {
+                    saveQRButton.setText(originalText);
+                    saveQRButton.setEnabled(true);
+                });
+                timer.setRepeats(false);
+                timer.start();
+                
+            } catch (java.io.IOException e) {
+                addNgrokStatusMessage("❌ Failed to save QR code: " + e.getMessage());
+                JOptionPane.showMessageDialog(this, 
+                    "Failed to save QR code:\n" + e.getMessage(), 
+                    "Save Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
