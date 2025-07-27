@@ -27,7 +27,6 @@
 
 // Button mixins (переработанные)
 @mixin button-primary {
-  // Все обычные свойства в правильном порядке
   background: v.$primary-color;
   color: v.$white;
   border: none;
@@ -40,12 +39,15 @@
   padding: 6px 12px;
   font-size: 12px;
 
-  // Затем псевдо-селекторы
-  &:hover {
+  &:hover:not(:disabled) {
     background: v.$primary-hover;
   }
 
-  // Затем медиа-запросы
+  &:disabled {
+    background: v.$border-color;
+    cursor: not-allowed;
+  }
+
   @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
     padding: v.$spacing-sm 12px;
     font-size: 14px;
@@ -58,7 +60,6 @@
 }
 
 @mixin button-secondary {
-  // Все обычные свойства в правильном порядке
   background: v.$white;
   color: v.$text-color;
   border: 1px solid v.$border-color;
@@ -71,13 +72,17 @@
   padding: 6px 12px;
   font-size: 12px;
 
-  // Затем псевдо-селекторы
-  &:hover {
+  &:hover:not(:disabled) {
     background: v.$background-hover;
     border-color: v.$border-hover;
   }
 
-  // Затем медиа-запросы
+  &:disabled {
+    background: v.$background-color;
+    color: v.$text-muted;
+    cursor: not-allowed;
+  }
+
   @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
     padding: v.$spacing-sm 12px;
     font-size: 14px;
@@ -90,7 +95,6 @@
 }
 
 @mixin button-success {
-  // Все обычные свойства в правильном порядке
   background: v.$success-color;
   color: v.$white;
   border: none;
@@ -103,12 +107,15 @@
   padding: 6px 12px;
   font-size: 12px;
 
-  // Затем псевдо-селекторы
-  &:hover {
+  &:hover:not(:disabled) {
     background: v.$success-hover;
   }
 
-  // Затем медиа-запросы
+  &:disabled {
+    background: v.$border-color;
+    cursor: not-allowed;
+  }
+
   @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
     padding: v.$spacing-sm 12px;
     font-size: 14px;
@@ -117,6 +124,192 @@
   @media (min-width: #{v.$desktop}) {
     padding: v.$spacing-sm 16px;
     font-size: 14px;
+  }
+}
+
+@mixin button-error {
+  background: v.$error-color;
+  color: v.$white;
+  border: none;
+  cursor: pointer;
+  transition: all v.$transition-fast;
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-xs;
+  border-radius: v.$border-radius-sm;
+  padding: 6px 12px;
+  font-size: 12px;
+
+  &:hover:not(:disabled) {
+    background: v.$error-hover;
+  }
+
+  &:disabled {
+    background: v.$border-color;
+    cursor: not-allowed;
+  }
+
+  @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
+    padding: v.$spacing-sm 12px;
+    font-size: 14px;
+  }
+
+  @media (min-width: #{v.$desktop}) {
+    padding: v.$spacing-sm 16px;
+    font-size: 14px;
+  }
+}
+
+@mixin button-warning {
+  background: v.$warning-color;
+  color: v.$white;
+  border: none;
+  cursor: pointer;
+  transition: all v.$transition-fast;
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-xs;
+  border-radius: v.$border-radius-sm;
+  padding: 6px 12px;
+  font-size: 12px;
+
+  &:hover:not(:disabled) {
+    background: v.$warning-hover;
+  }
+
+  &:disabled {
+    background: v.$border-color;
+    cursor: not-allowed;
+  }
+
+  @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
+    padding: v.$spacing-sm 12px;
+    font-size: 14px;
+  }
+
+  @media (min-width: #{v.$desktop}) {
+    padding: v.$spacing-sm 16px;
+    font-size: 14px;
+  }
+}
+
+@mixin button-info {
+  background: v.$info-color;
+  color: v.$white;
+  border: none;
+  cursor: pointer;
+  transition: all v.$transition-fast;
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-xs;
+  border-radius: v.$border-radius-sm;
+  padding: 6px 12px;
+  font-size: 12px;
+
+  &:hover:not(:disabled) {
+    background: v.$info-hover;
+  }
+
+  &:disabled {
+    background: v.$border-color;
+    cursor: not-allowed;
+  }
+
+  @media (min-width: #{v.$mobile}) and (max-width: #{v.$tablet - 1px}) {
+    padding: v.$spacing-sm 12px;
+    font-size: 14px;
+  }
+
+  @media (min-width: #{v.$desktop}) {
+    padding: v.$spacing-sm 16px;
+    font-size: 14px;
+  }
+}
+
+// Form input mixins
+@mixin input-base {
+  width: 100%;
+  padding: v.$spacing-md;
+  border: 2px solid v.$border-color;
+  border-radius: v.$border-radius-lg;
+  font-family: v.$font-mono;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border-color v.$transition-fast ease;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: v.$success-color;
+  }
+
+  &:disabled {
+    background-color: v.$background-color;
+    color: v.$text-muted;
+    cursor: not-allowed;
+  }
+
+  @include m.mobile {
+    padding: v.$spacing-sm;
+    font-size: 13px;
+  }
+}
+
+@mixin input-error {
+  border-color: v.$error-color;
+
+  &:focus {
+    border-color: v.$error-color;
+  }
+}
+
+@mixin input-valid {
+  border-color: v.$success-color;
+
+  &:focus {
+    border-color: v.$success-color;
+  }
+}
+
+// Validation message mixins
+@mixin validation-box {
+  margin-bottom: v.$spacing-lg;
+  padding: v.$spacing-md;
+  border-radius: v.$border-radius-md;
+  background-color: v.$warning-background;
+  border: 1px solid v.$warning-color;
+
+  @include m.mobile {
+    padding: v.$spacing-sm;
+    margin-bottom: v.$spacing-md;
+  }
+}
+
+@mixin validation-error {
+  color: v.$error-color;
+  font-weight: 500;
+  margin-bottom: v.$spacing-sm;
+}
+
+@mixin validation-warning {
+  color: v.$warning-color;
+  font-weight: 500;
+  margin-bottom: v.$spacing-xs;
+}
+
+// Loading state mixin
+@mixin loading-state {
+  text-align: center;
+  color: v.$text-muted;
+  font-style: italic;
+  padding: v.$spacing-lg;
+  background-color: v.$background-color;
+  border-radius: v.$border-radius-md;
+  margin-bottom: v.$spacing-lg;
+
+  @include m.mobile {
+    padding: v.$spacing-md;
+    margin-bottom: v.$spacing-md;
   }
 }
 
@@ -131,6 +324,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+@mixin flex-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: v.$spacing-sm;
+
+  @include m.mobile {
+    gap: v.$spacing-xs;
+  }
 }
 
 @mixin flex-column {

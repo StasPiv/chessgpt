@@ -1,0 +1,176 @@
+
+@use '../styles/variables' as v;
+@use '../styles/mixins' as m;
+
+.pgn-container {
+  padding: 0;
+}
+
+.pgn-textarea {
+  @include m.input-base;
+  min-height: 200px;
+  margin-bottom: v.$spacing-xl;
+
+  @include m.mobile {
+    min-height: 150px;
+    margin-bottom: v.$spacing-lg;
+  }
+
+  // State variants
+  &.pgn-error {
+    @include m.input-error;
+  }
+
+  &.pgn-valid {
+    @include m.input-valid;
+  }
+
+  // Placeholder styling
+  &::placeholder {
+    color: v.$text-muted;
+    opacity: 0.7;
+  }
+}
+
+.pgn-actions {
+  @include m.flex-end;
+}
+
+// Button styles using mixins
+.pgn-load-button {
+  @include m.button-success;
+  padding: v.$spacing-sm v.$spacing-xl;
+  font-size: 14px;
+  font-weight: 500;
+
+  @include m.mobile {
+    padding: v.$spacing-sm v.$spacing-md;
+    font-size: 13px;
+  }
+}
+
+.pgn-cancel-button {
+  @include m.button-error;
+  padding: v.$spacing-sm v.$spacing-xl;
+  font-size: 14px;
+  font-weight: 500;
+
+  @include m.mobile {
+    padding: v.$spacing-sm v.$spacing-md;
+    font-size: 13px;
+  }
+}
+
+.pgn-clear-button {
+  @include m.button-warning;
+  padding: v.$spacing-sm v.$spacing-xl;
+  font-size: 14px;
+  font-weight: 500;
+
+  @include m.mobile {
+    padding: v.$spacing-sm v.$spacing-md;
+    font-size: 13px;
+  }
+}
+
+.pgn-validate-button {
+  @include m.button-info;
+  padding: v.$spacing-sm v.$spacing-xl;
+  font-size: 14px;
+  font-weight: 500;
+
+  @include m.mobile {
+    padding: v.$spacing-sm v.$spacing-md;
+    font-size: 13px;
+  }
+}
+
+// Validation display
+.pgn-validation {
+  @include m.validation-box;
+
+  .pgn-error {
+    @include m.validation-error;
+  }
+
+  .pgn-warning {
+    @include m.validation-warning;
+  }
+}
+
+// Loading state
+.pgn-loading {
+  @include m.loading-state;
+}
+
+// Responsive improvements
+@include m.tablet {
+  .pgn-textarea {
+    min-height: 180px;
+    font-size: 15px;
+  }
+
+  .pgn-actions {
+    gap: v.$spacing-md;
+  }
+}
+
+@include m.desktop {
+  .pgn-textarea {
+    min-height: 220px;
+    font-size: 16px;
+    
+    &:hover {
+      border-color: v.$border-hover;
+    }
+  }
+
+  .pgn-actions {
+    gap: v.$spacing-lg;
+  }
+
+  // Enhanced button interactions on desktop
+  .pgn-load-button,
+  .pgn-cancel-button,
+  .pgn-clear-button,
+  .pgn-validate-button {
+    transition: all v.$transition-fast ease;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px v.$shadow-light;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Focus management for accessibility
+.pgn-textarea:focus,
+.pgn-load-button:focus,
+.pgn-cancel-button:focus,
+.pgn-clear-button:focus,
+.pgn-validate-button:focus {
+  outline: 2px solid v.$info-color;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .pgn-textarea {
+    border-width: 3px;
+  }
+
+  .pgn-validation {
+    border-width: 2px;
+  }
+}
+
+// Dark mode support (if needed later)
+@media (prefers-color-scheme: dark) {
+  .pgn-container {
+    // Dark mode styles can be added here later
+  }
+}
