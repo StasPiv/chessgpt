@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../types';
 import { PgnHeaders, GameResult, FormattedGameResult, GameHeaderProps, ResultFormatter } from '../types';
-import './GameHeader.css';
+import './GameHeader.scss';
 
 const GameHeader: React.FC<GameHeaderProps> = ({ className, compact = false }) => {
     const pgnHeaders = useSelector((state: RootState) => state.chess.pgnHeaders);

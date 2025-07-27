@@ -13,6 +13,19 @@ $success-hover: #388e3c;
 $success-background: #f1f8e9;
 $success-background-hover: #e8f5e8;
 
+// Добавляем недостающие цвета
+$error-color: #f44336;
+$error-hover: #d32f2f;
+$error-background: #ffebee;
+
+$warning-color: #ff9800;
+$warning-hover: #f57c00;
+$warning-background: #fff3e0;
+
+$info-color: #2196f3;
+$info-hover: #1976d2;
+$info-background: #e3f2fd;
+
 $white: #ffffff;
 $black: #000000;
 
@@ -39,6 +52,7 @@ $shadow-dark: rgba(0, 0, 0, 0.3);
 $modal-overlay: rgba(0, 0, 0, 0.5);
 
 // Spacing (в пикселях для простоты)
+$spacing-xxs: 2px;  // Добавляем самый маленький размер
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 12px;
