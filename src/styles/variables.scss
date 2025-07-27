@@ -96,9 +96,10 @@ $variation-level-4: #64b5f6;
 
 // Move list specific
 $move-font-size: 16px;
-$move-font-size-mobile: 14px;
+$move-font-size-mobile: 4.5vw; // Используем vw для лучшей читаемости на мобильных
 $move-line-height: 1.4;
 $variation-bracket-size: 13px;
+$variation-bracket-size-mobile: 3.5vw; // Также для скобок вариаций
 
 // Navigation controls
 $nav-controls-bg: #f0f0f0;

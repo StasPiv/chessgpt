@@ -405,10 +405,6 @@
   text-align: justify;
   padding: 0;
   margin: 0;
-  
-  @include mobile {
-    font-size: v.$move-font-size-mobile;
-  }
 }
 
 // Navigation controls mixins

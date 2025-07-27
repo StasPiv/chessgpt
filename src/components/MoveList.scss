@@ -32,12 +32,6 @@
     outline: 2px solid v.$info-color;
     outline-offset: 1px;
   }
-
-  @include m.mobile {
-    padding: 1px 1px;
-    margin-right: 0.3em;
-    font-size: v.$move-font-size-mobile;
-  }
 }
 
 // Variation level colors
@@ -59,10 +53,6 @@
 
 .variation-bracket {
   @include m.variation-bracket;
-  
-  @include m.mobile {
-    font-size: 12px;
-  }
 }
 
 .no-moves {
@@ -107,7 +97,7 @@
 }
 
 .variation-bracket-close {
-  margin: 0;
+  margin: 0;  
   margin-right: 0.5em;
 }
 
@@ -174,45 +164,6 @@
   }
 }
 
-// Tablet optimizations
-@include m.tablet {
-  .moves-list {
-    font-size: 15px;
-  }
-  
-  .move-item {
-    padding: v.$spacing-xxs v.$spacing-xs;
-  }
-}
-
-// Mobile optimizations
-@include m.mobile {
-  .moves-container {
-    // Better touch targets on mobile
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  
-  .move-item {
-    // Larger touch targets
-    min-height: 24px;
-    line-height: 24px;
-    
-    &:hover {
-      // Disable hover on mobile to prevent sticky states
-      background-color: transparent;
-    }
-    
-    &:active {
-      background-color: v.$move-hover-bg;
-    }
-  }
-}
-
 // Print styles
 @media print {
   .move-list-container {
@@ -264,5 +215,119 @@
     &:hover {
       transform: none;
     }
+  }
+}
+
+// Tablet optimizations (768px-995px)
+@include m.tablet {
+  .moves-list {
+    font-size: 3.8vw; // Используем vw и для планшетов
+    line-height: 1.45;
+  }
+  
+  .move-item {
+    padding: v.$spacing-xxs v.$spacing-xs;
+    font-size: 3.8vw;
+  }
+  
+  .move-number,
+  .move-san,
+  .move-number-after-variation {
+    font-size: 3.8vw;
+  }
+  
+  .variation-bracket {
+    font-size: 3vw;
+  }
+}
+
+// Mobile optimizations (до 767px)
+@include m.mobile {
+  .moves-container {
+    // Better touch targets on mobile
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .moves-list {
+    font-size: v.$move-font-size-mobile !important; // !important чтобы переопределить планшетные стили
+    line-height: 1.5 !important;
+  }
+  
+  .move-item {
+    // Larger touch targets
+    min-height: 24px;
+    line-height: 24px;
+    padding: 1px 1px;
+    margin-right: 0.3em;
+    font-size: v.$move-font-size-mobile !important;
+    
+    &:hover {
+      // Disable hover on mobile to prevent sticky states
+      background-color: transparent;
+    }
+    
+    &:active {
+      background-color: v.$move-hover-bg;
+    }
+  }
+  
+  .move-number,
+  .move-san,
+  .move-number-after-variation {
+    font-size: v.$move-font-size-mobile !important;
+  }
+  
+  .variation-bracket {
+    font-size: v.$variation-bracket-size-mobile !important;
+  }
+}
+
+// Дополнительные медиа-запросы для очень маленьких экранов
+@media (max-width: 320px) {
+  .moves-list,
+  .move-item,
+  .move-number,
+  .move-san,
+  .move-number-after-variation {
+    font-size: 5vw !important;
+  }
+  
+  .variation-bracket {
+    font-size: 4vw !important;
+  }
+}
+
+// Медиа-запрос для средних мобильных экранов
+@media (min-width: 321px) and (max-width: 414px) {
+  .moves-list,
+  .move-item,
+  .move-number,
+  .move-san,
+  .move-number-after-variation {
+    font-size: 4.2vw !important;
+  }
+  
+  .variation-bracket {
+    font-size: 3.2vw !important;
+  }
+}
+
+// Для больших мобильных экранов (415px-767px)
+@media (min-width: 415px) and (max-width: 767px) {
+  .moves-list,
+  .move-item,
+  .move-number,
+  .move-san,
+  .move-number-after-variation {
+    font-size: 4.5vw !important;
+  }
+  
+  .variation-bracket {
+    font-size: 3.5vw !important;
   }
 }

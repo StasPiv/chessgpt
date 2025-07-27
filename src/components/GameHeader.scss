@@ -1,4 +1,3 @@
-
 @use '../styles/variables' as v;
 @use '../styles/mixins' as m;
 
@@ -85,17 +84,68 @@
   }
 }
 
-// Адаптивные улучшения
+// Tablet optimizations (768px-995px)
 @include m.tablet {
   .game-header {
     padding: v.$spacing-md v.$spacing-lg;
   }
   
   .game-header-players {
-    font-size: 1.15em;
+    font-size: 3.2vw; // Пропорциональный размер для планшетов
+  }
+
+  .game-header-info {
+    font-size: 2.8vw;
   }
 }
 
+// Mobile optimizations (до 767px)
+@include m.mobile {
+  .game-header-players {
+    font-size: 3.8vw !important; // Пропорционально размеру ходов (4.5vw * 0.85)
+    line-height: 1.2 !important;
+  }
+  
+  .game-header-info {
+    font-size: 3.2vw !important; // Немного меньше основного текста
+    line-height: 1.1 !important;
+  }
+}
+
+// Дополнительные медиа-запросы для очень маленьких экранов
+@media (max-width: 320px) {
+  .game-header-players {
+    font-size: 4.2vw !important;
+  }
+  
+  .game-header-info {
+    font-size: 3.8vw !important;
+  }
+}
+
+// Медиа-запрос для средних мобильных экранов
+@media (min-width: 321px) and (max-width: 414px) {
+  .game-header-players {
+    font-size: 3.6vw !important;
+  }
+  
+  .game-header-info {
+    font-size: 3.0vw !important;
+  }
+}
+
+// Для больших мобильных экранов (415px-767px)
+@media (min-width: 415px) and (max-width: 767px) {
+  .game-header-players {
+    font-size: 3.8vw !important;
+  }
+  
+  .game-header-info {
+    font-size: 3.2vw !important;
+  }
+}
+
+// Desktop остается без изменений
 @include m.desktop {
   .game-header {
     transition: box-shadow v.$transition-fast ease;
