@@ -16,7 +16,7 @@ import {
     PGN_ERROR_MESSAGES, 
     PGN_CSS_CLASSES 
 } from '../types/PgnConstants';
-import './LoadPgn.css';
+import './LoadPgn.scss';
 
 const LoadPgn: React.FC<LoadPgnProps> = ({
     onClose,

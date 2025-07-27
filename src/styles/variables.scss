@@ -13,7 +13,6 @@ $success-hover: #388e3c;
 $success-background: #f1f8e9;
 $success-background-hover: #e8f5e8;
 
-// Добавляем недостающие цвета
 $error-color: #f44336;
 $error-hover: #d32f2f;
 $error-background: #ffebee;
@@ -51,8 +50,8 @@ $shadow-dark: rgba(0, 0, 0, 0.3);
 // Modal
 $modal-overlay: rgba(0, 0, 0, 0.5);
 
-// Spacing (в пикселях для простоты)
-$spacing-xxs: 2px;  // Добавляем самый маленький размер
+// Spacing
+$spacing-xxs: 2px;
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 12px;
@@ -61,6 +60,7 @@ $spacing-xl: 20px;
 $spacing-xxl: 24px;
 
 // Border radius
+$border-radius-xxs: 2px;
 $border-radius-sm: 4px;
 $border-radius-md: 6px;
 $border-radius-lg: 8px;
@@ -76,14 +76,26 @@ $transition-slow: 0.5s;
 $font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
 $font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-// Breakpoints
-$mobile: 768px;
-$tablet: 996px;
-$desktop: 1200px;
-
 // Z-index
 $z-header: 10;
 $z-modal: 1000;
 
 // Grid
 $grid-handle-size: 20px;
+
+// Chess move colors
+$move-hover-bg: #e8f0fe;
+$move-current-bg: #4285f4;
+$move-current-color: #ffffff;
+
+// Variation colors
+$variation-level-1: #1565c0;
+$variation-level-2: #1976d2;
+$variation-level-3: #42a5f5;
+$variation-level-4: #64b5f6;
+
+// Move list specific
+$move-font-size: 16px;
+$move-font-size-mobile: 14px;
+$move-line-height: 1.4;
+$variation-bracket-size: 13px;

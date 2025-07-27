@@ -1,4 +1,3 @@
-
 @use '../styles/variables' as v;
 @use '../styles/mixins' as m;
 
@@ -7,13 +6,17 @@
 }
 
 .pgn-textarea {
-  @include m.input-base;
+  // Сначала все обычные свойства
   min-height: 200px;
   margin-bottom: v.$spacing-xl;
+  
+  // Затем миксины и includes
+  @include m.input-base;
 
-  @include m.mobile {
-    min-height: 150px;
-    margin-bottom: v.$spacing-lg;
+  // Placeholder styling
+  &::placeholder {
+    color: v.$text-muted;
+    opacity: 0.7;
   }
 
   // State variants
@@ -25,10 +28,10 @@
     @include m.input-valid;
   }
 
-  // Placeholder styling
-  &::placeholder {
-    color: v.$text-muted;
-    opacity: 0.7;
+  // Media queries last
+  @include m.mobile {
+    min-height: 150px;
+    margin-bottom: v.$spacing-lg;
   }
 }
 
@@ -38,10 +41,13 @@
 
 // Button styles using mixins
 .pgn-load-button {
-  @include m.button-success;
+  // Сначала обычные свойства
   padding: v.$spacing-sm v.$spacing-xl;
   font-size: 14px;
   font-weight: 500;
+  
+  // Затем миксины
+  @include m.button-success;
 
   @include m.mobile {
     padding: v.$spacing-sm v.$spacing-md;
@@ -50,10 +56,13 @@
 }
 
 .pgn-cancel-button {
-  @include m.button-error;
+  // Сначала обычные свойства
   padding: v.$spacing-sm v.$spacing-xl;
   font-size: 14px;
   font-weight: 500;
+  
+  // Затем миксины
+  @include m.button-error;
 
   @include m.mobile {
     padding: v.$spacing-sm v.$spacing-md;
@@ -62,10 +71,13 @@
 }
 
 .pgn-clear-button {
-  @include m.button-warning;
+  // Сначала обычные свойства
   padding: v.$spacing-sm v.$spacing-xl;
   font-size: 14px;
   font-weight: 500;
+  
+  // Затем миксины
+  @include m.button-warning;
 
   @include m.mobile {
     padding: v.$spacing-sm v.$spacing-md;
@@ -74,10 +86,13 @@
 }
 
 .pgn-validate-button {
-  @include m.button-info;
+  // Сначала обычные свойства
   padding: v.$spacing-sm v.$spacing-xl;
   font-size: 14px;
   font-weight: 500;
+  
+  // Затем миксины
+  @include m.button-info;
 
   @include m.mobile {
     padding: v.$spacing-sm v.$spacing-md;
@@ -101,6 +116,16 @@
 // Loading state
 .pgn-loading {
   @include m.loading-state;
+}
+
+// Focus management for accessibility
+.pgn-textarea:focus,
+.pgn-load-button:focus,
+.pgn-cancel-button:focus,
+.pgn-clear-button:focus,
+.pgn-validate-button:focus {
+  outline: 2px solid v.$info-color;
+  outline-offset: 2px;
 }
 
 // Responsive improvements
@@ -145,16 +170,6 @@
       transform: translateY(0);
     }
   }
-}
-
-// Focus management for accessibility
-.pgn-textarea:focus,
-.pgn-load-button:focus,
-.pgn-cancel-button:focus,
-.pgn-clear-button:focus,
-.pgn-validate-button:focus {
-  outline: 2px solid v.$info-color;
-  outline-offset: 2px;
 }
 
 // High contrast mode support

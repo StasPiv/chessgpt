@@ -1,0 +1,268 @@
+@use '../styles/variables' as v;
+@use '../styles/mixins' as m;
+
+.move-list-container {
+  @include m.move-list-container;
+}
+
+.moves-container {
+  width: 100%;
+  height: 100%;
+}
+
+.moves-list {
+  @include m.moves-list-typography;
+}
+
+.move-item {
+  @include m.move-item-base;
+  
+  // Main line moves (не в вариациях)
+  &:not(.variation-move) {
+    @include m.move-main-line;
+  }
+
+  // Variation moves
+  &.variation-move {
+    @include m.move-variation;
+  }
+
+  // Focus state for accessibility
+  &:focus {
+    outline: 2px solid v.$info-color;
+    outline-offset: 1px;
+  }
+
+  @include m.mobile {
+    padding: 1px 1px;
+    margin-right: 0.3em;
+    font-size: v.$move-font-size-mobile;
+  }
+}
+
+// Variation level colors
+.variation-level-1 {
+  @include m.variation-level(1);
+}
+
+.variation-level-2 {
+  @include m.variation-level(2);
+}
+
+.variation-level-3 {
+  @include m.variation-level(3);
+}
+
+.variation-level-4 {
+  @include m.variation-level(4);
+}
+
+.variation-bracket {
+  @include m.variation-bracket;
+  
+  @include m.mobile {
+    font-size: 12px;
+  }
+}
+
+.no-moves {
+  @include m.no-moves-state;
+}
+
+// Move number styling
+.move-number {
+  @include m.move-number;
+  margin-right: v.$spacing-xxs;
+  
+  &.variation-move {
+    font-weight: normal;
+  }
+  
+  // Variation level colors for move numbers
+  &.variation-level-1 {
+    @include m.variation-level(1);
+  }
+  
+  &.variation-level-2 {
+    @include m.variation-level(2);
+  }
+  
+  &.variation-level-3 {
+    @include m.variation-level(3);
+  }
+  
+  &.variation-level-4 {
+    @include m.variation-level(4);
+  }
+}
+
+.move-san {
+  font-weight: normal;
+  margin-right: v.$spacing-xs;
+}
+
+// Specific bracket positioning
+.variation-bracket-open {
+  margin: 0;
+}
+
+.variation-bracket-close {
+  margin: 0;
+  margin-right: 0.5em;
+}
+
+// Move numbers after variations
+.move-number-after-variation {
+  margin-right: v.$spacing-xxs;
+  display: inline;
+
+  // Main line - bold black
+  &:not(.variation-move) {
+    @include m.move-main-line;
+  }
+
+  // Variations inherit from their level
+  &.variation-move {
+    font-weight: normal;
+  }
+
+  // Variation level colors
+  &.variation-level-1 {
+    @include m.variation-level(1);
+  }
+
+  &.variation-level-2 {
+    @include m.variation-level(2);
+  }
+
+  &.variation-level-3 {
+    @include m.variation-level(3);
+  }
+
+  &.variation-level-4 {
+    @include m.variation-level(4);
+  }
+}
+
+// Enhanced desktop experience
+@include m.desktop {
+  .move-item {
+    transition: all v.$transition-fast ease;
+    
+    &:hover {
+      background-color: v.$move-hover-bg;
+      border-radius: v.$border-radius-sm;
+      transform: translateY(-1px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    &.current {
+      box-shadow: 0 2px 4px v.$shadow-light;
+    }
+  }
+  
+  .moves-list {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  
+  .variation-bracket {
+    font-size: 14px;
+  }
+}
+
+// Tablet optimizations
+@include m.tablet {
+  .moves-list {
+    font-size: 15px;
+  }
+  
+  .move-item {
+    padding: v.$spacing-xxs v.$spacing-xs;
+  }
+}
+
+// Mobile optimizations
+@include m.mobile {
+  .moves-container {
+    // Better touch targets on mobile
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .move-item {
+    // Larger touch targets
+    min-height: 24px;
+    line-height: 24px;
+    
+    &:hover {
+      // Disable hover on mobile to prevent sticky states
+      background-color: transparent;
+    }
+    
+    &:active {
+      background-color: v.$move-hover-bg;
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .move-list-container {
+    overflow: visible;
+    height: auto;
+  }
+  
+  .moves-list {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+  
+  .move-item {
+    &.current {
+      background-color: transparent;
+      color: v.$black;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .move-item {
+    border: 1px solid transparent;
+    
+    &:hover {
+      border-color: v.$border-color;
+      background-color: v.$background-hover;
+    }
+    
+    &.current {
+      border-color: v.$move-current-bg;
+      background-color: v.$move-current-bg;
+    }
+  }
+}
+
+// Reduced motion preference
+@media (prefers-reduced-motion: reduce) {
+  .move-item {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}

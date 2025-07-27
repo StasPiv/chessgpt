@@ -2,7 +2,7 @@ import React, { ReactElement, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction, loadPGNAction } from '../redux/actions.js';
 import {ChessMove, RootState} from '../types';
-import './MoveList.css';
+import './MoveList.scss';
 import GameHeader from "./GameHeader";
 
 const MoveList = (): ReactElement => {
