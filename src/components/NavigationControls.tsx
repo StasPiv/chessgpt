@@ -11,7 +11,7 @@ import {
     NavigationKey
 } from '../types';
 import { DEFAULT_NAVIGATION_ICONS, KEY_NAVIGATION_MAP } from '../types/NavigationConstants';
-import './NavigationControls.css';
+import './NavigationControls.scss';
 
 const NavigationControls: React.FC<NavigationControlsProps> = ({
     onFlipBoard,
