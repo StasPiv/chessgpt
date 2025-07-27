@@ -16,9 +16,9 @@
   
   @include m.mobile {
     & {
-      flex-direction: column;
+      // УБИРАЕМ flex-direction: column - оставляем в одну строку
       gap: v.$spacing-sm-mobile;
-      align-items: flex-start;
+      align-items: center; // Выравниваем по центру
       margin-bottom: v.$spacing-md-mobile;
       padding-bottom: v.$spacing-xs-mobile;
     }
@@ -31,10 +31,15 @@
     cursor: pointer;
     user-select: none;
     gap: v.$spacing-sm;
+    font-size: 14px;
+    color: v.$text-color;
+    font-weight: 500;
     
     @include m.mobile {
       & {
         gap: v.$spacing-sm-mobile;
+        font-size: 3.2vw;
+        font-weight: 600; // Более жирный для лучшей читаемости
       }
     }
   }
@@ -68,13 +73,14 @@
     
     @include m.mobile {
       & {
-        width: 3.5vw;
-        height: 3.5vw;
+        width: 4vw;
+        height: 4vw;
+        border-width: 0.4vw;
         border-radius: v.$border-radius-sm-mobile;
         
         &::after {
-          left: 1.2vw;
-          top: 0.4vw;
+          left: 1.3vw;
+          top: 0.5vw;
           width: 0.8vw;
           height: 1.6vw;
           border-width: 0 0.4vw 0.4vw 0;
@@ -100,9 +106,9 @@
   
   @include m.mobile {
     & {
-      align-self: stretch;
-      justify-content: space-between;
-      gap: v.$spacing-md-mobile;
+      // УБИРАЕМ align-self: stretch и justify-content: space-between
+      gap: v.$spacing-sm-mobile; // Уменьшаем gap для компактности
+      flex-shrink: 0; // Не позволяем сжиматься
     }
   }
 }
@@ -115,6 +121,8 @@
   @include m.mobile {
     & {
       font-size: 2.8vw;
+      font-weight: 700;
+      white-space: nowrap; // Не переносим на новую строку
     }
   }
 }
@@ -127,6 +135,7 @@
   @include m.mobile {
     & {
       gap: 1.2vw;
+      flex-shrink: 0; // Не позволяем сжиматься
     }
   }
 }
@@ -161,6 +170,7 @@
   @include m.mobile {
     & {
       font-size: 2.5vw;
+      white-space: nowrap; // Не переносим на новую строку
     }
   }
 }
@@ -199,6 +209,7 @@
       margin-left: 1.2vw;
       min-width: 6vw;
       height: 5vw;
+      flex-shrink: 0; // Не позволяем сжиматься
     }
   }
 }
@@ -250,104 +261,19 @@
   }
 }
 
-// Стили для анализа (если они все еще нужны в этом файле)
-.analysis-line {
-  background: v.$background-secondary;
-  border-radius: v.$border-radius-md;
-  padding: 10px;
-  margin-bottom: v.$spacing-sm;
-  border-left: 3px solid v.$success-color;
-  transition: background-color v.$transition-fast ease;
-
-  &:hover {
-    background: v.$background-hover;
-  }
-
-  &.inactive {
-    opacity: 0.5;
-  }
-  
-  @include m.mobile {
-    & {
-      border-radius: v.$border-radius-md-mobile;
-      padding: v.$spacing-sm-mobile;
-      margin-bottom: v.$spacing-xs-mobile;
-      border-left-width: 0.6vw;
-    }
-  }
-}
-
-.line-header {
-  @include m.flex-between;
-  margin-bottom: v.$spacing-sm;
-  
-  @include m.mobile {
-    & {
-      margin-bottom: v.$spacing-xs-mobile;
-    }
-  }
-}
-
-.line-evaluation {
-  font-weight: bold;
-  color: v.$success-color;
-  
-  @include m.mobile {
-    & {
-      font-size: 3vw;
-    }
-  }
-}
-
-.line-info {
-  font-size: 11px;
-  color: v.$text-muted;
-  display: flex;
-  gap: 10px;
-  
-  @include m.mobile {
-    & {
-      font-size: 2.5vw;
-      gap: 2vw;
-    }
-  }
-}
-
-.line-moves {
-  font-family: v.$font-mono;
-  font-size: 13px;
-  line-height: 1.4;
-  color: v.$text-color;
-  word-wrap: break-word;
-  
-  @include m.mobile {
-    & {
-      font-size: 3.2vw;
-      line-height: 1.3;
-    }
-  }
-}
-
-.move-number {
-  color: v.$text-secondary;
-  font-weight: normal;
-}
-
-.white-move {
-  color: v.$black;
-  font-weight: 500;
-}
-
-.black-move {
-  color: v.$text-color;
-  font-weight: 500;
-}
-
 // Дополнительные адаптивные стили для планшетов
 @include m.tablet {
   .analysis-header {
     margin-bottom: v.$spacing-md;
     padding-bottom: v.$spacing-sm;
+  }
+  
+  .checkbox-container {
+    font-size: 2.8vw !important;
+  }
+  
+  .header-right {
+    gap: v.$spacing-md !important;
   }
   
   .total-nodes {
@@ -368,16 +294,16 @@
     font-size: 2.8vw;
   }
   
-  .line-evaluation {
-    font-size: 2.8vw;
-  }
-  
-  .line-info {
-    font-size: 2.2vw;
-  }
-  
-  .line-moves {
-    font-size: 2.8vw;
+  .checkmark {
+    width: 3.5vw !important;
+    height: 3.5vw !important;
+    
+    &::after {
+      left: 1.1vw !important;
+      top: 0.4vw !important;
+      width: 0.7vw !important;
+      height: 1.4vw !important;
+    }
   }
 }
 
@@ -393,6 +319,17 @@
     }
   }
   
+  .checkbox-container {
+    &:hover {
+      color: v.$primary-color;
+      
+      .checkmark {
+        border-color: v.$primary-color;
+        transform: scale(1.05);
+      }
+    }
+  }
+  
   .reconnect-btn {
     &:hover:not(:disabled) {
       transform: translateY(-1px);
@@ -403,36 +340,108 @@
   .analysis-lines {
     max-height: 350px; // Больше места на десктопе
   }
-  
-  .analysis-line {
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px v.$shadow-light;
-    }
-  }
 }
 
-// Специальные стили для очень маленьких экранов
+// Специальные стили для очень маленьких экранов (320px и меньше)
 @media (max-width: 320px) {
-  .total-nodes {
-    font-size: 3.2vw !important;
+  .analysis-header {
+    gap: 1vw !important; // Еще более компактный gap
   }
   
-  .connection-text {
+  .header-right {
+    gap: 1vw !important; // Компактные отступы между элементами справа
+  }
+  
+  .checkbox-container {
+    font-size: 3.5vw !important;
+  }
+  
+  .checkmark {
+    width: 4.2vw !important;
+    height: 4.2vw !important;
+    
+    &::after {
+      left: 1.4vw !important;
+      top: 0.5vw !important;
+      width: 0.8vw !important;
+      height: 1.7vw !important;
+    }
+  }
+  
+  .total-nodes {
     font-size: 2.8vw !important;
   }
   
-  .reconnect-btn {
+  .connection-text {
     font-size: 2.5vw !important;
-    min-width: 7vw !important;
-    height: 5.5vw !important;
   }
   
-  .line-evaluation {
-    font-size: 3.5vw !important;
+  .reconnect-btn {
+    font-size: 2vw !important;
+    min-width: 5.5vw !important;
+    height: 4.5vw !important;
+    margin-left: 0.8vw !important;
+  }
+}
+
+// Средние мобильные экраны (321px-414px)
+@media (min-width: 321px) and (max-width: 414px) {
+  .header-right {
+    gap: 1.5vw !important;
   }
   
-  .line-moves {
-    font-size: 3.5vw !important;
+  .checkbox-container {
+    font-size: 3.2vw !important;
+  }
+  
+  .checkmark {
+    width: 4vw !important;
+    height: 4vw !important;
+    
+    &::after {
+      left: 1.3vw !important;
+      top: 0.5vw !important;
+      width: 0.8vw !important;
+      height: 1.6vw !important;
+    }
+  }
+  
+  .total-nodes {
+    font-size: 2.6vw !important;
+  }
+  
+  .connection-text {
+    font-size: 2.3vw !important;
+  }
+}
+
+// Большие мобильные экраны (415px-767px)
+@media (min-width: 415px) and (max-width: 767px) {
+  .header-right {
+    gap: 2vw !important;
+  }
+  
+  .checkbox-container {
+    font-size: 3vw !important;
+  }
+  
+  .checkmark {
+    width: 3.8vw !important;
+    height: 3.8vw !important;
+    
+    &::after {
+      left: 1.2vw !important;
+      top: 0.4vw !important;
+      width: 0.7vw !important;
+      height: 1.5vw !important;
+    }
+  }
+  
+  .total-nodes {
+    font-size: 2.5vw !important;
+  }
+  
+  .connection-text {
+    font-size: 2.2vw !important;
   }
 }

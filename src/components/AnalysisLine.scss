@@ -1,4 +1,3 @@
-
 @use '../styles/variables' as v;
 @use '../styles/mixins' as m;
 
@@ -39,9 +38,13 @@
   
   // Адаптивные изменения для мобильных
   @include m.mobile {
-    padding: 8px;
-    gap: 8px;
-    font-size: 11px;
+    & {
+      padding: v.$spacing-xs-mobile v.$spacing-sm-mobile;
+      gap: v.$spacing-xs-mobile;
+      font-size: 2.8vw;
+      border-radius: v.$border-radius-sm-mobile;
+      border-left-width: 0.6vw;
+    }
   }
 }
 
@@ -53,8 +56,11 @@
   flex-shrink: 0;
   
   @include m.mobile {
-    min-width: 40px;
-    font-size: 11px;
+    & {
+      min-width: 10vw;
+      font-size: 2.8vw;
+      font-weight: 700; // Более жирный на мобильных для читаемости
+    }
   }
 }
 
@@ -65,8 +71,10 @@
   flex-shrink: 0;
   
   @include m.mobile {
-    min-width: 30px;
-    font-size: 9px;
+    & {
+      min-width: 8vw;
+      font-size: 2.2vw;
+    }
   }
 }
 
@@ -85,6 +93,111 @@
   }
   
   @include m.mobile {
-    font-size: 11px;
+    & {
+      font-size: 2.8vw;
+    }
+  }
+}
+
+// Дополнительные стили для планшетов
+@include m.tablet {
+  .analysis-line {
+    padding: v.$spacing-sm;
+    gap: v.$spacing-sm;
+    font-size: 2.5vw;
+  }
+  
+  .line-score {
+    min-width: 8vw;
+    font-size: 2.5vw;
+  }
+  
+  .line-depth {
+    min-width: 6vw;
+    font-size: 2vw;
+  }
+  
+  .line-moves {
+    font-size: 2.5vw;
+  }
+}
+
+// Улучшения для десктопа
+@include m.desktop {
+  .analysis-line {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px v.$shadow-light;
+    }
+    
+    &:first-child:hover {
+      box-shadow: 0 2px 6px v.$shadow-medium;
+    }
+  }
+  
+  .line-moves {
+    &:hover {
+      font-weight: 500;
+    }
+  }
+}
+
+// Стили для очень маленьких экранов
+@media (max-width: 320px) {
+  .analysis-line {
+    font-size: 3.2vw !important;
+    gap: 1vw !important;
+  }
+  
+  .line-score {
+    min-width: 12vw !important;
+    font-size: 3.2vw !important;
+  }
+  
+  .line-depth {
+    min-width: 10vw !important;
+    font-size: 2.5vw !important;
+  }
+  
+  .line-moves {
+    font-size: 3.2vw !important;
+  }
+}
+
+// Средние мобильные экраны
+@media (min-width: 321px) and (max-width: 414px) {
+  .analysis-line {
+    font-size: 2.8vw !important;
+  }
+  
+  .line-score {
+    font-size: 2.8vw !important;
+  }
+  
+  .line-depth {
+    font-size: 2.2vw !important;
+  }
+  
+  .line-moves {
+    font-size: 2.8vw !important;
+  }
+}
+
+// Большие мобильные экраны
+@media (min-width: 415px) and (max-width: 767px) {
+  .analysis-line {
+    font-size: 2.5vw !important;
+  }
+  
+  .line-score {
+    font-size: 2.5vw !important;
+  }
+  
+  .line-depth {
+    font-size: 2vw !important;
+  }
+  
+  .line-moves {
+    font-size: 2.5vw !important;
   }
 }
