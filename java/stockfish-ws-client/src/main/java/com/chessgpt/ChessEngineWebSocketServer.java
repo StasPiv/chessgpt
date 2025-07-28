@@ -683,8 +683,14 @@ public class ChessEngineWebSocketServer extends WebSocketServer {
     private void broadcastAnalysisToClient() {
         if (connectedClient != null && connectedClient.isOpen()) {
             List<AnalysisLine> analysisData = new ArrayList<>(lines.values());
-            String json = gson.toJson(analysisData);
-            System.out.println("📤 Broadcasting analysis (" + analysisData.size() + " lines) to client");
+
+            // Создаем объект с FEN и линиями анализа
+            JsonObject analysisResponse = new JsonObject();
+            analysisResponse.addProperty("fen", currentFen);
+            analysisResponse.add("lines", gson.toJsonTree(analysisData));
+
+            String json = gson.toJson(analysisResponse);
+            System.out.println("📤 Broadcasting analysis (" + analysisData.size() + " lines) with FEN: " + currentFen);
             sendToClient(json);
         }
     }

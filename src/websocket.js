@@ -115,9 +115,28 @@ export function connectWebSocket(store) {
             
             const data = JSON.parse(messageData);
             
-            if (Array.isArray(data)) {
+            // Обработка нового формата сообщений с FEN и lines
+            if (data.fen && data.lines) {
+                // Получаем текущий FEN из стора
+                const currentState = store.getState();
+                const currentFen = currentState.chess.fen;
+                
+                // Проверяем, совпадает ли FEN из анализа с текущей позицией
+                if (data.fen === currentFen) {
+                    console.log('✅ Analysis FEN matches current board position, updating analysis');
+                    store.dispatch(updateAnalysis(data.lines));
+                } else {
+                    console.log('⚠️ Analysis FEN mismatch - ignoring outdated analysis');
+                    console.log('  - Analysis FEN:', data.fen);
+                    console.log('  - Current board FEN:', currentFen);
+                }
+            }
+            // Обработка старого формата (массив линий) для совместимости
+            else if (Array.isArray(data)) {
                 store.dispatch(updateAnalysis(data));
-            } else if (data.type === 'stopped') {
+            } 
+            // Обработка команд остановки
+            else if (data.type === 'stopped') {
                 store.dispatch(stopAnalysis());
             }
         } catch (e) {
