@@ -524,7 +524,7 @@ public class ChessEngineWebSocketServer extends WebSocketServer {
     private void handleAnalyzeRequest(String fen) {
         stopAnalysis();
         currentFen = fen;
-        lines.clear();
+        // Не очищаем lines здесь - будем очищать при получении глубины 1
         System.out.println("🔍 Starting analysis for position: " + currentFen);
         sendToEngine("position fen " + currentFen);
         sendToEngine("go infinite");
@@ -643,6 +643,14 @@ public class ChessEngineWebSocketServer extends WebSocketServer {
             String nodes = matcher.group(6);
             String moves = matcher.group(7);
 
+            int depthValue = Integer.parseInt(depth);
+
+            // Очищаем старые линии при получении первой линии с глубиной 1
+            if (depthValue == 1 && pvNum.equals("1")) {
+                lines.clear();
+                System.out.println("🧹 Cleared previous analysis lines (new analysis started with depth 1)");
+            }
+
             String[] moveList = moves.trim().split(" ");
 
             // Determine whose turn it is from FEN
@@ -668,7 +676,7 @@ public class ChessEngineWebSocketServer extends WebSocketServer {
             // Create analysis line
             AnalysisLine analysisLine = new AnalysisLine();
             analysisLine.score = score;
-            analysisLine.depth = Integer.parseInt(depth);
+            analysisLine.depth = depthValue;
             analysisLine.nodes = Long.parseLong(nodes);
             analysisLine.uciMoves = String.join(" ", moveList);
             analysisLine.fen = currentFen;
