@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useRef } from 'react';
+import React, { ReactElement, useCallback, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction, loadPGNAction } from '../redux/actions.js';
 import {ChessMove, RootState} from '../types';
@@ -14,6 +14,9 @@ const MoveList = (): ReactElement => {
     // Ref для отслеживания долгого нажатия
     const longPressTimer = useRef<NodeJS.Timeout | null>(null);
     const isLongPress = useRef<boolean>(false);
+    
+    // Ref для контейнера со списком ходов
+    const movesContainerRef = useRef<HTMLDivElement>(null);
 
     const handleMoveClick = (move: ChessMove, variationPath?: any[]): void => {
         dispatch(gotoMoveAction({
@@ -139,6 +142,23 @@ const MoveList = (): ReactElement => {
         }
         isLongPress.current = false;
     }, []);
+
+    // Эффект для автоматической прокрутки к активному ходу
+    useEffect(() => {
+        if (currentMoveIndex !== null && currentMoveIndex !== undefined && movesContainerRef.current) {
+            // Находим элемент активного хода
+            const activeElement = movesContainerRef.current.querySelector('.move-item.current');
+            
+            if (activeElement) {
+                // Прокручиваем к активному элементу
+                activeElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'nearest'
+                });
+            }
+        }
+    }, [currentMoveIndex]);
 
     const isCurrentMove = (globalIndex: number, variationPath?: any[]): boolean => {
         return globalIndex === currentMoveIndex;
@@ -276,6 +296,7 @@ const MoveList = (): ReactElement => {
     return (
         <div className="move-list-container">
             <div
+                ref={movesContainerRef}
                 className="moves-container"
                 onContextMenu={handleContextMenu}
                 onTouchStart={handleTouchStart}
