@@ -5,371 +5,428 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  font-family: v.$font-system;
+  overflow: hidden;
+  
+  // МОБИЛЬНЫЕ ОПТИМИЗАЦИИ
+  @include m.mobile {
+    & {
+      padding: 0;
+      gap: 0;
+    }
+  }
 }
 
 .analysis-header {
-  @include m.flex-between;
-  margin-bottom: v.$spacing-lg;
-  padding-bottom: 10px;
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: v.$spacing-sm v.$spacing-md;
   border-bottom: 1px solid v.$border-color;
+  background: v.$background-secondary;
+  border-radius: v.$border-radius-sm v.$border-radius-sm 0 0;
+  gap: v.$spacing-sm;
   
+  // УВЕЛИЧЕННАЯ ВЫСОТА ДЛЯ ПРИПЛЮСНУТОГО ПЕРЕКЛЮЧАТЕЛЯ
   @include m.mobile {
     & {
-      // УБИРАЕМ flex-direction: column - оставляем в одну строку
-      gap: v.$spacing-sm-mobile;
-      align-items: center; // Выравниваем по центру
-      margin-bottom: v.$spacing-md-mobile;
-      padding-bottom: v.$spacing-xs-mobile;
+      padding: v.$spacing-sm; // Увеличенный padding
+      min-height: 48px; // Увеличили до 48px для больших элементов
+      max-height: 48px;
     }
   }
 }
 
 .header-left {
-  .checkbox-container {
-    @include m.flex-center;
-    cursor: pointer;
-    user-select: none;
-    gap: v.$spacing-sm;
-    font-size: 14px;
-    color: v.$text-color;
-    font-weight: 500;
-    
-    @include m.mobile {
-      & {
-        gap: v.$spacing-sm-mobile;
-        font-size: 3.2vw;
-        font-weight: 600; // Более жирный для лучшей читаемости
-      }
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+// КОНТЕЙНЕР ДЛЯ ПЕРЕКЛЮЧАТЕЛЯ
+.switch-container {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  
+  @include m.mobile {
+    & {
+      gap: v.$spacing-xs;
     }
   }
+}
 
-  input[type="checkbox"] {
-    display: none;
-  }
-
-  .checkmark {
-    width: 18px;
-    height: 18px;
-    background-color: v.$white;
-    border: 2px solid v.$border-hover;
-    border-radius: v.$border-radius-sm;
-    position: relative;
-    transition: all v.$transition-fast ease;
-    flex-shrink: 0;
-
-    &::after {
-      content: "";
-      position: absolute;
-      display: none;
-      left: 5px;
-      top: 2px;
-      width: 4px;
-      height: 8px;
-      border: solid v.$white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
-    }
-    
-    @include m.mobile {
-      & {
-        width: 4vw;
-        height: 4vw;
-        border-width: 0.4vw;
-        border-radius: v.$border-radius-sm-mobile;
-        
-        &::after {
-          left: 1.3vw;
-          top: 0.5vw;
-          width: 0.8vw;
-          height: 1.6vw;
-          border-width: 0 0.4vw 0.4vw 0;
-        }
-      }
+.switch-label {
+  font-size: 14px;
+  color: v.$text-color;
+  user-select: none;
+  font-weight: 500;
+  
+  @include m.mobile {
+    & {
+      font-size: 4vw; // ИСПОЛЬЗУЕМ VW ДЛЯ АДАПТИВНОСТИ (примерно 15-16px)
+      min-font-size: 14px; // Минимальный размер
+      max-font-size: 16px; // Максимальный размер
     }
   }
+}
 
-  input[type="checkbox"]:checked + .checkmark {
-    background-color: v.$success-color;
-    border-color: v.$success-color;
-
-    &::after {
-      display: block;
-    }
+// СТИЛИ ДЛЯ REACT-SWITCH
+.analysis-switch {
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2) !important;
   }
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: v.$spacing-lg;
+  gap: v.$spacing-md;
+  flex: 0 0 auto;
+  height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
   
   @include m.mobile {
     & {
-      // УБИРАЕМ align-self: stretch и justify-content: space-between
-      gap: v.$spacing-sm-mobile; // Уменьшаем gap для компактности
-      flex-shrink: 0; // Не позволяем сжиматься
+      gap: v.$spacing-sm;
+    }
+  }
+}
+
+// КОНТЕЙНЕР ДЛЯ СЧЕТЧИКА УЗЛОВ
+.total-nodes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
+  padding: v.$spacing-xs 0;
+  
+  @include m.mobile {
+    & {
+      align-items: center;
+      text-align: center;
     }
   }
 }
 
 .total-nodes {
-  font-size: 12px;
-  color: v.$text-muted;
-  font-weight: bold;
+  font-family: v.$font-mono;
+  font-size: 15px; // УВЕЛИЧЕННЫЙ РАЗМЕР
+  color: v.$text-color;
+  font-weight: 600;
+  line-height: 1.2;
   
   @include m.mobile {
     & {
-      font-size: 2.8vw;
-      font-weight: 700;
-      white-space: nowrap; // Не переносим на новую строку
+      font-size: 4.2vw; // ИСПОЛЬЗУЕМ VW (примерно 16-17px)
+      min-font-size: 15px;
+      max-font-size: 18px;
     }
   }
 }
 
-.connection-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.nodes-label {
+  font-size: 11px;
+  color: v.$text-muted;
+  font-weight: 400;
+  line-height: 1;
+  margin-top: 1px;
   
   @include m.mobile {
     & {
-      gap: 1.2vw;
-      flex-shrink: 0; // Не позволяем сжиматься
+      font-size: 2.8vw; // ИСПОЛЬЗУЕМ VW (примерно 11-12px)
+      min-font-size: 10px;
+      max-font-size: 12px;
+    }
+  }
+}
+
+// ИНДИКАТОР ПОДКЛЮЧЕНИЯ
+.connection-indicator {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
+  
+  @include m.mobile {
+    & {
+      gap: v.$spacing-xs;
+    }
+  }
+}
+
+.connection-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
+  padding: v.$spacing-xs;
+  border-radius: v.$border-radius-sm;
+  transition: background-color v.$transition-fast ease;
+  
+  &.connected {
+    background: rgba(40, 167, 69, 0.1);
+    
+    .connection-dot {
+      background-color: #28a745;
+      box-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
+    }
+  }
+  
+  &.disconnected {
+    background: rgba(220, 53, 69, 0.1);
+    
+    .connection-dot {
+      background-color: #dc3545;
+      box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);
+    }
+  }
+  
+  @include m.mobile {
+    & {
+      padding: v.$spacing-xs v.$spacing-sm;
+      min-width: 12vw; // АДАПТИВНАЯ ШИРИНА
+      max-width: 60px;
     }
   }
 }
 
 .connection-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: v.$border-radius-round;
-  transition: background-color v.$transition-medium ease;
-  flex-shrink: 0;
-
-  &.connected {
-    background-color: v.$success-color;
-  }
-
-  &.disconnected {
-    background-color: v.$error-color;
-  }
+  width: 10px; // УВЕЛИЧЕННЫЙ РАЗМЕР
+  height: 10px;
+  border-radius: 50%;
+  transition: all v.$transition-fast ease;
+  margin-bottom: 2px;
   
   @include m.mobile {
     & {
-      width: 1.8vw;
-      height: 1.8vw;
+      width: 3vw; // АДАПТИВНЫЙ РАЗМЕР (примерно 12-13px)
+      height: 3vw;
+      min-width: 11px;
+      min-height: 11px;
+      max-width: 14px;
+      max-height: 14px;
+      margin-bottom: 1px;
     }
   }
 }
 
 .connection-text {
-  font-size: 12px;
-  color: v.$text-muted;
+  font-size: 11px;
+  color: v.$text-color;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1;
   
   @include m.mobile {
     & {
-      font-size: 2.5vw;
-      white-space: nowrap; // Не переносим на новую строку
+      font-size: 2.8vw; // АДАПТИВНЫЙ РАЗМЕР (примерно 11-12px)
+      min-font-size: 10px;
+      max-font-size: 13px;
     }
   }
 }
 
 .reconnect-btn {
-  background: v.$white;
-  border: 1px solid v.$border-hover;
-  color: v.$text-muted;
-  padding: 4px v.$spacing-sm;
-  border-radius: v.$border-radius-sm;
+  background: v.$background-color;
+  border: 1px solid v.$border-color;
+  padding: v.$spacing-xs;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 16px; // УВЕЛИЧЕННЫЙ РАЗМЕР
+  color: v.$text-muted;
+  border-radius: v.$border-radius-sm;
   transition: all v.$transition-fast ease;
-  margin-left: 6px;
-  min-width: 28px;
-  height: 24px;
-  @include m.flex-center;
-
-  &:hover:not(:disabled) {
-    background-color: v.$background-color;
-    border-color: v.$text-secondary;
+  height: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: v.$background-hover;
     color: v.$text-color;
+    border-color: v.$border-hover;
+    transform: scale(1.05);
   }
-
+  
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
-    animation: spin 1s linear infinite;
+    transform: none;
   }
   
   @include m.mobile {
     & {
-      padding: v.$spacing-xs-mobile v.$spacing-sm-mobile;
-      border-radius: v.$border-radius-sm-mobile;
-      font-size: 2.2vw;
-      margin-left: 1.2vw;
-      min-width: 6vw;
-      height: 5vw;
-      flex-shrink: 0; // Не позволяем сжиматься
+      font-size: 4.5vw; // КРУПНЫЙ АДАПТИВНЫЙ РАЗМЕР (примерно 18-19px)
+      min-font-size: 16px;
+      max-font-size: 20px;
+      padding: v.$spacing-xs;
+      min-width: 10vw; // АДАПТИВНАЯ ШИРИНА
+      min-height: 10vw; // АДАПТИВНАЯ ВЫСОТА
+      max-width: 44px;
+      max-height: 44px;
+      border-width: 2px; // Более толстая граница для лучшей видимости
     }
   }
 }
 
-@keyframes spin {
-  from { 
-    transform: rotate(0deg); 
-  }
-  to { 
-    transform: rotate(360deg); 
-  }
-}
-
+// ОСНОВНОЙ КОНТЕНТ - ЛИНИИ АНАЛИЗА
 .analysis-lines {
   flex: 1;
   overflow-y: auto;
-  max-height: 300px;
-
-  &.inactive {
-    opacity: 0.6;
-  }
+  overflow-x: hidden;
+  padding: v.$spacing-sm;
   
   @include m.custom-scrollbar;
   
+  &.inactive {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  // МОБИЛЬНЫЕ СТИЛИ - УЧИТЫВАЕМ НОВУЮ ВЫСОТУ ЗАГОЛОВКА
   @include m.mobile {
     & {
-      max-height: 40vh; // Адаптивная высота на мобильных
+      padding: v.$spacing-xs;
+      gap: v.$spacing-xs;
+      
+      // Ограничиваем высоту для точно 4 линий (учитываем новую высоту заголовка)
+      max-height: calc(100% - 48px); // Вычитаем увеличенную высоту заголовка
+      min-height: calc(100% - 48px);
     }
   }
 }
 
 .no-analysis {
-  text-align: center;
-  color: v.$text-secondary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: v.$text-muted;
   font-style: italic;
-  padding: v.$spacing-xl;
-  border: 1px dashed v.$border-color;
-  border-radius: v.$border-radius-sm;
-  margin-top: v.$spacing-lg;
-  background-color: v.$background-secondary;
-
+  text-align: center;
+  padding: v.$spacing-md;
+  
   @include m.mobile {
     & {
-      padding: v.$spacing-lg-mobile;
-      font-size: 3.2vw;
-      margin-top: v.$spacing-md-mobile;
-      border-radius: v.$border-radius-sm-mobile;
+      padding: v.$spacing-sm;
+      font-size: 3.5vw; // АДАПТИВНЫЙ РАЗМЕР
+      min-font-size: 13px;
+      max-font-size: 15px;
     }
   }
 }
 
-// Дополнительные адаптивные стили для планшетов
-@include m.tablet {
-  .analysis-header {
-    margin-bottom: v.$spacing-md;
-    padding-bottom: v.$spacing-sm;
-  }
-  
-  .checkbox-container {
-    font-size: 2.8vw !important;
-  }
-  
-  .header-right {
-    gap: v.$spacing-md !important;
-  }
-  
-  .total-nodes {
-    font-size: 2.5vw;
-  }
-  
-  .connection-text {
-    font-size: 2.2vw;
-  }
-  
-  .reconnect-btn {
-    font-size: 2vw;
-    min-width: 5vw;
-    height: 4.5vw;
-  }
-  
-  .no-analysis {
-    font-size: 2.8vw;
-  }
-  
-  .checkmark {
-    width: 3.5vw !important;
-    height: 3.5vw !important;
-    
-    &::after {
-      left: 1.1vw !important;
-      top: 0.4vw !important;
-      width: 0.7vw !important;
-      height: 1.4vw !important;
-    }
-  }
-}
-
-// Улучшения для десктопа
-@include m.desktop {
-  .analysis-panel {
-    font-size: 14px;
-  }
-  
-  .analysis-header {
-    &:hover {
-      border-bottom-color: v.$border-hover;
-    }
-  }
-  
-  .checkbox-container {
-    &:hover {
-      color: v.$primary-color;
+// Стили для отдельных линий анализа на мобильных
+@include m.mobile {
+  .analysis-lines {
+    // Каждая линия анализа должна быть компактной
+    :global(.analysis-line) {
+      margin-bottom: v.$spacing-xs !important;
+      padding: v.$spacing-xs !important;
+      font-size: 3vw !important; // АДАПТИВНЫЙ РАЗМЕР
+      min-font-size: 12px !important;
+      max-font-size: 14px !important;
+      line-height: 1.3 !important;
       
-      .checkmark {
-        border-color: v.$primary-color;
-        transform: scale(1.05);
+      // Ограничиваем высоту каждой линии (чуть больше места)
+      max-height: 35px !important;
+      min-height: 35px !important;
+      overflow: hidden !important;
+    }
+    
+    // Скрываем лишние линии, если их больше 4
+    :global(.analysis-line:nth-child(n+5)) {
+      display: none !important;
+    }
+  }
+}
+
+// Обновленная высота для секции анализа в CustomLayout
+// (этот код должен быть добавлен в CustomLayout.scss)
+@include m.mobile {
+  :global(.mobile-analysis-section) {
+    height: 250px !important; // Увеличено для нового заголовка: 48px заголовок + 4×35px линии + отступы
+    
+    // Для маленьких экранов
+    @media (max-width: 320px) {
+      & {
+        height: 230px !important;
+      }
+    }
+    
+    // Для ландшафтной ориентации
+    @media (orientation: landscape) and (max-width: 767px) {
+      & {
+        height: 210px !important;
       }
     }
   }
+}
+
+// Дополнительные стили для очень маленьких экранов
+@media (max-width: 320px) {
+  .analysis-header {
+    min-height: 44px !important;
+    max-height: 44px !important;
+    padding: v.$spacing-xs !important;
+  }
+  
+  .switch-label {
+    font-size: 4.5vw !important; // Больше для маленьких экранов
+    min-font-size: 13px !important;
+  }
+  
+  .total-nodes {
+    font-size: 4.8vw !important;
+    min-font-size: 14px !important;
+  }
+  
+  .connection-text {
+    font-size: 3.2vw !important;
+    min-font-size: 9px !important;
+  }
   
   .reconnect-btn {
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px v.$shadow-light;
-    }
+    font-size: 5vw !important;
+    min-font-size: 15px !important;
+    min-width: 12vw !important;
+    min-height: 12vw !important;
   }
   
   .analysis-lines {
-    max-height: 350px; // Больше места на десктопе
+    max-height: calc(100% - 44px) !important;
+    min-height: calc(100% - 44px) !important;
+    
+    :global(.analysis-line) {
+      max-height: 32px !important;
+      min-height: 32px !important;
+      font-size: 3.5vw !important;
+      min-font-size: 11px !important;
+    }
   }
 }
 
-// Специальные стили для очень маленьких экранов (320px и меньше)
-@media (max-width: 320px) {
+// Ландшафтная ориентация
+@media (orientation: landscape) and (max-width: 767px) {
   .analysis-header {
-    gap: 1vw !important; // Еще более компактный gap
+    min-height: 42px !important;
+    max-height: 42px !important;
+    padding: v.$spacing-xs v.$spacing-sm !important;
   }
   
-  .header-right {
-    gap: 1vw !important; // Компактные отступы между элементами справа
-  }
-  
-  .checkbox-container {
+  .switch-label {
     font-size: 3.5vw !important;
   }
   
-  .checkmark {
-    width: 4.2vw !important;
-    height: 4.2vw !important;
-    
-    &::after {
-      left: 1.4vw !important;
-      top: 0.5vw !important;
-      width: 0.8vw !important;
-      height: 1.7vw !important;
-    }
+  .total-nodes {
+    font-size: 3.8vw !important;
   }
   
-  .total-nodes {
-    font-size: 2.8vw !important;
+  .connection-dot {
+    width: 2.5vw !important;
+    height: 2.5vw !important;
   }
   
   .connection-text {
@@ -377,71 +434,47 @@
   }
   
   .reconnect-btn {
-    font-size: 2vw !important;
-    min-width: 5.5vw !important;
-    height: 4.5vw !important;
-    margin-left: 0.8vw !important;
+    font-size: 4vw !important;
+    min-width: 8vw !important;
+    min-height: 8vw !important;
+  }
+  
+  .analysis-lines {
+    max-height: calc(100% - 42px) !important;
+    min-height: calc(100% - 42px) !important;
+    
+    :global(.analysis-line) {
+      max-height: 32px !important;
+      min-height: 32px !important;
+      font-size: 2.8vw !important;
+      min-font-size: 11px !important;
+    }
   }
 }
 
-// Средние мобильные экраны (321px-414px)
-@media (min-width: 321px) and (max-width: 414px) {
-  .header-right {
-    gap: 1.5vw !important;
-  }
-  
-  .checkbox-container {
-    font-size: 3.2vw !important;
-  }
-  
-  .checkmark {
-    width: 4vw !important;
-    height: 4vw !important;
-    
-    &::after {
-      left: 1.3vw !important;
-      top: 0.5vw !important;
-      width: 0.8vw !important;
-      height: 1.6vw !important;
-    }
+// Дополнительные стили для больших мобильных экранов (phablets)
+@media (min-width: 400px) and (max-width: 767px) {
+  .switch-label {
+    font-size: 3.8vw;
+    max-font-size: 17px;
   }
   
   .total-nodes {
-    font-size: 2.6vw !important;
+    font-size: 4vw;
+    max-font-size: 19px;
   }
   
-  .connection-text {
-    font-size: 2.3vw !important;
-  }
-}
-
-// Большие мобильные экраны (415px-767px)
-@media (min-width: 415px) and (max-width: 767px) {
-  .header-right {
-    gap: 2vw !important;
+  .connection-dot {
+    width: 2.8vw;
+    height: 2.8vw;
+    max-width: 15px;
+    max-height: 15px;
   }
   
-  .checkbox-container {
-    font-size: 3vw !important;
-  }
-  
-  .checkmark {
-    width: 3.8vw !important;
-    height: 3.8vw !important;
-    
-    &::after {
-      left: 1.2vw !important;
-      top: 0.4vw !important;
-      width: 0.7vw !important;
-      height: 1.5vw !important;
-    }
-  }
-  
-  .total-nodes {
-    font-size: 2.5vw !important;
-  }
-  
-  .connection-text {
-    font-size: 2.2vw !important;
+  .reconnect-btn {
+    font-size: 4.2vw;
+    max-font-size: 21px;
+    max-width: 46px;
+    max-height: 46px;
   }
 }

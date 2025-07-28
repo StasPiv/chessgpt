@@ -6,10 +6,109 @@
   height: 100vh;
   padding: 10px;
   background-color: v.$background-color;
-  
+
   @include m.mobile {
     & {
       padding: v.$spacing-sm;
+    }
+  }
+}
+
+// МОБИЛЬНЫЙ ФИКСИРОВАННЫЙ ЛЕЙАУТ
+.mobile-fixed-layout {
+  @include m.mobile {
+    & {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 0;
+      gap: 0;
+      overflow: hidden;
+    }
+  }
+}
+
+// Секция шахматной доски на мобильном
+.mobile-chessboard-section {
+  @include m.mobile {
+    & {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-radius: v.$border-radius-md;
+      margin: v.$spacing-xs;
+      padding: v.$spacing-sm;
+      box-shadow: 0 2px 4px v.$shadow-light;
+    }
+  }
+
+  .chess-board-wrapper {
+    @include m.mobile {
+      & {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+      }
+    }
+  }
+
+  .navigation-wrapper.mobile-compact {
+    @include m.mobile {
+      & {
+        flex: 0 0 auto;
+        margin-top: 0; // УБИРАЕМ ОТСТУП между доской и навигацией
+        padding-top: v.$spacing-xs;
+        display: flex;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// Секция анализа на мобильном - ОБНОВЛЕННАЯ ВЫСОТА ДЛЯ УВЕЛИЧЕННОГО ЗАГОЛОВКА
+.mobile-analysis-section {
+  @include m.mobile {
+    & {
+      flex: 0 0 auto;
+      height: 250px; // Увеличено: 48px заголовок + 4×35px линии + отступы
+      background: white;
+      border-radius: v.$border-radius-md;
+      margin: 0 v.$spacing-xs v.$spacing-xs v.$spacing-xs;
+      padding: v.$spacing-sm;
+      box-shadow: 0 2px 4px v.$shadow-light;
+      overflow: hidden;
+    }
+
+    // Для маленьких экранов
+    @media (max-width: 320px) {
+      & {
+        height: 230px !important;
+      }
+    }
+
+    // Для ландшафтной ориентации
+    @media (orientation: landscape) and (max-width: 767px) {
+      & {
+        height: 210px !important;
+      }
+    }
+  }
+}
+
+// Секция ходов на мобильном - ЗАНИМАЕТ ВСЕ ОСТАВШЕЕСЯ МЕСТО
+.mobile-moves-section {
+  @include m.mobile {
+    & {
+      flex: 1;
+      min-height: 0;
+      background: white;
+      border-radius: v.$border-radius-md;
+      margin: 0 v.$spacing-xs v.$spacing-xs v.$spacing-xs;
+      box-shadow: 0 2px 4px v.$shadow-light;
+      overflow: hidden;
     }
   }
 }
@@ -20,42 +119,48 @@
   justify-content: flex-end;
   margin-bottom: 10px;
   padding: 0 10px;
-  
+
   @include m.mobile {
     & {
-      padding: 0 v.$spacing-sm;
+      display: none; // Скрываем на мобильных
     }
   }
 }
 
 .reset-layout-btn {
   gap: v.$spacing-xs;
-  
+
   @include m.button-secondary;
-  
+
   &:hover {
     background: v.$background-hover;
     border-color: v.$border-hover;
   }
 }
 
-// Grid layout
+// Grid layout - только для десктопа
 .layout {
   height: calc(100vh - 80px);
-  
+
   @include m.mobile {
     & {
-      height: calc(100vh - 60px);
+      display: none; // Скрываем grid layout на мобильных
     }
   }
 }
 
-// React Grid Layout основные стили
+// React Grid Layout основные стили - только для десктопа
 .react-grid-layout {
   position: relative;
   flex: 1;
   width: 100%;
   height: 100%;
+
+  @include m.mobile {
+    & {
+      display: none;
+    }
+  }
 }
 
 .react-grid-item {
@@ -64,25 +169,25 @@
   overflow: hidden;
   transition: all v.$transition-fast ease;
   transition-property: left, top, box-shadow;
-  
+
   @include m.card;
-  
+
   &:hover {
     box-shadow: 0 4px 8px v.$shadow-light;
   }
-  
+
   &.cssTransforms {
     transition-property: transform, box-shadow;
   }
-  
+
   &.resizing {
     opacity: 0.9;
   }
-  
+
   &.static {
     background: #cce;
   }
-  
+
   // Placeholder для перетаскиваемых элементов
   &.react-grid-placeholder {
     background: v.$border-color !important;
@@ -93,7 +198,7 @@
     z-index: 2 !important;
     user-select: none !important;
   }
-  
+
   // Ручка изменения размера
   > .react-resizable-handle {
     position: absolute;
@@ -101,7 +206,7 @@
     height: v.$grid-handle-size;
     bottom: 0;
     right: 0;
-    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNiA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiM5OTkiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTAgNXM1IDAgNSAwIDAgNSAwIDV6Ii8+PC9nPjwvc3ZnPg==');
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNiA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiM5OTkiIGZpbGwtcnVsZT0iZXZlbm9lZCI+PHBhdGggZD0iTTAgNXM1IDAgNSAwIDAgNSAwIDV6Ii8+PC9nPjwvc3ZnPg==');
     background-position: bottom right;
     background-repeat: no-repeat;
     background-origin: content-box;
@@ -111,11 +216,11 @@
     background-color: v.$border-color;
     border-radius: v.$border-radius-sm;
     transition: background-color v.$transition-fast ease;
-    
+
     &:hover {
       background-color: v.$border-hover;
     }
-    
+
     &::after {
       content: "";
       position: absolute;
@@ -127,7 +232,7 @@
       border-bottom: 2px solid v.$text-secondary;
       transform: rotate(45deg);
     }
-    
+
     @include m.mobile {
       & {
         display: none; // Скрываем ручку изменения размера на мобильных
@@ -136,17 +241,23 @@
   }
 }
 
-// Layout items - общие стили для панелей
+// Layout items - общие стили для панелей (только десктоп)
 .layout-item {
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: box-shadow v.$transition-fast ease;
-  
+
   @include m.card;
-  
+
   &:hover {
     box-shadow: 0 4px 8px v.$shadow-light;
+  }
+
+  @include m.mobile {
+    & {
+      display: none; // Скрываем на мобильных
+    }
   }
 }
 
@@ -163,13 +274,13 @@
   color: v.$text-color;
   user-select: none;
   transition: background-color v.$transition-fast ease;
-  
+
   @include m.flex-center;
-  
+
   &:hover {
     background: v.$background-hover;
   }
-  
+
   @include m.mobile {
     & {
       display: none; // ПОЛНОСТЬЮ СКРЫВАЕМ НА МОБИЛЬНЫХ УСТРОЙСТВАХ
@@ -181,7 +292,7 @@
   font-size: 12px;
   color: v.$text-muted;
   line-height: 1;
-  
+
   @include m.mobile {
     & {
       font-size: 10px;
@@ -195,38 +306,31 @@
   color: v.$text-color;
 }
 
-// Panel content - основное содержимое панели
+// Panel content - основное содержимое панели (только десктоп)
 .panel-content {
   flex: 1;
   overflow: auto;
   padding: 10px;
   display: flex;
   flex-direction: column;
-  
+
   @include m.custom-scrollbar;
-  
+
   @include m.mobile {
     & {
-      padding: v.$spacing-sm;
+      display: none; // Скрываем на мобильных, используем фиксированные секции
     }
   }
 }
 
-// Специальные стили для панели шахматной доски
+// Специальные стили для панели шахматной доски (только десктоп)
 .chessboard-item {
   .panel-content {
     justify-content: center;
     padding: 10px;
     gap: v.$spacing-lg;
-    
+
     @include m.flex-column-center;
-    
-    @include m.mobile {
-      & {
-        gap: v.$spacing-sm;
-        padding: v.$spacing-sm;
-      }
-    }
   }
 }
 
@@ -234,7 +338,7 @@
   flex: 1;
   width: 100%;
   min-height: 0;
-  
+
   @include m.flex-center;
 }
 
@@ -242,53 +346,46 @@
   flex-shrink: 0;
   width: 100%;
   margin-top: 10px;
-  
+
   @include m.flex-center;
-  
+
   @include m.mobile {
     & {
-      margin-top: v.$spacing-sm;
+      margin-top: 0; // Убираем отступ на мобильных
     }
   }
 }
 
-// Специальные стили для панели ходов
+// Специальные стили для панели ходов (только десктоп)
 .moves-item {
   .panel-content {
     padding: 0;
   }
+
+  @include m.mobile {
+    & {
+      display: none;
+    }
+  }
 }
 
-// Специальные стили для панели анализа
+// Специальные стили для панели анализа (только десктоп)
 .analysis-item {
   .panel-content {
     padding: 10px;
-    
-    @include m.mobile {
-      & {
-        padding: v.$spacing-sm;
-      }
+  }
+
+  @include m.mobile {
+    & {
+      display: none;
     }
   }
 }
 
 // Адаптивные стили для мобильных устройств
 @include m.mobile {
-  .custom-layout-container {
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  .layout {
-    height: calc(100vh - 20px); // УМЕНЬШАЕМ ВЫСОТУ БЕЗ DRAG-HANDLE
-  }
-  
-  .react-grid-item {
-    box-shadow: 0 1px 2px v.$shadow-light;
-    
-    &:hover {
-      box-shadow: 0 2px 4px v.$shadow-light;
-    }
+  .custom-layout-container:not(.mobile-fixed-layout) {
+    display: none; // Скрываем старый лейаут
   }
 }
 
@@ -297,7 +394,7 @@
   .custom-layout-container {
     padding: v.$spacing-md;
   }
-  
+
   .panel-content {
     padding: v.$spacing-md;
   }
@@ -310,7 +407,7 @@
       box-shadow: 0 6px 12px v.$shadow-light;
     }
   }
-  
+
   .drag-handle {
     &:hover {
       background: v.$background-hover;

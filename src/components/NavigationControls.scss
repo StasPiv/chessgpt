@@ -42,30 +42,32 @@
     pointer-events: none;
   }
   
-  // МОБИЛЬНЫЕ СТИЛИ В VW
+  // МОБИЛЬНЫЕ СТИЛИ - КОМПАКТНЫЕ КНОПКИ (высота как строка текста)
   @include m.mobile {
     & {
-      min-width: 12vw !important;
-      height: 12vw !important;
-      padding: 3vw 4vw !important;
-      font-size: 4vw !important;
-      border-radius: 1.5vw !important;
-      margin: 0.5vw !important;
+      min-width: 8vw !important;
+      height: 6vw !important; // Уменьшенная высота для компактности
+      padding: 1vw 2vw !important; // Минимальный padding
+      font-size: 3.5vw !important;
+      border-radius: 1vw !important;
+      margin: 0.3vw !important;
+      line-height: 1 !important; // Плотная упаковка текста
     }
     
     &:active:not(:disabled) {
       transform: scale(0.95) !important;
-      box-shadow: inset 0 1vw 2vw rgba(0, 0, 0, 0.2) !important;
+      box-shadow: inset 0 0.5vw 1vw rgba(0, 0, 0, 0.2) !important;
     }
     
-    // Минимальные размеры для очень маленьких экранов
+    // Минимальные размеры для очень маленьких экранов - тоже компактные
     @media (max-width: 320px) {
       & {
-        min-width: 48px !important;
-        height: 48px !important;
-        font-size: 16px !important;
-        padding: 12px 16px !important;
-        border-radius: 8px !important;
+        min-width: 32px !important;
+        height: 24px !important; // Высота как строка текста
+        font-size: 12px !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        line-height: 1 !important;
       }
     }
   }
@@ -86,20 +88,21 @@
   
   @include m.mobile {
     & {
-      min-width: 12vw !important;
-      width: 12vw !important;
-      height: 12vw !important;
-      font-size: 4vw !important;
+      min-width: 8vw !important;
+      width: 8vw !important;
+      height: 6vw !important; // Компактная высота
+      font-size: 3.5vw !important;
       font-weight: bold !important;
       padding: 0 !important;
+      line-height: 1 !important;
     }
     
     @media (max-width: 320px) {
       & {
-        min-width: 48px !important;
-        width: 48px !important;
-        height: 48px !important;
-        font-size: 18px !important;
+        min-width: 32px !important;
+        width: 32px !important;
+        height: 24px !important; // Высота как строка текста
+        font-size: 14px !important;
       }
     }
   }
@@ -136,16 +139,17 @@
     }
   }
   
-  // МОБИЛЬНЫЕ СТИЛИ В VW
+  // МОБИЛЬНЫЕ СТИЛИ - КОМПАКТНАЯ КНОПКА ПОВОРОТА
   @include m.mobile {
     & {
-      min-width: 20vw !important;
-      height: 12vw !important;
-      padding: 3vw 4vw !important;
-      font-size: 4vw !important;
-      border-radius: 1.5vw !important;
-      border-width: 0.8vw !important;
-      margin-left: 3vw !important;
+      min-width: 12vw !important;
+      height: 6vw !important; // Компактная высота
+      padding: 1vw 2vw !important;
+      font-size: 3vw !important;
+      border-radius: 1vw !important;
+      border-width: 0.4vw !important;
+      margin-left: 2vw !important;
+      line-height: 1 !important;
     }
     
     &:active:not(:disabled) {
@@ -162,13 +166,13 @@
     
     @media (max-width: 320px) {
       & {
-        min-width: 80px !important;
-        height: 48px !important;
-        font-size: 16px !important;
-        border-width: 3px !important;
-        padding: 12px 16px !important;
-        border-radius: 8px !important;
-        margin-left: 12px !important;
+        min-width: 48px !important;
+        height: 24px !important; // Высота как строка текста
+        font-size: 11px !important;
+        border-width: 1px !important;
+        padding: 2px 8px !important;
+        border-radius: 4px !important;
+        margin-left: 8px !important;
       }
     }
   }
@@ -197,19 +201,20 @@
     }
   }
   
-  // МОБИЛЬНЫЕ СТИЛИ В VW
+  // МОБИЛЬНЫЕ СТИЛИ - КОМПАКТНЫЙ ИНДИКАТОР
   @include m.mobile {
     & {
-      font-size: 3.5vw !important;
-      padding: 0 3vw !important;
-      letter-spacing: 0.2vw !important;
+      font-size: 3vw !important;
+      padding: 0 1.5vw !important;
+      letter-spacing: 0.1vw !important;
+      line-height: 1 !important;
     }
     
     @media (max-width: 320px) {
       & {
-        font-size: 14px !important;
-        padding: 0 12px !important;
-        letter-spacing: 1px !important;
+        font-size: 11px !important;
+        padding: 0 6px !important;
+        letter-spacing: 0.5px !important;
       }
     }
   }
@@ -238,7 +243,7 @@
   
   @include m.mobile {
     & {
-      gap: 1vw;
+      gap: 0.5vw; // Уменьшенный зазор для компактности
     }
   }
 }
@@ -251,7 +256,7 @@
     
     @include m.mobile {
       & {
-        border-radius: 1.5vw !important;
+        border-radius: 1vw !important;
       }
     }
   }
@@ -262,7 +267,7 @@
     
     @include m.mobile {
       & {
-        border-radius: 1.5vw !important;
+        border-radius: 1vw !important;
       }
     }
   }
@@ -274,7 +279,7 @@
     
     @include m.mobile {
       & {
-        border-radius: 1.5vw !important;
+        border-radius: 1vw !important;
         margin-left: 0 !important;
       }
     }
@@ -297,12 +302,12 @@
   }
 }
 
-// Touch device optimizations
+// Touch device optimizations - но сохраняем компактность
 @media (hover: none) and (pointer: coarse) {
   .nav-button,
   .flip-button {
-    min-height: 48px;
-    min-width: 48px;
+    // На тач-устройствах минимальная высота остается компактной
+    min-height: 32px; // Вместо 48px для компактности
     
     &:hover {
       background-color: inherit;
@@ -316,6 +321,8 @@
   }
   
   .flip-button {
+    min-height: 32px; // Компактная высота и для flip-button
+    
     &:active {
       background-color: #e8e8e8;
     }
@@ -327,46 +334,48 @@
   }
   
   .nav-controls-group {
-    gap: 12px;
+    gap: 8px; // Уменьшенный зазор
     
     @include m.mobile {
       & {
-        gap: 3vw;
+        gap: 1vw; // Еще более компактно на мобильных
       }
     }
   }
 }
 
-// Дополнительные стили для очень маленьких экранов
+// Дополнительные стили для очень маленьких экранов - все компактно
 @media (max-width: 320px) {
   .navigation-controls {
-    padding: 8px;
-    gap: 4px;
+    padding: 4px; // Уменьшенный padding
+    gap: 2px; // Минимальный зазор
   }
   
   .nav-controls-group {
-    gap: 4px;
+    gap: 2px;
   }
 }
 
-// Для больших мобильных экранов (ландшафтная ориентация)
+// Для больших мобильных экранов (ландшафтная ориентация) - тоже компактно
 @media (min-width: 568px) and (max-width: 767px) and (orientation: landscape) {
   .navigation-controls {
     flex-direction: row;
     justify-content: center;
     flex-wrap: nowrap;
-    gap: 2vw;
+    gap: 1vw; // Компактный зазор
   }
   
   .nav-button,
   .flip-button {
-    min-width: 10vw !important;
-    height: 10vw !important;
-    font-size: 3.5vw !important;
+    min-width: 7vw !important;
+    height: 5vw !important; // Компактная высота в landscape
+    font-size: 2.8vw !important;
+    line-height: 1 !important;
   }
   
   .position-indicator {
-    font-size: 3vw !important;
+    font-size: 2.5vw !important;
+    line-height: 1 !important;
   }
 }
 
@@ -381,7 +390,7 @@
     
     @include m.mobile {
       & {
-        border-width: 0.3vw;
+        border-width: 0.2vw; // Тонкая граница для компактности
       }
     }
   }
@@ -391,7 +400,7 @@
     
     @include m.mobile {
       & {
-        border-width: 1vw !important;
+        border-width: 0.4vw !important; // Тонкая граница
       }
     }
     
@@ -400,8 +409,47 @@
       
       @include m.mobile {
         & {
-          border-width: 1vw !important;
+          border-width: 0.4vw !important;
         }
+      }
+    }
+  }
+}
+
+// Дополнительные стили для ультра-компактного режима на всех мобильных
+@include m.mobile {
+  .navigation-controls {
+    // Убираем лишние отступы
+    padding: 1vw !important;
+    gap: 0.3vw !important;
+    
+    // Принудительно делаем контейнер более плоским
+    min-height: auto !important;
+    height: auto !important;
+  }
+  
+  // Все кнопки получают одинаковую компактную высоту
+  .nav-button,
+  .flip-button,
+  .nav-button.icon-button {
+    // Высота примерно как у строки текста
+    height: 6vw !important;
+    min-height: 6vw !important;
+    max-height: 6vw !important;
+    
+    // Выравнивание по центру для лучшего вида
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    // Плотная упаковка текста
+    line-height: 1 !important;
+    
+    @media (max-width: 320px) {
+      & {
+        height: 24px !important;
+        min-height: 24px !important;
+        max-height: 24px !important;
       }
     }
   }

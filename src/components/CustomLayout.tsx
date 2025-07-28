@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {Layout, Layouts, Responsive, WidthProvider} from 'react-grid-layout';
 import {CustomLayoutProps, LayoutChangeCallback} from '../types';
 import {setIsMobileAction} from '../redux/actions.js';
 import {addResizeListener, isMobileDevice} from '../utils/DeviceUtilities.js';
+import {RootState} from '../types';
 import ChessBoard from './ChessBoard';
 import MoveList from './MoveList';
 import AnalysisPanel from './AnalysisPanel';
@@ -14,6 +15,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
     const dispatch = useDispatch();
+    const isMobile = useSelector((state: RootState) => state.ui.isMobile);
     
     const [layouts, setLayouts] = useState<Layouts>({
         lg: [
@@ -26,11 +28,14 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
             { i: 'moves', x: 6, y: 0, w: 6, h: 6, minW: 3, minH: 4 },
             { i: 'analysis', x: 0, y: 6, w: 12, h: 4, minW: 6, minH: 3 }
         ],
-        // Добавляем макет для мобильных устройств
+        // ФИКСИРОВАННЫЙ МОБИЛЬНЫЙ ЛЕЙАУТ - ПЕРЕСТАВЛЕНЫ МЕСТАМИ
         sm: [
-            { i: 'chessboard', x: 0, y: 0, w: 12, h: 15, minW: 12, minH: 5 },
-            { i: 'moves', x: 0, y: 6, w: 12, h: 6, minW: 12, minH: 3 },
-            { i: 'analysis', x: 0, y: 10, w: 12, h: 5, minW: 12, minH: 2 }
+            // Шахматная доска с навигацией (верх экрана)
+            { i: 'chessboard', x: 0, y: 0, w: 12, h: 10, static: true, minW: 12, minH: 10, maxW: 12, maxH: 10 },
+            // Ходы - сразу под доской (фиксированная высота)
+            { i: 'moves', x: 0, y: 10, w: 12, h: 6, static: true, minW: 12, minH: 6, maxW: 12, maxH: 20 },
+            // Анализ - внизу (фиксированная высота для 4 линий)
+            { i: 'analysis', x: 0, y: 16, w: 12, h: 4, static: true, minW: 12, minH: 4, maxW: 12, maxH: 4 }
         ]
     });
 
@@ -53,29 +58,69 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
         };
     }, [dispatch]);
 
-    // Load saved layout from localStorage
+    // Load saved layout from localStorage только для десктопа
     useEffect(() => {
-        const savedLayouts = localStorage.getItem('chessapp-layouts');
-        if (savedLayouts) {
-            try {
-                const parsedLayouts = JSON.parse(savedLayouts) as Layouts;
-                setLayouts(parsedLayouts);
-            } catch (error) {
-                console.error('Error loading saved layouts:', error);
+        if (!isMobile) {
+            const savedLayouts = localStorage.getItem('chessapp-layouts');
+            if (savedLayouts) {
+                try {
+                    const parsedLayouts = JSON.parse(savedLayouts) as Layouts;
+                    setLayouts(prevLayouts => ({
+                        ...parsedLayouts,
+                        // Сохраняем фиксированный мобильный лейаут
+                        sm: prevLayouts.sm
+                    }));
+                } catch (error) {
+                    console.error('Error loading saved layouts:', error);
+                }
             }
         }
-    }, []);
+    }, [isMobile]);
 
-    // Save layout to localStorage
+    // Save layout to localStorage только для десктопа
     const handleLayoutChange: LayoutChangeCallback = (layout: Layout[], allLayouts: Layouts) => {
-        setLayouts(allLayouts);
-        localStorage.setItem('chessapp-layouts', JSON.stringify(allLayouts));
+        if (!isMobile) {
+            setLayouts(allLayouts);
+            localStorage.setItem('chessapp-layouts', JSON.stringify(allLayouts));
+        }
     };
 
     const handleFlipBoard = (): void => {
         setIsFlipped(!isFlipped);
     };
 
+    // Мобильный фиксированный лейаут
+    if (isMobile) {
+        return (
+            <div className={`custom-layout-container mobile-fixed-layout ${className || ''}`}>
+                {/* Шахматная доска с навигацией */}
+                <div className="mobile-chessboard-section">
+                    <div className="chess-board-wrapper">
+                        <ChessBoard isFlipped={isFlipped} />
+                    </div>
+                    <div className="navigation-wrapper mobile-compact">
+                        <NavigationControls 
+                            onFlipBoard={handleFlipBoard} 
+                            isFlipped={isFlipped}
+                            compact={true}
+                        />
+                    </div>
+                </div>
+                
+                {/* Панель ходов - теперь сразу под доской */}
+                <div className="mobile-moves-section">
+                    <MoveList />
+                </div>
+                
+                {/* Панель анализа - теперь внизу */}
+                <div className="mobile-analysis-section">
+                    <AnalysisPanel />
+                </div>
+            </div>
+        );
+    }
+
+    // Десктопный лейаут с grid
     return (
         <div className={`custom-layout-container ${className || ''}`}>
             <ResponsiveGridLayout
@@ -85,8 +130,8 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
                 breakpoints={{ lg: 1200, md: 996, sm: 768 }}
                 cols={{ lg: 12, md: 12, sm: 12 }}
                 rowHeight={60}
-                isDraggable={true}
-                isResizable={true}
+                isDraggable={!isMobile}
+                isResizable={!isMobile}
                 margin={[10, 10]}
                 containerPadding={[10, 10]}
                 useCSSTransforms={true}

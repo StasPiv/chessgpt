@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Switch from 'react-switch';
 import { toggleAutoAnalysis } from '../redux/analysisReducer.js';
 import { sendPosition, stopAnalysisRequest, connectWebSocket } from '../websocket.js';
 import { store } from '../redux/store.js';
@@ -12,6 +13,7 @@ const AnalysisPanel: React.FC = () => {
     const dispatch = useDispatch();
     const { lines, status, autoAnalysisEnabled } = useSelector((state: RootState) => state.analysis);
     const { currentFen } = useSelector((state: RootState) => state.chess);
+    const isMobile = useSelector((state: RootState) => state.ui.isMobile);
     
     // Получаем состояние WebSocket из Redux
     const { isConnected } = useSelector((state: RootState) => state.websocket);
@@ -19,11 +21,10 @@ const AnalysisPanel: React.FC = () => {
     // Состояние для индикации процесса переподключения
     const [isReconnecting, setIsReconnecting] = useState(false);
 
-    const handleToggleAutoAnalysis = (): void => {
-        const newAutoEnabled = !autoAnalysisEnabled;
+    const handleToggleAutoAnalysis = (checked: boolean): void => {
         dispatch(toggleAutoAnalysis());
 
-        if (!newAutoEnabled) {
+        if (!checked) {
             stopAnalysisRequest();
         } else if (currentFen && isConnected) {
             sendPosition(currentFen);
@@ -69,26 +70,40 @@ const AnalysisPanel: React.FC = () => {
         <div className="analysis-panel">
             <div className="analysis-header">
                 <div className="header-left">
-                    <label className="checkbox-container">
-                        <input
-                            type="checkbox"
+                    <div className="switch-container">
+                        <Switch
                             checked={autoAnalysisEnabled}
                             onChange={handleToggleAutoAnalysis}
+                            onColor="#28a745"
+                            offColor="#6c757d"
+                            onHandleColor="#ffffff"
+                            offHandleColor="#ffffff"
+                            handleDiameter={isMobile ? 18 : 20}
+                            uncheckedIcon={false}
+                            checkedIcon={false}
+                            height={isMobile ? 20 : 24}
+                            width={isMobile ? 36 : 44}
+                            className="analysis-switch"
+                            activeBoxShadow="0 0 2px 3px #28a74544"
                         />
-                        <span className="checkmark"></span>
-                        Auto-analyze moves
-                    </label>
+                        <span className="switch-label">Auto-analyze moves</span>
+                    </div>
                 </div>
                 
                 <div className="header-right">
                     {totalNodes > 0 && (
-                        <span className="total-nodes">{totalNodes.toLocaleString()}</span>
+                        <div className="total-nodes-container">
+                            <span className="total-nodes">{totalNodes.toLocaleString()}</span>
+                            <span className="nodes-label">nodes</span>
+                        </div>
                     )}
                     <div className="connection-indicator">
-                        <div className={`connection-dot ${isConnected ? 'connected' : 'disconnected'}`}></div>
-                        <span className="connection-text">
-                            {isConnected ? 'Connected' : 'Disconnected'}
-                        </span>
+                        <div className={`connection-status ${isConnected ? 'connected' : 'disconnected'}`}>
+                            <div className="connection-dot"></div>
+                            <span className="connection-text">
+                                {isConnected ? 'Connected' : 'Disconnected'}
+                            </span>
+                        </div>
                         {!isConnected && (
                             <button 
                                 className="reconnect-btn"
