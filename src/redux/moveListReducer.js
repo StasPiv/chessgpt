@@ -1,11 +1,11 @@
 import { Chess } from 'cm-chess';
 import { ADD_MOVE, ADD_VARIATION, GOTO_MOVE } from './actions.js';
 
-const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 const initialState = {
     game: new Chess(),
-    fen: START_POSITION,
+    fen: DEFAULT_START_POSITION,
     history: [],
     currentMoveIndex: -1,
     currentMove: null, // Добавляем объект текущего хода
@@ -13,6 +13,11 @@ const initialState = {
     pgnHeaders: {},
     maxGlobalIndex: -1 // Добавляем максимальный глобальный индекс
 };
+
+// Function to get the starting position from PGN headers or default
+function getStartPosition(pgnHeaders) {
+    return pgnHeaders.FEN || DEFAULT_START_POSITION;
+}
 
 // Function to find move object by global index
 function findMoveByGlobalIndex(history, globalIndex) {
@@ -249,12 +254,13 @@ function handleGotoMove(state, action) {
         // If going to position before first move
         if (moveIndex === -1) {
             const newGame = new Chess();
-            newGame.load(START_POSITION);
+            const startPosition = getStartPosition(state.pgnHeaders);
+            newGame.load(startPosition);
 
             return {
                 ...state,
                 game: newGame,
-                fen: START_POSITION,
+                fen: startPosition,
                 currentMoveIndex: -1,
                 currentMove: null
             };

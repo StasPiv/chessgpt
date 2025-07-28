@@ -2,11 +2,11 @@ import { Chess } from 'cm-chess';
 import { cleanPgn } from './cleanPgn.js';
 import { LOAD_PGN } from './actions.js';
 
-const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 const initialState = {
     game: new Chess(),
-    fen: START_POSITION,
+    fen: DEFAULT_START_POSITION,
     history: [],
     fullHistory: [],
     currentMoveIndex: -1,
@@ -16,6 +16,11 @@ const initialState = {
     pgnHeaders: {},
     maxGlobalIndex: 0
 };
+
+// Function to get the starting position from PGN headers or default
+function getStartPosition(pgnHeaders) {
+    return pgnHeaders.FEN || DEFAULT_START_POSITION;
+}
 
 // Function to extract PGN headers
 function extractPgnHeaders(pgn) {
@@ -112,11 +117,16 @@ function handleLoadPgn(state, action) {
             return state;
         }
 
+        // Извлекаем заголовки PGN
+        const pgnHeaders = extractPgnHeaders(cleanedPgn);
+        
+        // Получаем начальную позицию из заголовков или используем стандартную
+        const startPosition = getStartPosition(pgnHeaders);
+        
         // Создаем новый экземпляр Chess и полностью очищаем состояние
         const newGame = new Chess();
-        newGame.load(START_POSITION);
+        newGame.load(startPosition);
         
-        const pgnHeaders = extractPgnHeaders(cleanedPgn);
         newGame.loadPgn(cleanedPgn, { sloppy: true });
         const loadedHistory = newGame.history({ verbose: true, variations: true });
         

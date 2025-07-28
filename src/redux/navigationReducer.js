@@ -6,11 +6,11 @@ import {
     GOTO_NEXT 
 } from './actions.js';
 
-const START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 const initialState = {
     game: new Chess(),
-    fen: START_POSITION,
+    fen: DEFAULT_START_POSITION,
     history: [],
     currentMoveIndex: -1,
     currentMove: null, // Добавляем объект текущего хода
@@ -18,10 +18,15 @@ const initialState = {
     pgnHeaders: {}
 };
 
+// Function to get the starting position from PGN headers or default
+function getStartPosition(pgnHeaders) {
+    return pgnHeaders.FEN || DEFAULT_START_POSITION;
+}
+
 // Function to find FEN by global index
-function findFenByGlobalIndex(history, globalIndex) {
+function findFenByGlobalIndex(history, globalIndex, startPosition) {
     if (globalIndex === -1) {
-        return START_POSITION;
+        return startPosition;
     }
     
     function searchInHistory(moves) {
@@ -43,7 +48,7 @@ function findFenByGlobalIndex(history, globalIndex) {
         return null;
     }
     
-    return searchInHistory(history) || START_POSITION;
+    return searchInHistory(history) || startPosition;
 }
 
 // Function to find move object by global index
@@ -77,9 +82,11 @@ function findMoveByGlobalIndex(history, globalIndex) {
 // Handler for going to first move
 function handleGotoFirst(state) {
     try {
+        const startPosition = getStartPosition(state.pgnHeaders);
+        
         return {
             ...state,
-            fen: START_POSITION,
+            fen: startPosition,
             currentMoveIndex: -1,
             currentMove: null,
         };
@@ -107,7 +114,8 @@ function handleGotoLast(state) {
             }
         }
 
-        const fen = findFenByGlobalIndex(state.history, lastGlobalIndex);
+        const startPosition = getStartPosition(state.pgnHeaders);
+        const fen = findFenByGlobalIndex(state.history, lastGlobalIndex, startPosition);
         const currentMove = findMoveByGlobalIndex(state.history, lastGlobalIndex);
 
         return {
@@ -126,7 +134,8 @@ function handleGotoLast(state) {
 function handleGotoPrevious(state) {
     try {
         const prevMoveIndex = Math.max(-1, state.currentMoveIndex - 1);
-        const fen = findFenByGlobalIndex(state.history, prevMoveIndex);
+        const startPosition = getStartPosition(state.pgnHeaders);
+        const fen = findFenByGlobalIndex(state.history, prevMoveIndex, startPosition);
         const currentMove = findMoveByGlobalIndex(state.history, prevMoveIndex);
         
         return {
@@ -145,7 +154,8 @@ function handleGotoPrevious(state) {
 function handleGotoNext(state) {
     try {
         const nextMoveIndex = state.currentMoveIndex + 1;
-        const fen = findFenByGlobalIndex(state.history, nextMoveIndex);
+        const startPosition = getStartPosition(state.pgnHeaders);
+        const fen = findFenByGlobalIndex(state.history, nextMoveIndex, startPosition);
         const currentMove = findMoveByGlobalIndex(state.history, nextMoveIndex);
         
         return {

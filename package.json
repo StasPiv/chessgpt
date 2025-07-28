@@ -1,6 +1,6 @@
 {
   "name": "my-chess-app",
-  "version": "6.3.4",
+  "version": "6.3.6",
   "description": "Chess PGN viewer with engine analysis and variation navigation built with React, Redux, and TypeScript",
   "main": "src/index.js",
   "type": "module",
