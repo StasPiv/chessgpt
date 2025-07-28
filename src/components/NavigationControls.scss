@@ -3,6 +3,34 @@
 
 .navigation-controls {
   @include m.navigation-controls-container;
+  
+  // Добавляем специальные отступы между определенными кнопками на мобильных устройствах
+  @include m.mobile {
+    .nav-button {
+      // Отступ после кнопки "вернуться на начало партии" (first)
+      &:nth-child(1) {
+        margin-right: 3vw !important;
+      }
+      
+      // Отступ после кнопки "ход вперед" (next) - перед кнопкой "перейти в конец партии"
+      &:nth-child(3) {
+        margin-right: 3vw !important;
+      }
+    }
+    
+    // Для очень маленьких экранов используем фиксированные отступы
+    @media (max-width: 320px) {
+      .nav-button {
+        &:nth-child(1) {
+          margin-right: 12px !important;
+        }
+        
+        &:nth-child(3) {
+          margin-right: 12px !important;
+        }
+      }
+    }
+  }
 }
 
 .nav-button {
@@ -363,6 +391,17 @@
     justify-content: center;
     flex-wrap: nowrap;
     gap: 1vw; // Компактный зазор
+    
+    // Добавляем отступы и для landscape ориентации
+    .nav-button {
+      &:nth-child(1) {
+        margin-right: 2vw !important;
+      }
+      
+      &:nth-child(4) {
+        margin-right: 2vw !important;
+      }
+    }
   }
   
   .nav-button,
