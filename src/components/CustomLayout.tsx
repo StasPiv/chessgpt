@@ -17,7 +17,8 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
     const dispatch = useDispatch();
     const isMobile = useSelector((state: RootState) => state.ui.isMobile);
     
-    const [layouts, setLayouts] = useState<Layouts>({
+    // Дефолтные лейауты - всегда используются для мобильных устройств
+    const defaultLayouts: Layouts = {
         lg: [
             { i: 'chessboard', x: 0, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
             { i: 'moves', x: 6, y: 0, w: 6, h: 8, minW: 3, minH: 4 },
@@ -37,8 +38,9 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
             // Анализ - внизу (фиксированная высота для 4 линий)
             { i: 'analysis', x: 0, y: 16, w: 12, h: 4, static: true, minW: 12, minH: 4, maxW: 12, maxH: 4 }
         ]
-    });
-
+    };
+    
+    const [layouts, setLayouts] = useState<Layouts>(defaultLayouts);
     const [isFlipped, setIsFlipped] = useState<boolean>(false);
 
     // Инициализация определения мобильного устройства
@@ -50,6 +52,10 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
         // Добавляем обработчик изменения размера экрана
         const removeResizeListener = addResizeListener((isMobile: boolean) => {
             dispatch(setIsMobileAction(isMobile));
+            // При переключении на мобильное устройство сбрасываем лейаут на дефолтный
+            if (isMobile) {
+                setLayouts(defaultLayouts);
+            }
         });
 
         // Очистка обработчика при размонтировании компонента
@@ -58,7 +64,7 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
         };
     }, [dispatch]);
 
-    // Load saved layout from localStorage только для десктопа
+    // Load saved layout from localStorage ТОЛЬКО для десктопа
     useEffect(() => {
         if (!isMobile) {
             const savedLayouts = localStorage.getItem('chessapp-layouts');
@@ -67,22 +73,34 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
                     const parsedLayouts = JSON.parse(savedLayouts) as Layouts;
                     setLayouts(prevLayouts => ({
                         ...parsedLayouts,
-                        // Сохраняем фиксированный мобильный лейаут
-                        sm: prevLayouts.sm
+                        // Всегда сохраняем фиксированный мобильный лейаут
+                        sm: defaultLayouts.sm
                     }));
                 } catch (error) {
                     console.error('Error loading saved layouts:', error);
+                    // В случае ошибки используем дефолтные лейауты
+                    setLayouts(defaultLayouts);
                 }
             }
+        } else {
+            // Для мобильных устройств всегда используем дефолтные лейауты
+            setLayouts(defaultLayouts);
         }
     }, [isMobile]);
 
-    // Save layout to localStorage только для десктопа
+    // Save layout to localStorage ТОЛЬКО для десктопа
     const handleLayoutChange: LayoutChangeCallback = (layout: Layout[], allLayouts: Layouts) => {
         if (!isMobile) {
-            setLayouts(allLayouts);
-            localStorage.setItem('chessapp-layouts', JSON.stringify(allLayouts));
+            // Сохраняем лейаут только для десктопа
+            const layoutsToSave = {
+                ...allLayouts,
+                // Не сохраняем мобильный лейаут - он всегда должен быть дефолтным
+                sm: defaultLayouts.sm
+            };
+            setLayouts(layoutsToSave);
+            localStorage.setItem('chessapp-layouts', JSON.stringify(layoutsToSave));
         }
+        // Для мобильных устройств игнорируем любые изменения лейаута
     };
 
     const handleFlipBoard = (): void => {

@@ -8,6 +8,10 @@
   height: 100vh;
   background-color: v.$background-color;
   overflow: hidden;
+
+  @media (max-width: #{v.$tablet - 1px}) {
+    touch-action: manipulation; // Отключает зум только на мобильных устройствах
+  }
 }
 
 // App header
