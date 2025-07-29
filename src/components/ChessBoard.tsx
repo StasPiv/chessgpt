@@ -118,14 +118,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
             if (selectedSquare === square) {
                 // Клик по той же клетке - отменяем выбор
                 setSelectedSquare(null);
-                setCustomSquareStyles({});
             } else {
                 // Клик по другой клетке - пытаемся сделать ход
                 const moveSuccess = makeMove(selectedSquare, square);
 
                 // Сбрасываем выбор независимо от результата
                 setSelectedSquare(null);
-                setCustomSquareStyles({});
 
                 if (!moveSuccess) {
                     // Если ход невозможен, попробуем выбрать новую фигуру
@@ -133,16 +131,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
                         const pieceColor = piece.pieceType[0].toLowerCase();
                         if (pieceColor === tempGame.turn()) {
                             setSelectedSquare(square);
-                            setCustomSquareStyles({
-                                [square]: {
-                                    backgroundColor: 'rgba(255, 255, 0, 0.4)',
-                                    border: '2px solid #ffff00'
-                                }
-                            });
                         }
                     }
                 }
             }
+
+            setCustomSquareStyles({});
         }
     }, [selectedSquare, fen, makeMove]);
 

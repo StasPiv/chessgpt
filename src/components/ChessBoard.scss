@@ -44,7 +44,7 @@
     height: auto !important;
     aspect-ratio: 1 / 1 !important;
     max-width: calc(100% - 20px) !important;
-    
+
     // Вложенные div элементы
     > div {
       width: 100% !important;
@@ -55,7 +55,7 @@
 
   @include m.mobile {
     padding: v.$spacing-sm;
-    
+
     > div:not([style*="position: fixed"]) {
       max-width: calc(100% - 16px) !important;
     }
@@ -87,10 +87,10 @@
 
   // Стили для фигур
   [data-piece] {
-    transition: 
-      transform 0.15s ease-out,
-      box-shadow 0.15s ease-out,
-      filter 0.15s ease-out;
+    transition:
+            transform 0.15s ease-out,
+            box-shadow 0.15s ease-out,
+            filter 0.15s ease-out;
     cursor: grab !important;
     border-radius: v.$border-radius-sm;
 
@@ -142,6 +142,15 @@
   .react-chessboard [data-square] {
     min-height: 40px;
     min-width: 40px;
+
+    // Дополнительная защита от стандартного выделения
+    &:focus,
+    &:active,
+    &:hover {
+      background-color: transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
   }
 }
 
@@ -154,7 +163,7 @@
 // Стили для возможных ходов
 .possible-move {
   background-color: rgba(0, 255, 0, 0.2) !important;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -194,12 +203,23 @@
 @include m.tablet {
   .chess-board-container {
     padding: v.$spacing-md;
-    
+
     .react-chessboard [data-piece] {
       &:hover {
         transform: translateY(-2px) scale(1.02);
         box-shadow: 0 4px 8px v.$shadow-light;
       }
+    }
+  }
+}
+
+// Агрессивное переопределение всех возможных стилей выделения на мобильных
+@include m.mobile {
+  .chess-board-container {
+    // Переопределяем все возможные селекторы библиотеки
+    * {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-touch-callout: none !important;
     }
   }
 }
