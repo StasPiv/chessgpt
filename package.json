@@ -1,6 +1,6 @@
 {
   "name": "my-chess-app",
-  "version": "6.3.7",
+  "version": "6.4.0",
   "description": "Chess PGN viewer with engine analysis and variation navigation built with React, Redux, and TypeScript",
   "main": "src/index.js",
   "type": "module",
@@ -8,9 +8,9 @@
     "start": "webpack serve --open",
     "build": "NODE_ENV=production webpack --mode=production",
     "build:dev": "NODE_ENV=development webpack --mode=development",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest",
-    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
-    "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
+    "test": "NODE_ENV=test node --experimental-vm-modules node_modules/.bin/jest",
+    "test:watch": "NODE_ENV=test node --experimental-vm-modules node_modules/.bin/jest --watch",
+    "test:coverage": "NODE_ENV=test node --experimental-vm-modules node_modules/.bin/jest --coverage",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -51,7 +51,26 @@
     "webpack-dev-server": "^4.11.1"
   },
   "jest": {
-    "transform": {}
+    "preset": null,
+    "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [".ts", ".tsx"],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "babel-jest",
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
+    "moduleFileExtensions": ["js", "jsx", "ts", "tsx"],
+    "testMatch": [
+      "**/tests/**/*.test.(js|jsx|ts|tsx)",
+      "**/__tests__/**/*.test.(js|jsx|ts|tsx)"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/index.js",
+      "!src/**/*.d.ts"
+    ]
   },
   "keywords": [
     "chess",
