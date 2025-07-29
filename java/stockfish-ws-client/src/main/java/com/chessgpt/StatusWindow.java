@@ -1,12 +1,5 @@
 package com.chessgpt;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -15,9 +8,11 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * Status Window - GUI for displaying application status
+ * Handles only UI display and user interactions
+ */
 public class StatusWindow extends JFrame {
     private JPanel webSocketStatusPanel;
     private JPanel engineStatusPanel;
@@ -296,36 +291,8 @@ public class StatusWindow extends JFrame {
     }
     
     /**
-     * Generate QR code image from URL
+     * Update ngrok URL and generate QR code
      */
-    private BufferedImage generateQRCode(String url) {
-        try {
-            Map<EncodeHintType, Object> hints = new HashMap<>();
-            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-            hints.put(EncodeHintType.MARGIN, 1);
-            
-            QRCodeWriter qrCodeWriter = new QRCodeWriter();
-            BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 150, 150, hints);
-            
-            int width = bitMatrix.getWidth();
-            int height = bitMatrix.getHeight();
-            BufferedImage qrImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    qrImage.setRGB(x, y, bitMatrix.get(x, y) ? Color.BLACK.getRGB() : Color.WHITE.getRGB());
-                }
-            }
-            
-            return qrImage;
-            
-        } catch (WriterException e) {
-            System.err.println("❌ Error generating QR code: " + e.getMessage());
-            return null;
-        }
-    }
-    
     public void updateNgrokUrl(String url) {
         SwingUtilities.invokeLater(() -> {
             this.ngrokUrl = url;
@@ -336,9 +303,9 @@ public class StatusWindow extends JFrame {
                 copyButton.setEnabled(true);
                 openButton.setEnabled(true);
                 
-                // Generate and display QR code
+                // Generate and display QR code using QRCodeGenerator
                 addNgrokStatusMessage("📱 Generating QR code...");
-                qrCodeImage = generateQRCode(url);
+                qrCodeImage = QRCodeGenerator.generateQRCode(url);
                 if (qrCodeImage != null) {
                     ImageIcon qrIcon = new ImageIcon(qrCodeImage);
                     qrCodeLabel.setIcon(qrIcon);
@@ -429,7 +396,7 @@ public class StatusWindow extends JFrame {
         
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save QR Code");
-        fileChooser.setSelectedFile(new java.io.File("chess-ngrok-qr.png"));
+        fileChooser.setSelectedFile(new java.io.File(QRCodeGenerator.getChessQRFilename()));
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("PNG Images", "png"));
         
         int userSelection = fileChooser.showSaveDialog(this);
@@ -442,8 +409,10 @@ public class StatusWindow extends JFrame {
                 fileToSave = new java.io.File(fileToSave.getAbsolutePath() + ".png");
             }
             
-            try {
-                javax.imageio.ImageIO.write(qrCodeImage, "PNG", fileToSave);
+            // Use QRCodeGenerator to save the image
+            boolean saved = QRCodeGenerator.saveQRCodePNG(qrCodeImage, fileToSave);
+            
+            if (saved) {
                 addNgrokStatusMessage("💾 QR code saved to: " + fileToSave.getAbsolutePath());
                 
                 // Show temporary feedback
@@ -458,10 +427,10 @@ public class StatusWindow extends JFrame {
                 timer.setRepeats(false);
                 timer.start();
                 
-            } catch (java.io.IOException e) {
-                addNgrokStatusMessage("❌ Failed to save QR code: " + e.getMessage());
+            } else {
+                addNgrokStatusMessage("❌ Failed to save QR code");
                 JOptionPane.showMessageDialog(this, 
-                    "Failed to save QR code:\n" + e.getMessage(), 
+                    "Failed to save QR code to:\n" + fileToSave.getAbsolutePath(), 
                     "Save Error", 
                     JOptionPane.ERROR_MESSAGE);
             }
