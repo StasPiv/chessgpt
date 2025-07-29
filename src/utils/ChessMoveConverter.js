@@ -1,5 +1,5 @@
 
-import { Chess } from 'chess.js';
+import { Chess } from 'cm-chess';
 
 /**
  * Конвертирует UCI-ходы в алгебраическую нотацию (SAN)
