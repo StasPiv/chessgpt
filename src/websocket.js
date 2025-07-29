@@ -115,10 +115,18 @@ export function connectWebSocket(store) {
             
             const data = JSON.parse(messageData);
             
+            // Получаем текущее состояние для проверки autoAnalysisEnabled
+            const currentState = store.getState();
+            const autoAnalysisEnabled = currentState.analysis.autoAnalysisEnabled;
+            
             // Обработка нового формата сообщений с FEN и lines
             if (data.fen && data.lines) {
-                // Получаем текущий FEN из стора
-                const currentState = store.getState();
+                // Проверяем, включен ли автоанализ
+                if (!autoAnalysisEnabled) {
+                    console.log('🚫 Auto-analysis disabled, ignoring analysis update');
+                    return;
+                }
+                
                 const currentFen = currentState.chess.fen;
                 
                 // Проверяем, совпадает ли FEN из анализа с текущей позицией
@@ -133,6 +141,12 @@ export function connectWebSocket(store) {
             }
             // Обработка старого формата (массив линий) для совместимости
             else if (Array.isArray(data)) {
+                // Проверяем, включен ли автоанализ
+                if (!autoAnalysisEnabled) {
+                    console.log('🚫 Auto-analysis disabled, ignoring analysis update');
+                    return;
+                }
+                
                 store.dispatch(updateAnalysis(data));
             } 
             // Обработка команд остановки
