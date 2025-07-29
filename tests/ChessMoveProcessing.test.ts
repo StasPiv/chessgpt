@@ -3,142 +3,378 @@ import {
   processMoveHierarchy,
   getMoveClasses,
   isProcessedMove,
-  isBracketItem,
-  ProcessedMove,
-  BracketItem
+  isBracketItem
 } from '../src/utils/ChessMoveProcessing';
-import { ChessMove } from '../src/types';
 
-describe('ChessMoveProcessing', () => {
-  const createTestMove = (overrides: Partial<ChessMove> = {}): ChessMove => ({
-    // Обязательные свойства
-    san: 'e4',
-    fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1',
+// ==================== TEST DATA ====================
+
+const testScenarios = [
+  {
+    name: 'simple line without variations',
+    input: {
+      moves: [
+        { globalIndex: 0, san: 'e4', ply: 1, fen: 'fen1' },
+        { globalIndex: 1, san: 'e5', ply: 2, fen: 'fen2' },
+        { globalIndex: 2, san: 'Nf3', ply: 3, fen: 'fen3' }
+      ],
+      currentMoveIndex: 1
+    },
+    expected: [
+      'move:1.e4',
+      'move:e5:current',
+      'move:2.Nf3'
+    ]
+  },
+
+  {
+    name: 'line with single variation',
+    input: {
+      moves: [
+        { globalIndex: 0, san: 'e4', ply: 1, fen: 'fen1' },
+        {
+          globalIndex: 1,
+          san: 'e5',
+          ply: 2,
+          fen: 'fen2',
+          variations: [
+            [
+              { globalIndex: 2, san: 'c5', ply: 2, fen: 'fen2a' },
+              { globalIndex: 3, san: 'Nf3', ply: 3, fen: 'fen3a' }
+            ]
+          ]
+        },
+        { globalIndex: 4, san: 'Nf3', ply: 3, fen: 'fen3' }
+      ],
+      currentMoveIndex: 0
+    },
+    expected: [
+      'move:1.e4:current',
+      'move:e5',
+      'bracket:open',
+      'move:1...c5',
+      'move:2.Nf3',
+      'bracket:close',
+      'move:2.Nf3'
+    ]
+  },
+
+  {
+    name: 'nested variations (2 levels)',
+    input: {
+      moves: [
+        { globalIndex: 0, san: 'e4', ply: 1, fen: 'fen1' },
+        {
+          globalIndex: 1,
+          san: 'e5',
+          ply: 2,
+          fen: 'fen2',
+          variations: [
+            [
+              {
+                globalIndex: 2,
+                san: 'c5',
+                ply: 2,
+                fen: 'fen2a',
+                variations: [
+                  [
+                    { globalIndex: 3, san: 'd6', ply: 2, fen: 'fen2b' }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      currentMoveIndex: 3
+    },
+    expected: [
+      'move:1.e4',
+      'move:e5',
+      'bracket:open',
+      'move:1...c5',
+      'bracket:open',
+      'move:1...d6:current',
+      'bracket:close',
+      'bracket:close'
+    ]
+  },
+
+  {
+    name: 'multiple variations at same level',
+    input: {
+      moves: [
+        { globalIndex: 0, san: 'e4', ply: 1, fen: 'fen1' },
+        {
+          globalIndex: 1,
+          san: 'e5',
+          ply: 2,
+          fen: 'fen2',
+          variations: [
+            [{ globalIndex: 2, san: 'c5', ply: 2, fen: 'fen2a' }],
+            [{ globalIndex: 3, san: 'c6', ply: 2, fen: 'fen2b' }],
+            [{ globalIndex: 4, san: 'd6', ply: 2, fen: 'fen2c' }]
+          ]
+        }
+      ],
+      currentMoveIndex: null
+    },
+    expected: [
+      'move:1.e4',
+      'move:e5',
+      'bracket:open',
+      'move:1...c5',
+      'bracket:close',
+      'bracket:open',
+      'move:1...c6',
+      'bracket:close',
+      'bracket:open',
+      'move:1...d6',
+      'bracket:close'
+    ]
+  },
+
+  {
+    name: 'complex nested structure with multiple branches',
+    input: {
+      moves: [
+        { globalIndex: 0, san: 'e4', ply: 1, fen: 'fen1' },
+        {
+          globalIndex: 1,
+          san: 'e5',
+          ply: 2,
+          fen: 'fen2',
+          variations: [
+            [
+              { globalIndex: 2, san: 'c5', ply: 2, fen: 'fen2a' },
+              {
+                globalIndex: 3,
+                san: 'Nf3',
+                ply: 3,
+                fen: 'fen3a',
+                variations: [
+                  [{ globalIndex: 4, san: 'Nc3', ply: 3, fen: 'fen3b' }]
+                ]
+              }
+            ],
+            [{ globalIndex: 5, san: 'Nf6', ply: 2, fen: 'fen2b' }]
+          ]
+        },
+        { globalIndex: 6, san: 'Nf3', ply: 3, fen: 'fen3' }
+      ],
+      currentMoveIndex: 4
+    },
+    expected: [
+      'move:1.e4',
+      'move:e5',
+      'bracket:open',
+      'move:1...c5',
+      'move:2.Nf3',
+      'bracket:open',
+      'move:2.Nc3:current',
+      'bracket:close',
+      'bracket:close',
+      'bracket:open',
+      'move:1...Nf6',
+      'bracket:close',
+      'move:2.Nf3'
+    ]
+  },
+
+  {
+    name: 'current move in main line with variations present',
+    input: {
+      moves: [
+        { globalIndex: 0, san: 'e4', ply: 1, fen: 'fen1' },
+        {
+          globalIndex: 1,
+          san: 'e5',
+          ply: 2,
+          fen: 'fen2',
+          variations: [
+            [{ globalIndex: 2, san: 'c5', ply: 2, fen: 'fen2a' }]
+          ]
+        },
+        { globalIndex: 3, san: 'Nf3', ply: 3, fen: 'fen3' }
+      ],
+      currentMoveIndex: 3
+    },
+    expected: [
+      'move:1.e4',
+      'move:e5',
+      'bracket:open',
+      'move:1...c5',
+      'bracket:close',
+      'move:2.Nf3:current'
+    ]
+  },
+
+  {
+    name: 'empty input',
+    input: {
+      moves: [],
+      currentMoveIndex: null
+    },
+    expected: []
+  },
+
+  {
+    name: 'single move',
+    input: {
+      moves: [
+        { globalIndex: 0, san: 'e4', ply: 1, fen: 'fen1' }
+      ],
+      currentMoveIndex: 0
+    },
+    expected: [
+      'move:1.e4:current'
+    ]
+  }
+];
+
+const cssClassScenarios = [
+  {
+    name: 'regular move',
+    input: {
+      globalIndex: 0,
+      display: '1.e4',
+      level: 0,
+      isVariation: false,
+      isCurrent: false,
+      path: [0],
+      san: 'e4',
+      fen: 'test'
+    },
+    expected: 'move-item'
+  },
+  {
+    name: 'current move',
+    input: {
+      globalIndex: 0,
+      display: '1.e4',
+      level: 0,
+      isVariation: false,
+      isCurrent: true,
+      path: [0],
+      san: 'e4',
+      fen: 'test'
+    },
+    expected: 'move-item current'
+  },
+  {
+    name: 'variation move',
+    input: {
+      globalIndex: 2,
+      display: 'c5',
+      level: 1,
+      isVariation: true,
+      isCurrent: false,
+      path: [0, 1, 0],
+      san: 'c5',
+      fen: 'test'
+    },
+    expected: 'move-item variation-move variation-level-1'
+  },
+  {
+    name: 'current variation move',
+    input: {
+      globalIndex: 2,
+      display: 'c5',
+      level: 1,
+      isVariation: true,
+      isCurrent: true,
+      path: [0, 1, 0],
+      san: 'c5',
+      fen: 'test'
+    },
+    expected: 'move-item current variation-move variation-level-1'
+  }
+];
+
+// ==================== HELPER FUNCTIONS ====================
+
+function serializeRenderArray(result: any[]): string[] {
+  return result.map(item => {
+    if (isProcessedMove(item)) {
+      const parts = ['move', item.display];
+
+      if (item.isCurrent) {
+        parts.push('current');
+      }
+
+      return parts.join(':');
+    }
+
+    if (isBracketItem(item)) {
+      return `bracket:${item.bracketType}`;
+    }
+
+    return 'unknown';
+  });
+}
+
+// Минимальная функция для создания полного ChessMove объекта из простых данных
+function expandMove(simpleMove: any): any {
+  return {
+    san: simpleMove.san,
+    fen: simpleMove.fen,
     from: 'e2',
     to: 'e4',
     piece: 'p',
     flags: 'b',
     lan: 'e2e4',
-    before: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-    after: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1',
+    before: 'fen_before',
+    after: simpleMove.fen,
     next: null,
+    globalIndex: simpleMove.globalIndex,
+    ply: simpleMove.ply,
+    variations: simpleMove.variations?.map((variation: any[]) =>
+        variation.map((move: any) => expandMove(move))
+    )
+  };
+}
 
-    // Дополнительные свойства
-    globalIndex: 0,
-    ply: 1,
+// ==================== TESTS ====================
 
-    // Переопределяем значениями из параметра
-    ...overrides
-  });
+describe('ChessMoveProcessing', () => {
+  describe('processMoveHierarchy - input/output behavior', () => {
+    test.each(testScenarios)('$name', ({ input, expected }) => {
+      const expandedMoves = input.moves.map(expandMove);
+      const result = processMoveHierarchy(expandedMoves, input.currentMoveIndex);
+      const serialized = serializeRenderArray(result);
 
-  describe('processMoveHierarchy', () => {
-    test('processes simple move sequence correctly', () => {
-      const moves: ChessMove[] = [
-        createTestMove({
-          globalIndex: 0,
-          san: 'e4',
-          ply: 1,
-          from: 'e2',
-          to: 'e4'
-        }),
-        createTestMove({
-          globalIndex: 1,
-          san: 'e5',
-          ply: 2,
-          from: 'e7',
-          to: 'e5',
-          piece: 'P'
-        })
-      ];
-
-      const result = processMoveHierarchy(moves, 0);
-
-      expect(result).toHaveLength(2);
-
-      const firstMove = result[0];
-      if (isProcessedMove(firstMove)) {
-        expect(firstMove.display).toBe('1.e4');
-        expect(firstMove.isCurrent).toBe(true);
-        expect(firstMove.level).toBe(0);
-        expect(firstMove.isVariation).toBe(false);
-      }
-
-      const secondMove = result[1];
-      if (isProcessedMove(secondMove)) {
-        expect(secondMove.display).toBe('e5');
-        expect(secondMove.isCurrent).toBe(false);
-        expect(secondMove.level).toBe(0);
-      }
-    });
-
-    test('handles empty moves array', () => {
-      const result = processMoveHierarchy([], null);
-      expect(result).toHaveLength(0);
+      expect(serialized).toEqual(expected);
     });
   });
 
-  describe('getMoveClasses', () => {
-    test('generates correct classes for regular move', () => {
-      const move: ProcessedMove = {
-        globalIndex: 0,
-        display: '1.e4',
-        level: 0,
-        isVariation: false,
-        isCurrent: false,
-        path: [0],
-        san: 'e4',
-        fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1'
-      };
-
-      const classes = getMoveClasses(move);
-      expect(classes).toBe('move-item');
-    });
-
-    test('generates correct classes for current move', () => {
-      const move: ProcessedMove = {
-        globalIndex: 0,
-        display: '1.e4',
-        level: 0,
-        isVariation: false,
-        isCurrent: true,
-        path: [0],
-        san: 'e4',
-        fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1'
-      };
-
-      const classes = getMoveClasses(move);
-      expect(classes).toBe('move-item current');
+  describe('getMoveClasses - CSS class generation', () => {
+    test.each(cssClassScenarios)('$name', ({ input, expected }) => {
+      expect(getMoveClasses(input)).toBe(expected);
     });
   });
 
   describe('type guards', () => {
-    test('isProcessedMove correctly identifies moves', () => {
-      const move: ProcessedMove = {
-        globalIndex: 0,
-        display: '1.e4',
-        level: 0,
-        isVariation: false,
-        isCurrent: false,
-        path: [0],
-        san: 'e4',
-        fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1'
-      };
+    test('correctly identify different item types', () => {
+      const moves = [
+        { globalIndex: 0, san: 'e4', ply: 1, fen: 'fen1' },
+        {
+          globalIndex: 1,
+          san: 'e5',
+          ply: 2,
+          fen: 'fen2',
+          variations: [
+            [{ globalIndex: 2, san: 'c5', ply: 2, fen: 'fen2a' }]
+          ]
+        }
+      ].map(expandMove);
 
-      expect(isProcessedMove(move)).toBe(true);
-    });
+      const result = processMoveHierarchy(moves, 0);
 
-    test('isBracketItem correctly identifies brackets', () => {
-      const bracket: BracketItem = {
-        type: 'bracket',
-        bracketType: 'open',
-        level: 0,
-        path: [0],
-        variationIndex: 0,
-        parentMoveIndex: 0
-      };
+      const moveItems = result.filter(isProcessedMove);
+      const bracketItems = result.filter(isBracketItem);
 
-      expect(isBracketItem(bracket)).toBe(true);
-      expect(isProcessedMove(bracket)).toBe(false);
+      expect(moveItems.length).toBeGreaterThan(0);
+      expect(bracketItems.length).toBeGreaterThan(0);
+      expect(moveItems.length + bracketItems.length).toBe(result.length);
     });
   });
 });
