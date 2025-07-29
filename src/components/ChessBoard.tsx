@@ -13,6 +13,9 @@ import {
 import { ChessboardOptions } from 'react-chessboard';
 import './ChessBoard.scss';
 
+// Константа для длительности анимации
+const ANIMATION_DURATION_MS = 200;
+
 const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
     const dispatch = useDispatch();
     const fen = useSelector((state: RootState) => state.chess.fen);
@@ -143,10 +146,14 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
         }
     }, [selectedSquare, fen, makeMove]);
 
-    // Effect to send position for analysis
+    // Effect to send position for analysis after animation completes
     useEffect(() => {
         if (fen && autoAnalysisEnabled) {
-            sendPosition(fen);
+            const timeoutId = setTimeout(() => {
+                sendPosition(fen);
+            }, ANIMATION_DURATION_MS);
+
+            return () => clearTimeout(timeoutId);
         }
     }, [fen, autoAnalysisEnabled]);
 
@@ -158,7 +165,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
         boardOrientation: isFlipped ? 'black' : 'white',
         id: 'chess-board',
         squareStyles: customSquareStyles,
-        canDragPiece: () => !isMobile
+        canDragPiece: () => !isMobile,
+        animationDurationInMs: ANIMATION_DURATION_MS
     };
 
     return (
