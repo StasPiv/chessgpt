@@ -1,6 +1,6 @@
 import { Chess } from 'cm-chess';
 import { ADD_MOVE, ADD_VARIATION, GOTO_MOVE } from './actions.js';
-import { addMoveToHistory } from '../utils/ChessMoveHistoryUpdater.js';
+import { addMoveToHistory, addVariationToHistory } from '../utils/ChessMoveHistoryUpdater.js';
 
 const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -125,35 +125,8 @@ function handleAddVariation(state, action) {
             ply: newPly
         };
 
-        // Функция для добавления хода в variations следующего хода
-        function addMoveToVariations(history, currentMove, newMove) {
-            function updateInHistory(moves) {
-                return moves.map(move => {
-                    if (move.globalIndex === currentMove.next.globalIndex) {
-                        // Инициализируем variations если не существует
-                        const variations = move.variations || [];
-                        return {
-                            ...move,
-                            variations: [...variations, [newMove]]
-                        };
-                    }
-                    
-                    // Обновляем в вариациях
-                    if (move.variations && move.variations.length > 0) {
-                        return {
-                            ...move,
-                            variations: move.variations.map(variation => updateInHistory(variation))
-                        };
-                    }
-                    
-                    return move;
-                });
-            }
-
-            return updateInHistory(history);
-        }
-
-        const updatedHistory = addMoveToVariations(state.history, state.currentMove, newMove);
+        // Используем утилиту для добавления вариации
+        const { updatedHistory } = addVariationToHistory(newMove, state.currentMove, state.history);
         
         return {
             ...state,

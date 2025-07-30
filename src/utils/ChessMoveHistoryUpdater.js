@@ -1,4 +1,3 @@
-
 /**
  * Добавляет новый ход к текущему ходу и обновляет историю ходов
  * @param {Object} newMove - Объект нового хода
@@ -90,6 +89,49 @@ export function addMoveToHistory(newMove, currentMove, history) {
 
     return {
         updatedCurrentMove: newMove,
+        updatedHistory: updatedHistory
+    };
+}
+
+/**
+ * Добавляет новый ход как вариацию к следующему ходу после текущего
+ * @param {Object} newMove - Объект нового хода (вариации)
+ * @param {Object} currentMove - Объект текущего хода (должен иметь next)
+ * @param {Array} history - История ходов
+ * @returns {Object} Объект с обновленной историей
+ */
+export function addVariationToHistory(newMove, currentMove, history) {
+    // Функция для добавления хода в variations следующего хода
+    function addMoveToVariations(history, currentMove, newMove) {
+        function updateInHistory(moves) {
+            return moves.map(move => {
+                if (move.globalIndex === currentMove.next.globalIndex) {
+                    // Инициализируем variations если не существует
+                    const variations = move.variations || [];
+                    return {
+                        ...move,
+                        variations: [...variations, [newMove]]
+                    };
+                }
+                
+                // Обновляем в вариациях
+                if (move.variations && move.variations.length > 0) {
+                    return {
+                        ...move,
+                        variations: move.variations.map(variation => updateInHistory(variation))
+                    };
+                }
+                
+                return move;
+            });
+        }
+
+        return updateInHistory(history);
+    }
+
+    const updatedHistory = addMoveToVariations(history, currentMove, newMove);
+    
+    return {
         updatedHistory: updatedHistory
     };
 }
