@@ -1,6 +1,6 @@
 import { Chess } from 'cm-chess';
 import { ADD_MOVE, ADD_VARIATION, GOTO_MOVE } from './actions.js';
-import { addMoveToHistory, addVariationToHistory } from '../utils/ChessMoveHistoryUpdater.js';
+import { addMoveToHistory, addVariationToHistory } from '../utils/ChessMoveHistoryUpdater.ts';
 
 const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
