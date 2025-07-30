@@ -1,5 +1,6 @@
 import { Chess } from 'cm-chess';
 import { ADD_MOVE, ADD_VARIATION, GOTO_MOVE } from './actions.js';
+import { addMoveToHistory } from '../utils/ChessMoveHistoryUpdater.js';
 
 const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -76,86 +77,8 @@ function handleAddMove(state, action) {
             ply: newPly
         };
 
-        // Функция для добавления хода в нужное место
-        function addMoveToCorrectLocation(history, currentMove, newMove, currentVariationPath) {
-            if (!currentMove) {
-                // Если нет текущего хода, добавляем в начало главной линии
-                return [newMove];
-            }
-
-            // Если мы в главной линии (currentVariationPath пуст), добавляем в конец главной линии
-            if (currentMove.globalIndex < 1000) {
-                return [...history, newMove];
-            }
-
-            // Если мы в варианте, нужно добавить ход в конец этого варианта
-            function updateInHistory(moves) {
-                return moves.map(move => {
-                    if (move.globalIndex === currentMove.globalIndex) {
-                        return {
-                            ...move,
-                            next: newMove
-                        };
-                    }
-
-                    // Обновляем в вариациях
-                    if (move.variations && move.variations.length > 0) {
-                        return {
-                            ...move,
-                            variations: move.variations.map(variation => {
-                                // Проверяем, содержит ли эта вариация текущий ход
-                                const containsCurrentMove = variation.some(varMove => 
-                                    varMove.globalIndex === currentMove.globalIndex
-                                );
-                                
-                                if (containsCurrentMove) {
-                                    // Добавляем новый ход в конец этой вариации
-                                    return [...variation, newMove];
-                                }
-                                
-                                return updateInHistory(variation);
-                            })
-                        };
-                    }
-
-                    return move;
-                });
-            }
-
-            return updateInHistory(history);
-        }
-
-        // Функция для обновления ссылки next в предыдущем ходе
-        function updatePreviousMoveNext(history, currentMove, newMove) {
-            if (!currentMove) return history;
-
-            function updateInHistory(moves) {
-                return moves.map(move => {
-                    if (move.globalIndex === currentMove.globalIndex) {
-                        return {
-                            ...move,
-                            next: newMove
-                        };
-                    }
-
-                    // Обновляем в вариациях
-                    if (move.variations && move.variations.length > 0) {
-                        return {
-                            ...move,
-                            variations: move.variations.map(variation => updateInHistory(variation))
-                        };
-                    }
-
-                    return move;
-                });
-            }
-
-            return updateInHistory(history);
-        }
-
-        // Добавляем ход в нужное место
-        const newHistory = addMoveToCorrectLocation(state.history, state.currentMove, newMove, state.currentVariationPath);
-        const updatedHistory = updatePreviousMoveNext(newHistory, state.currentMove, newMove);
+        // Используем утилиту для добавления хода
+        const { updatedCurrentMove, updatedHistory } = addMoveToHistory(newMove, state.currentMove, state.history);
 
         return {
             ...state,
@@ -163,7 +86,7 @@ function handleAddMove(state, action) {
             fen: newGame.fen(),
             history: updatedHistory,
             currentMoveIndex: newMoveIndex,
-            currentMove: newMove
+            currentMove: updatedCurrentMove
         };
     } catch (error) {
         console.error('Error adding move:', error);
