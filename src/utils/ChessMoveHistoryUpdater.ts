@@ -184,7 +184,6 @@ export function promoteVariation(
     history: ChessMove[]
 ): PromoteVariationResult {
     // Используем протестированную функцию promoteVariationLink
-    // Без ссылок next/previous, так как они управляются отдельно в приложении
     const updatedHistory = promoteVariationLink(currentMove, history, true);
 
     return {
