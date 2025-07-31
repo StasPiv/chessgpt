@@ -450,6 +450,46 @@ const linkAllMovesRecursively = (history: any[]): void => {
 };
 
 /**
+ * Находит первый ход в линии, содержащей указанный ход
+ * @param history - полная история ходов
+ * @param targetMove - ход, для которого нужно найти первый ход в линии
+ * @returns первый ход в линии или null если не найден
+ */
+const findFirstMoveInLine = (history: any[], targetMove: any): any | null => {
+    // Рекурсивно ищем targetMove и определяем первый ход его линии
+    const searchForFirstMoveInLine = (moves: any[]): any | null => {
+        for (let i = 0; i < moves.length; i++) {
+            const move = moves[i];
+
+            // Если это искомый ход и он в основной линии - он и есть первый в своей линии
+            if (move.globalIndex === targetMove.globalIndex) {
+                return moves[0]; // Возвращаем первый ход основной линии
+            }
+
+            // Если у хода есть вариации, ищем в них
+            if (move.variations && move.variations.length > 0) {
+                for (const variation of move.variations) {
+                    // Проверяем, есть ли targetMove в этой вариации
+                    const foundInVariation = variation.find((varMove: any) => varMove.globalIndex === targetMove.globalIndex);
+                    if (foundInVariation) {
+                        return variation[0]; // Возвращаем первый ход в вариации
+                    }
+
+                    // Рекурсивно ищем в подвариациях
+                    const foundInDeepVariation = searchForFirstMoveInLine(variation);
+                    if (foundInDeepVariation) {
+                        return foundInDeepVariation;
+                    }
+                }
+            }
+        }
+        return null;
+    };
+
+    return searchForFirstMoveInLine(history);
+};
+
+/**
  * Продвигает вариацию в основную линию
  * @param currentMove - текущий ход для продвижения
  * @param history - история ходов
@@ -464,8 +504,11 @@ export function promoteVariationLink(
     // Безопасно клонируем историю для избежания мутации
     const updatedHistory = safeClone(history);
 
+    // Находим первый ход в линии currentMove
+    const firstMoveInCurrentLine = findFirstMoveInLine(updatedHistory, currentMove);
+
     // Ищем currentMove в истории
-    const searchResult = searchMoveWithParentInfo(updatedHistory, currentMove.globalIndex, updatedHistory);
+    const searchResult = searchMoveWithParentInfo(updatedHistory, firstMoveInCurrentLine.globalIndex, updatedHistory);
 
     // Если ход не найден, возвращаем историю без изменений
     if (!searchResult) {
