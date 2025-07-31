@@ -73,20 +73,44 @@ export const addVariationToHistoryScenarios = [
         expected: {
             updatedHistory: [
                 {
-                    san: 'e4',
-                    globalIndex: 0,
-                    ply: 1
+                    "after": "fen1",
+                    "before": "start_fen",
+                    "fen": "fen1",
+                    "flags": "b",
+                    "from": "e2",
+                    "globalIndex": 0,
+                    "lan": "e2e4",
+                    "piece": "p",
+                    "ply": 1,
+                    "san": "e4",
+                    "to": "e4"
                 },
                 {
-                    san: 'e5',
-                    globalIndex: 1,
-                    ply: 2,
-                    variations: [
+                    "after": "fen2",
+                    "before": "fen1",
+                    "fen": "fen2",
+                    "flags": "b",
+                    "from": "e7",
+                    "globalIndex": 1,
+                    "lan": "e7e5",
+                    "piece": "p",
+                    "ply": 2,
+                    "san": "e5",
+                    "to": "e5",
+                    "variations": [
                         [
                             {
-                                san: 'c5',
-                                globalIndex: 1000,
-                                ply: 2
+                                "after": "fen2var",
+                                "before": "fen1",
+                                "fen": "fen2var",
+                                "flags": "b",
+                                "from": "c7",
+                                "globalIndex": 1000,
+                                "lan": "c7c5",
+                                "piece": "p",
+                                "ply": 2,
+                                "san": "c5",
+                                "to": "c5"
                             }
                         ]
                     ]
@@ -186,27 +210,59 @@ export const addVariationToHistoryScenarios = [
         expected: {
             updatedHistory: [
                 {
-                    san: 'e4',
-                    globalIndex: 0,
-                    ply: 1
+                    "after": "fen1",
+                    "before": "start_fen",
+                    "fen": "fen1",
+                    "flags": "b",
+                    "from": "e2",
+                    "globalIndex": 0,
+                    "lan": "e2e4",
+                    "piece": "p",
+                    "ply": 1,
+                    "san": "e4",
+                    "to": "e4"
                 },
                 {
-                    san: 'e5',
-                    globalIndex: 1,
-                    ply: 2,
-                    variations: [
+                    "after": "fen2",
+                    "before": "fen1",
+                    "fen": "fen2",
+                    "flags": "b",
+                    "from": "e7",
+                    "globalIndex": 1,
+                    "lan": "e7e5",
+                    "piece": "p",
+                    "ply": 2,
+                    "san": "e5",
+                    "to": "e5",
+                    "variations": [
                         [
                             {
-                                san: 'c5',
-                                globalIndex: 1000,
-                                ply: 2
+                                "after": "fen2var",
+                                "before": "fen1",
+                                "fen": "fen2var",
+                                "flags": "b",
+                                "from": "c7",
+                                "globalIndex": 1000,
+                                "lan": "c7c5",
+                                "piece": "p",
+                                "ply": 2,
+                                "san": "c5",
+                                "to": "c5"
                             }
                         ],
                         [
                             {
-                                san: 'Nf6',
-                                globalIndex: 2000,
-                                ply: 2
+                                "after": "fen2var2",
+                                "before": "fen1",
+                                "fen": "fen2var2",
+                                "flags": "n",
+                                "from": "g8",
+                                "globalIndex": 2000,
+                                "lan": "g8f6",
+                                "piece": "n",
+                                "ply": 2,
+                                "san": "Nf6",
+                                "to": "f6"
                             }
                         ]
                     ]

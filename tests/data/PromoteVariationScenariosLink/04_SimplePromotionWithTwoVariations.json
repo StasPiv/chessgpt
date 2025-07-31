@@ -1,0 +1,57 @@
+{
+  "name": "simple promotion with two variations",
+  "input": {
+    "currentMove": {
+      "san": "e5",
+      "globalIndex": 1000
+    },
+    "history": [
+      {
+        "san": "e4",
+        "globalIndex": 0
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "variations": [
+          [
+            {
+              "san": "e5",
+              "globalIndex": 1000
+            }
+          ],
+          [
+            {
+              "san": "e6",
+              "globalIndex": 2000
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "expected": [
+    {
+      "san": "e4",
+      "globalIndex": 0
+    },
+    {
+      "san": "e5",
+      "globalIndex": 1000,
+      "variations": [
+        [
+          {
+            "san": "e6",
+            "globalIndex": 2000
+          }
+        ],
+        [
+          {
+            "san": "c5",
+            "globalIndex": 1
+          }
+        ]
+      ]
+    }
+  ]
+}

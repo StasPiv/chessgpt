@@ -1,4 +1,6 @@
+
 import { ChessMove } from '../types';
+import { promoteVariationLink } from './PromoteVariationLink';
 
 /**
  * Результат добавления хода в историю
@@ -16,34 +18,37 @@ interface AddVariationResult {
 }
 
 /**
+ * Результат продвижения вариации
+ */
+interface PromoteVariationResult {
+    updatedHistory: ChessMove[];
+}
+
+/**
  * Добавляет новый ход к текущему ходу и обновляет историю ходов
- * @param newMove - Объект нового хода
- * @param currentMove - Объект текущего хода
- * @param history - История ходов
- * @returns Объект с обновленным currentMove и history
  */
 export function addMoveToHistory(
     newMove: ChessMove,
     currentMove: ChessMove | null,
     history: ChessMove[]
 ): AddMoveResult {
-    // Функция для добавления хода в нужное место
+    function isInMainLine(move: ChessMove, history: ChessMove[]): boolean {
+        return history.some(historyMove => historyMove.globalIndex === move.globalIndex);
+    }
+
     function addMoveToCorrectLocation(
         history: ChessMove[],
         currentMove: ChessMove | null,
         newMove: ChessMove
     ): ChessMove[] {
         if (!currentMove) {
-            // Если нет текущего хода, добавляем в начало главной линии
             return [newMove];
         }
 
-        // Если мы в главной линии (currentMove.globalIndex < 1000), добавляем в конец главной линии
-        if (currentMove.globalIndex < 1000) {
+        if (isInMainLine(currentMove, history)) {
             return [...history, newMove];
         }
 
-        // Если мы в варианте, нужно добавить ход в конец этого варианта
         function updateInHistory(moves: ChessMove[]): ChessMove[] {
             if (!currentMove) {
                 console.warn('addMoveToHistory: currentMove is null in updateInHistory');
@@ -58,18 +63,15 @@ export function addMoveToHistory(
                     };
                 }
 
-                // Обновляем в вариациях
                 if (move.variations && move.variations.length > 0) {
                     return {
                         ...move,
                         variations: move.variations.map(variation => {
-                            // Проверяем, содержит ли эта вариация текущий ход
                             const containsCurrentMove = variation.some(varMove =>
                                 varMove.globalIndex === currentMove.globalIndex
                             );
 
                             if (containsCurrentMove) {
-                                // Добавляем новый ход в конец этой вариации
                                 return [...variation, newMove];
                             }
 
@@ -85,7 +87,6 @@ export function addMoveToHistory(
         return updateInHistory(history);
     }
 
-    // Функция для обновления ссылки next в предыдущем ходе
     function updatePreviousMoveNext(
         history: ChessMove[],
         currentMove: ChessMove | null,
@@ -107,7 +108,6 @@ export function addMoveToHistory(
                     };
                 }
 
-                // Обновляем в вариациях
                 if (move.variations && move.variations.length > 0) {
                     return {
                         ...move,
@@ -122,7 +122,6 @@ export function addMoveToHistory(
         return updateInHistory(history);
     }
 
-    // Добавляем ход в нужное место
     const newHistory = addMoveToCorrectLocation(history, currentMove, newMove);
     const updatedHistory = updatePreviousMoveNext(newHistory, currentMove, newMove);
 
@@ -134,51 +133,61 @@ export function addMoveToHistory(
 
 /**
  * Добавляет новый ход как вариацию к следующему ходу после текущего
- * @param newMove - Объект нового хода (вариации)
- * @param currentMove - Объект текущего хода (должен иметь next)
- * @param history - История ходов
- * @returns Объект с обновленной историей
  */
 export function addVariationToHistory(
     newMove: ChessMove,
     currentMove: ChessMove,
     history: ChessMove[]
 ): AddVariationResult {
-    // Функция для добавления хода в variations следующего хода
-    function addMoveToVariations(
-        history: ChessMove[],
-        currentMove: ChessMove,
-        newMove: ChessMove
-    ): ChessMove[] {
-        function updateInHistory(moves: ChessMove[]): ChessMove[] {
-            return moves.map(move => {
-                if (currentMove.next && move.globalIndex === currentMove.next.globalIndex) {
-                    // Инициализируем variations если не существует
-                    const variations = move.variations || [];
-                    return {
-                        ...move,
-                        variations: [...variations, [newMove]]
-                    };
-                }
-
-                // Обновляем в вариациях
-                if (move.variations && move.variations.length > 0) {
-                    return {
-                        ...move,
-                        variations: move.variations.map(variation => updateInHistory(variation))
-                    };
-                }
-
-                return move;
-            });
-        }
-
-        return updateInHistory(history);
+    if (!currentMove.next) {
+        console.warn('addVariationToHistory: currentMove has no next move');
+        return { updatedHistory: history };
     }
 
-    const updatedHistory = addMoveToVariations(history, currentMove, newMove);
+    const targetGlobalIndex = currentMove.next.globalIndex;
+
+    function updateInHistory(moves: ChessMove[]): ChessMove[] {
+        return moves.map(move => {
+            // Если это ход, к которому добавляем вариацию
+            if (move.globalIndex === targetGlobalIndex) {
+                const existingVariations = move.variations || [];
+                return {
+                    ...move,
+                    variations: [...existingVariations, [newMove]]
+                };
+            }
+
+            // Рекурсивно обрабатываем вариации
+            if (move.variations && move.variations.length > 0) {
+                return {
+                    ...move,
+                    variations: move.variations.map(variation => updateInHistory(variation))
+                };
+            }
+
+            return move;
+        });
+    }
+
+    const updatedHistory = updateInHistory(history);
 
     return {
         updatedHistory: updatedHistory
+    };
+}
+
+/**
+ * Продвигает вариацию в основную линию, используя алгоритм из promoteVariationLink
+ */
+export function promoteVariation(
+    currentMove: ChessMove,
+    history: ChessMove[]
+): PromoteVariationResult {
+    // Используем протестированную функцию promoteVariationLink
+    // Без ссылок next/previous, так как они управляются отдельно в приложении
+    const updatedHistory = promoteVariationLink(currentMove, history, true);
+
+    return {
+        updatedHistory: updatedHistory as ChessMove[]
     };
 }

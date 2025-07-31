@@ -1,6 +1,6 @@
 import { Chess } from 'cm-chess';
-import { ADD_MOVE, ADD_VARIATION, GOTO_MOVE } from './actions.js';
-import { addMoveToHistory, addVariationToHistory } from '../utils/ChessMoveHistoryUpdater.ts';
+import { ADD_MOVE, ADD_VARIATION, PROMOTE_VARIATION, GOTO_MOVE } from './actions.js';
+import { addMoveToHistory, addVariationToHistory, promoteVariation } from '../utils/ChessMoveHistoryUpdater.ts';
 
 const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -127,7 +127,7 @@ function handleAddVariation(state, action) {
 
         // Используем утилиту для добавления вариации
         const { updatedHistory } = addVariationToHistory(newMove, state.currentMove, state.history);
-        
+
         return {
             ...state,
             history: updatedHistory,
@@ -138,6 +138,22 @@ function handleAddVariation(state, action) {
         };
     } catch (error) {
         console.error('Error adding variation:', error);
+        return state;
+    }
+}
+
+// Promote variation handler
+function handlePromoteVariation(state, action) {
+    try {
+        // Используем утилиту для продвижения вариации
+        const { updatedHistory } = promoteVariation(state.currentMove, state.history);
+
+        return {
+            ...state,
+            history: updatedHistory
+        };
+    } catch (error) {
+        console.error('Error promoting variation:', error);
         return state;
     }
 }
@@ -184,6 +200,8 @@ export function moveListReducer(state = initialState, action) {
             return handleAddMove(state, action);
         case ADD_VARIATION:
             return handleAddVariation(state, action);
+        case PROMOTE_VARIATION:
+            return handlePromoteVariation(state, action);
         case GOTO_MOVE:
             return handleGotoMove(state, action);
         default:

@@ -1,5 +1,6 @@
 declare module 'cm-chess' {
   export interface ChessMove {
+    ply: number;
     from: string;
     to: string;
     piece: string;
@@ -40,5 +41,6 @@ declare module 'cm-chess' {
     clear(): void;
     validate_fen(fen: string): { valid: boolean; error?: string; error_number?: number };
     ascii(): string;
+    ply(): number;
   }
 }

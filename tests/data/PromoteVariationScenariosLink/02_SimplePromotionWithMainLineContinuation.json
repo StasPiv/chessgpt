@@ -1,0 +1,69 @@
+{
+  "name": "simple promotion with main line continuation",
+  "input": {
+    "currentMove": {
+      "san": "e5",
+      "globalIndex": 1000
+    },
+    "history": [
+      {
+        "san": "e4",
+        "globalIndex": 0
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "variations": [
+          [
+            {
+              "san": "e5",
+              "globalIndex": 1000
+            }
+          ]
+        ]
+      },
+      {
+        "san": "Nf3",
+        "globalIndex": 2,
+        "variations": [
+          [
+            {
+              "san": "Nc3",
+              "globalIndex": 2000
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "expected": [
+    {
+      "san": "e4",
+      "globalIndex": 0
+    },
+    {
+      "san": "e5",
+      "globalIndex": 1000,
+      "variations": [
+        [
+          {
+            "san": "c5",
+            "globalIndex": 1
+          },
+          {
+            "san": "Nf3",
+            "globalIndex": 2,
+            "variations": [
+              [
+                {
+                  "san": "Nc3",
+                  "globalIndex": 2000
+                }
+              ]
+            ]
+          }
+        ]
+      ]
+    }
+  ]
+}
