@@ -1,7 +1,6 @@
-
 import { Chess } from 'cm-chess';
-import { ADD_MOVE, ADD_VARIATION, PROMOTE_VARIATION, DELETE_VARIATION, GOTO_MOVE } from './actions.js';
-import { addMoveToHistory, addVariationToHistory, promoteVariation, deleteVariation } from '../utils/ChessMoveHistoryUpdater.ts';
+import { ADD_MOVE, ADD_VARIATION, PROMOTE_VARIATION, DELETE_VARIATION, DELETE_REMAINING, GOTO_MOVE } from './actions.js';
+import { addMoveToHistory, addVariationToHistory, promoteVariation, deleteVariation, deleteRemaining } from '../utils/ChessMoveHistoryUpdater.ts';
 
 const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -214,6 +213,33 @@ function handleDeleteVariation(state, action) {
     }
 }
 
+// Delete remaining handler
+function handleDeleteRemaining(state, action) {
+    try {
+        // Проверяем, что у нас есть текущий ход
+        if (!state.currentMove) {
+            console.log('Cannot delete remaining: no current move');
+            return state;
+        }
+
+        // Используем утилиту для удаления оставшихся ходов
+        const { updatedHistory } = deleteRemaining(state.currentMove, state.history);
+
+        // После удаления оставшихся ходов текущий ход остается тем же самым,
+        // но нужно обновить его объект в новой истории
+        const updatedCurrentMove = findMoveByGlobalIndex(updatedHistory, state.currentMoveIndex);
+
+        return {
+            ...state,
+            history: updatedHistory,
+            currentMove: updatedCurrentMove
+        };
+    } catch (error) {
+        console.error('Error deleting remaining:', error);
+        return state;
+    }
+}
+
 // Goto move handler
 function handleGotoMove(state, action) {
     try {
@@ -260,6 +286,8 @@ export function moveListReducer(state = initialState, action) {
             return handlePromoteVariation(state, action);
         case DELETE_VARIATION:
             return handleDeleteVariation(state, action);
+        case DELETE_REMAINING:
+            return handleDeleteRemaining(state, action);
         case GOTO_MOVE:
             return handleGotoMove(state, action);
         default:

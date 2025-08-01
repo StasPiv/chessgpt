@@ -4,6 +4,7 @@ export const ADD_MOVE = 'ADD_MOVE';
 export const ADD_VARIATION = 'ADD_VARIATION';
 export const PROMOTE_VARIATION = 'PROMOTE_VARIATION';
 export const DELETE_VARIATION = 'DELETE_VARIATION';
+export const DELETE_REMAINING = 'DELETE_REMAINING';
 export const UNDO_MOVE = 'UNDO_MOVE';
 export const GOTO_MOVE = 'GOTO_MOVE';
 export const GOTO_FIRST = 'GOTO_FIRST';
@@ -30,6 +31,10 @@ export function promoteVariationAction() {
 
 export function deleteVariationAction() {
     return { type: DELETE_VARIATION };
+}
+
+export function deleteRemainingAction() {
+    return { type: DELETE_REMAINING };
 }
 
 export function gotoMoveAction(payload) {

@@ -1,8 +1,7 @@
-
-
 import { ChessMove } from '../types';
 import { promoteVariationLink } from './PromoteVariationLink';
 import { deleteVariation as deleteVariationUtil } from './DeleteVariation';
+import { deleteRemaining as deleteRemainingUtil } from './DeleteRemaining';
 
 /**
  * Результат добавления хода в историю
@@ -32,6 +31,13 @@ interface PromoteVariationResult {
 interface DeleteVariationResult {
     updatedHistory: ChessMove[];
     newCurrentMove: ChessMove | null;
+}
+
+/**
+ * Результат удаления оставшихся ходов
+ */
+interface DeleteRemainingResult {
+    updatedHistory: ChessMove[];
 }
 
 /**
@@ -214,5 +220,20 @@ export function deleteVariation(
     return {
         updatedHistory: result.updatedHistory as ChessMove[],
         newCurrentMove: result.newCurrentMove as ChessMove | null
+    };
+}
+
+/**
+ * Удаляет все ходы после текущего в той линии, в которой он находится
+ */
+export function deleteRemaining(
+    currentMove: ChessMove,
+    history: ChessMove[]
+): DeleteRemainingResult {
+    // Используем функцию deleteRemaining
+    const updatedHistory = deleteRemainingUtil(currentMove, history);
+
+    return {
+        updatedHistory: updatedHistory
     };
 }
