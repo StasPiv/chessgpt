@@ -158,6 +158,7 @@ function handlePromoteVariation(state, action) {
     }
 }
 
+
 // Delete variation handler
 function handleDeleteVariation(state, action) {
     try {
@@ -187,22 +188,20 @@ function handleDeleteVariation(state, action) {
             };
         }
 
-        // Обновляем состояние с новым текущим ходом
-        // Нужно будет пересчитать FEN для новой позиции
-        const newGame = new Chess();
-        const startPosition = getStartPosition(state.pgnHeaders);
-        newGame.load(startPosition);
+        // Используем FEN из нового текущего хода
+        const newFen = newCurrentMove.after || newCurrentMove.fen;
 
-        // Воспроизводим ходы до нового текущего хода
-        // Здесь нужна логика для построения пути к новому текущему ходу
-        // Пока используем FEN из нового текущего хода, если он есть
-        const newFen = newCurrentMove.after || startPosition;
-        newGame.load(newFen);
+        // Если FEN не найден в ходе, тогда используем стартовую позицию как fallback
+        const finalFen = newFen || getStartPosition(state.pgnHeaders);
+
+        // Создаем новую игру с правильной позицией
+        const newGame = new Chess();
+        newGame.load(finalFen);
 
         return {
             ...state,
             game: newGame,
-            fen: newFen,
+            fen: finalFen,
             history: updatedHistory,
             currentMoveIndex: newCurrentMove.globalIndex,
             currentMove: newCurrentMove
