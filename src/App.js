@@ -1,19 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useSelector, useDispatch } from 'react-redux';
 import { store } from './redux/store.js';
+import { setIsFullscreenAction } from './redux/actions.js';
 import CustomLayout from './components/CustomLayout.tsx';
 import LoadPgn from './components/LoadPgn.tsx';
 import { connectWebSocket } from './websocket.js';
+import fullscreenManager from './utils/FullscreenManager.js';
 import './App.scss';
 import FullScreenHint from "./components/FullScreenHint";
 
 function AppContent() {
     const [showPgnModal, setShowPgnModal] = useState(false);
+    const dispatch = useDispatch();
     const isMobile = useSelector(state => state.ui.isMobile);
+    const isFullscreen = useSelector(state => state.ui.isFullscreen);
 
     useEffect(() => {
         connectWebSocket(store);
     }, []);
+
+    // Отслеживание изменений полноэкранного режима
+    useEffect(() => {
+        const unsubscribe = fullscreenManager.addListener((fullscreen) => {
+            dispatch(setIsFullscreenAction(fullscreen));
+        });
+        
+        // Инициализируем состояние полноэкранного режима
+        dispatch(setIsFullscreenAction(fullscreenManager.isInFullscreen()));
+        
+        return unsubscribe;
+    }, [dispatch]);
 
     // Полноэкранный режим для мобильных устройств
     useEffect(() => {
@@ -62,15 +78,20 @@ function AppContent() {
         setShowPgnModal(false);
     };
 
+    // Определяем, нужно ли показывать основное содержимое
+    const shouldShowMainContent = !isMobile || isFullscreen;
+
     return (
         <div className="app-container">
-            <div className="layout-container">
-                <CustomLayout />
-            </div>
+            {shouldShowMainContent && (
+                <div className="layout-container">
+                    <CustomLayout />
+                </div>
+            )}
 
             <FullScreenHint />
 
-            {showPgnModal && (
+            {shouldShowMainContent && showPgnModal && (
                 <div className="pgn-modal">
                     <div className="pgn-modal-content">
                         <div className="pgn-modal-header">

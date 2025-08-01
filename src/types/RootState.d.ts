@@ -10,6 +10,7 @@ export interface WebSocketState {
 // UI State Type
 export interface UIState {
     isMobile: boolean;
+    isFullscreen: boolean;
 }
 
 // Root State Type (обновляем существующий)

@@ -10,6 +10,7 @@ export const GOTO_LAST = 'GOTO_LAST';
 export const GOTO_PREVIOUS = 'GOTO_PREVIOUS';
 export const GOTO_NEXT = 'GOTO_NEXT';
 export const SET_IS_MOBILE = 'SET_IS_MOBILE';
+export const SET_IS_FULLSCREEN = 'SET_IS_FULLSCREEN';
 export const UNDO_ACTION = 'UNDO_ACTION';
 export const REDO_ACTION = 'REDO_ACTION';
 
@@ -67,4 +68,8 @@ export function gotoNextAction() {
 
 export function setIsMobileAction(isMobile) {
     return { type: SET_IS_MOBILE, payload: isMobile };
+}
+
+export function setIsFullscreenAction(isFullscreen) {
+    return { type: SET_IS_FULLSCREEN, payload: isFullscreen };
 }

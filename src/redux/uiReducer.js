@@ -1,8 +1,8 @@
-
-import { SET_IS_MOBILE } from './actions.js';
+import { SET_IS_MOBILE, SET_IS_FULLSCREEN } from './actions.js';
 
 const initialState = {
     isMobile: false,
+    isFullscreen: false,
 };
 
 export function uiReducer(state = initialState, action) {
@@ -11,6 +11,11 @@ export function uiReducer(state = initialState, action) {
             return {
                 ...state,
                 isMobile: action.payload,
+            };
+        case SET_IS_FULLSCREEN:
+            return {
+                ...state,
+                isFullscreen: action.payload,
             };
         default:
             return state;
