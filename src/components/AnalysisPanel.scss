@@ -6,11 +6,12 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  
-  // МОБИЛЬНЫЕ ОПТИМИЗАЦИИ
+
+  // МОБИЛЬНЫЕ ОПТИМИЗАЦИИ - УБИРАЕМ ВСЕ ОТСТУПЫ
   @include m.mobile {
     & {
       padding: 0;
+      margin: 0;
       gap: 0;
     }
   }
@@ -26,13 +27,14 @@
   background: v.$background-secondary;
   border-radius: v.$border-radius-sm v.$border-radius-sm 0 0;
   gap: v.$spacing-sm;
-  
+
   // УВЕЛИЧЕННАЯ ВЫСОТА ДЛЯ ПРИПЛЮСНУТОГО ПЕРЕКЛЮЧАТЕЛЯ
   @include m.mobile {
     & {
       padding: v.$spacing-sm; // Увеличенный padding
       min-height: 48px; // Увеличили до 48px для больших элементов
       max-height: 48px;
+      border-radius: 0; // УБИРАЕМ СКРУГЛЕНИЯ НА МОБИЛЬНЫХ
     }
   }
 }
@@ -48,7 +50,7 @@
   display: flex;
   align-items: center;
   gap: v.$spacing-sm;
-  
+
   @include m.mobile {
     & {
       gap: v.$spacing-xs;
@@ -61,7 +63,7 @@
   color: v.$text-color;
   user-select: none;
   font-weight: 500;
-  
+
   @include m.mobile {
     & {
       font-size: 4vw; // ИСПОЛЬЗУЕМ VW ДЛЯ АДАПТИВНОСТИ (примерно 15-16px)
@@ -84,7 +86,7 @@
   gap: v.$spacing-md;
   flex: 0 0 auto;
   height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
-  
+
   @include m.mobile {
     & {
       gap: v.$spacing-sm;
@@ -100,7 +102,7 @@
   justify-content: center;
   height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
   padding: v.$spacing-xs 0;
-  
+
   @include m.mobile {
     & {
       align-items: center;
@@ -115,7 +117,7 @@
   color: v.$text-color;
   font-weight: 600;
   line-height: 1.2;
-  
+
   @include m.mobile {
     & {
       font-size: 4.2vw; // ИСПОЛЬЗУЕМ VW (примерно 16-17px)
@@ -131,7 +133,7 @@
   font-weight: 400;
   line-height: 1;
   margin-top: 1px;
-  
+
   @include m.mobile {
     & {
       font-size: 2.8vw; // ИСПОЛЬЗУЕМ VW (примерно 11-12px)
@@ -147,7 +149,7 @@
   align-items: center;
   gap: v.$spacing-sm;
   height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
-  
+
   @include m.mobile {
     & {
       gap: v.$spacing-xs;
@@ -164,30 +166,31 @@
   padding: v.$spacing-xs;
   border-radius: v.$border-radius-sm;
   transition: background-color v.$transition-fast ease;
-  
+
   &.connected {
     background: rgba(40, 167, 69, 0.1);
-    
+
     .connection-dot {
       background-color: #28a745;
       box-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
     }
   }
-  
+
   &.disconnected {
     background: rgba(220, 53, 69, 0.1);
-    
+
     .connection-dot {
       background-color: #dc3545;
       box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);
     }
   }
-  
+
   @include m.mobile {
     & {
       padding: v.$spacing-xs v.$spacing-sm;
       min-width: 12vw; // АДАПТИВНАЯ ШИРИНА
       max-width: 60px;
+      border-radius: 0; // УБИРАЕМ СКРУГЛЕНИЯ НА МОБИЛЬНЫХ
     }
   }
 }
@@ -198,7 +201,7 @@
   border-radius: 50%;
   transition: all v.$transition-fast ease;
   margin-bottom: 2px;
-  
+
   @include m.mobile {
     & {
       width: 3vw; // АДАПТИВНЫЙ РАЗМЕР (примерно 12-13px)
@@ -218,7 +221,7 @@
   font-weight: 500;
   text-align: center;
   line-height: 1;
-  
+
   @include m.mobile {
     & {
       font-size: 2.8vw; // АДАПТИВНЫЙ РАЗМЕР (примерно 11-12px)
@@ -242,20 +245,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   &:hover {
     background: v.$background-hover;
     color: v.$text-color;
     border-color: v.$border-hover;
     transform: scale(1.05);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
   }
-  
+
   @include m.mobile {
     & {
       font-size: 4.5vw; // КРУПНЫЙ АДАПТИВНЫЙ РАЗМЕР (примерно 18-19px)
@@ -267,214 +270,17 @@
       max-width: 44px;
       max-height: 44px;
       border-width: 2px; // Более толстая граница для лучшей видимости
+      border-radius: 0; // УБИРАЕМ СКРУГЛЕНИЯ НА МОБИЛЬНЫХ
     }
   }
 }
 
-// ОСНОВНОЙ КОНТЕНТ - ЛИНИИ АНАЛИЗА
+// ДОБАВЛЯЕМ СТИЛИ ДЛЯ ОСНОВНОГО КОНТЕЙНЕРА АНАЛИЗА
 .analysis-lines {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: v.$spacing-sm;
-  
-  @include m.custom-scrollbar;
-  
-  &.inactive {
-    opacity: 0.6;
-    pointer-events: none;
-  }
-  
-  // МОБИЛЬНЫЕ СТИЛИ - УЧИТЫВАЕМ НОВУЮ ВЫСОТУ ЗАГОЛОВКА
   @include m.mobile {
     & {
-      padding: v.$spacing-xs;
-      gap: v.$spacing-xs;
-      
-      // Ограничиваем высоту для точно 4 линий (учитываем новую высоту заголовка)
-      max-height: calc(100% - 48px); // Вычитаем увеличенную высоту заголовка
-      min-height: calc(100% - 48px);
+      padding: 0; // УБИРАЕМ ОТСТУПЫ
+      margin: 0; // УБИРАЕМ ОТСТУПЫ
     }
-  }
-}
-
-.no-analysis {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: v.$text-muted;
-  font-style: italic;
-  text-align: center;
-  padding: v.$spacing-md;
-  
-  @include m.mobile {
-    & {
-      padding: v.$spacing-sm;
-      font-size: 3.5vw; // АДАПТИВНЫЙ РАЗМЕР
-      min-font-size: 13px;
-      max-font-size: 15px;
-    }
-  }
-}
-
-// Стили для отдельных линий анализа на мобильных
-@include m.mobile {
-  .analysis-lines {
-    // Каждая линия анализа должна быть компактной
-    :global(.analysis-line) {
-      margin-bottom: v.$spacing-xs !important;
-      padding: v.$spacing-xs !important;
-      font-size: 3vw !important; // АДАПТИВНЫЙ РАЗМЕР
-      min-font-size: 12px !important;
-      max-font-size: 14px !important;
-      line-height: 1.3 !important;
-      
-      // Ограничиваем высоту каждой линии (чуть больше места)
-      max-height: 35px !important;
-      min-height: 35px !important;
-      overflow: hidden !important;
-    }
-    
-    // Скрываем лишние линии, если их больше 4
-    :global(.analysis-line:nth-child(n+5)) {
-      display: none !important;
-    }
-  }
-}
-
-// Обновленная высота для секции анализа в CustomLayout
-// (этот код должен быть добавлен в CustomLayout.scss)
-@include m.mobile {
-  :global(.mobile-analysis-section) {
-    height: 250px !important; // Увеличено для нового заголовка: 48px заголовок + 4×35px линии + отступы
-    
-    // Для маленьких экранов
-    @media (max-width: 320px) {
-      & {
-        height: 230px !important;
-      }
-    }
-    
-    // Для ландшафтной ориентации
-    @media (orientation: landscape) and (max-width: 767px) {
-      & {
-        height: 210px !important;
-      }
-    }
-  }
-}
-
-// Дополнительные стили для очень маленьких экранов
-@media (max-width: 320px) {
-  .analysis-header {
-    min-height: 44px !important;
-    max-height: 44px !important;
-    padding: v.$spacing-xs !important;
-  }
-  
-  .switch-label {
-    font-size: 4.5vw !important; // Больше для маленьких экранов
-    min-font-size: 13px !important;
-  }
-  
-  .total-nodes {
-    font-size: 4.8vw !important;
-    min-font-size: 14px !important;
-  }
-  
-  .connection-text {
-    font-size: 3.2vw !important;
-    min-font-size: 9px !important;
-  }
-  
-  .reconnect-btn {
-    font-size: 5vw !important;
-    min-font-size: 15px !important;
-    min-width: 12vw !important;
-    min-height: 12vw !important;
-  }
-  
-  .analysis-lines {
-    max-height: calc(100% - 44px) !important;
-    min-height: calc(100% - 44px) !important;
-    
-    :global(.analysis-line) {
-      max-height: 32px !important;
-      min-height: 32px !important;
-      font-size: 3.5vw !important;
-      min-font-size: 11px !important;
-    }
-  }
-}
-
-// Ландшафтная ориентация
-@media (orientation: landscape) and (max-width: 767px) {
-  .analysis-header {
-    min-height: 42px !important;
-    max-height: 42px !important;
-    padding: v.$spacing-xs v.$spacing-sm !important;
-  }
-  
-  .switch-label {
-    font-size: 3.5vw !important;
-  }
-  
-  .total-nodes {
-    font-size: 3.8vw !important;
-  }
-  
-  .connection-dot {
-    width: 2.5vw !important;
-    height: 2.5vw !important;
-  }
-  
-  .connection-text {
-    font-size: 2.5vw !important;
-  }
-  
-  .reconnect-btn {
-    font-size: 4vw !important;
-    min-width: 8vw !important;
-    min-height: 8vw !important;
-  }
-  
-  .analysis-lines {
-    max-height: calc(100% - 42px) !important;
-    min-height: calc(100% - 42px) !important;
-    
-    :global(.analysis-line) {
-      max-height: 32px !important;
-      min-height: 32px !important;
-      font-size: 2.8vw !important;
-      min-font-size: 11px !important;
-    }
-  }
-}
-
-// Дополнительные стили для больших мобильных экранов (phablets)
-@media (min-width: 400px) and (max-width: 767px) {
-  .switch-label {
-    font-size: 3.8vw;
-    max-font-size: 17px;
-  }
-  
-  .total-nodes {
-    font-size: 4vw;
-    max-font-size: 19px;
-  }
-  
-  .connection-dot {
-    width: 2.8vw;
-    height: 2.8vw;
-    max-width: 15px;
-    max-height: 15px;
-  }
-  
-  .reconnect-btn {
-    font-size: 4.2vw;
-    max-font-size: 21px;
-    max-width: 46px;
-    max-height: 46px;
   }
 }

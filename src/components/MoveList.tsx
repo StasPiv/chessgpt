@@ -19,6 +19,7 @@ const MoveList = (): ReactElement => {
     const history = useSelector((state: RootState) => state.chess.history);
     const currentMoveIndex = useSelector((state: RootState) => state.chess.currentMoveIndex);
     const isMobile = useSelector((state: RootState) => state.ui.isMobile);
+    const pgnHeaders = useSelector((state: RootState) => state.chess.pgnHeaders);
 
     // Ref для отслеживания долгого нажатия
     const longPressTimer = useRef<NodeJS.Timeout | null>(null);
@@ -207,8 +208,19 @@ const MoveList = (): ReactElement => {
         }).filter(Boolean) as ReactElement[];
     };
 
+    // Проверяем есть ли заголовки игры для отображения
+    const hasGameHeaders = pgnHeaders && Object.keys(pgnHeaders).length > 0;
+
     return (
         <div className="move-list-container">
+            {/* ФИКСИРОВАННЫЙ ЗАГОЛОВОК - НЕ СКРОЛЛИТСЯ */}
+            {hasGameHeaders && (
+                <div className="fixed-game-header">
+                    <GameHeader />
+                </div>
+            )}
+
+            {/* СКРОЛЛИРУЕМЫЙ КОНТЕЙНЕР С ХОДАМИ */}
             <div
                 ref={movesContainerRef}
                 className="moves-container"
@@ -223,11 +235,12 @@ const MoveList = (): ReactElement => {
                     </div>
                 ) : (
                     <div className="moves-list">
-                        <GameHeader />
                         {renderMovesList()}
                     </div>
                 )}
             </div>
+
+            {/* ФИКСИРОВАННАЯ ПАНЕЛЬ РЕДАКТОРА - НЕ СКРОЛЛИТСЯ */}
             <GameEditorPanel />
         </div>
     );

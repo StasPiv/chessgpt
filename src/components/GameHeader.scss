@@ -4,13 +4,13 @@
 .game-header {
   padding: v.$spacing-sm v.$spacing-md;
   margin-bottom: v.$spacing-md;
-  
+
   @include m.card;
-  
+
   @include m.mobile {
     & {
       padding: v.$spacing-xs v.$spacing-sm;
-      margin-bottom: v.$spacing-sm;
+      margin-bottom: 0; // УБИРАЕМ НИЖНИЙ ОТСТУП ДЛЯ ФИКСИРОВАННОГО ЗАГОЛОВКА
     }
   }
 }
@@ -21,15 +21,16 @@
   line-height: 1.3;
   text-align: center;
   margin-bottom: v.$spacing-xs;
-  
+
   strong {
     font-weight: 600;
   }
-  
+
   @include m.mobile {
     & {
       font-size: 1em;
       line-height: 1.2;
+      margin-bottom: v.$spacing-xs; // СОХРАНЯЕМ НЕБОЛЬШОЙ ОТСТУП СНИЗУ
     }
   }
 }
@@ -43,17 +44,17 @@
 .game-result {
   color: v.$error-color;
   margin-left: v.$spacing-xs;
-  
+
   strong {
     font-weight: 700;
     font-size: 1.05em;
   }
-  
+
   @include m.mobile {
     & {
       margin-left: v.$spacing-xxs;
     }
-    
+
     strong {
       font-size: 1em;
     }
@@ -65,7 +66,7 @@
   color: v.$text-muted;
   text-align: center;
   line-height: 1.2;
-  
+
   @include m.mobile {
     & {
       display: none; // СКРЫВАЕМ НА МОБИЛЬНЫХ УСТРОЙСТВАХ
@@ -78,15 +79,15 @@
   &.white-wins {
     color: v.$success-color;
   }
-  
+
   &.black-wins {
     color: v.$text-color;
   }
-  
+
   &.draw {
     color: v.$warning-color;
   }
-  
+
   &.ongoing {
     color: v.$info-color;
   }
@@ -97,7 +98,7 @@
   .game-header {
     padding: v.$spacing-md v.$spacing-lg;
   }
-  
+
   .game-header-players {
     font-size: 3.2vw; // Пропорциональный размер для планшетов
   }
@@ -113,7 +114,7 @@
     font-size: 3.8vw !important; // Пропорционально размеру ходов (4.5vw * 0.85)
     line-height: 1.2 !important;
   }
-  
+
   .game-header-info {
     display: none !important; // ПРИНУДИТЕЛЬНО СКРЫВАЕМ НА МОБИЛЬНЫХ
   }
@@ -124,7 +125,7 @@
   .game-header-players {
     font-size: 4.2vw !important;
   }
-  
+
   .game-header-info {
     display: none !important; // СКРЫВАЕМ И НА МАЛЕНЬКИХ ЭКРАНАХ
   }
@@ -135,7 +136,7 @@
   .game-header-players {
     font-size: 3.6vw !important;
   }
-  
+
   .game-header-info {
     display: none !important; // СКРЫВАЕМ И НА СРЕДНИХ МОБИЛЬНЫХ
   }
@@ -146,7 +147,7 @@
   .game-header-players {
     font-size: 3.8vw !important;
   }
-  
+
   .game-header-info {
     display: none !important; // СКРЫВАЕМ И НА БОЛЬШИХ МОБИЛЬНЫХ
   }
@@ -156,16 +157,16 @@
 @include m.desktop {
   .game-header {
     transition: box-shadow v.$transition-fast ease;
-    
+
     &:hover {
       box-shadow: 0 4px 8px v.$shadow-light;
     }
   }
-  
+
   .game-header-players {
     font-size: 1.2em;
   }
-  
+
   .game-header-info {
     font-size: 0.9em;
   }

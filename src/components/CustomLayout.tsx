@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Layout, Layouts, Responsive, WidthProvider} from 'react-grid-layout';
 import {CustomLayoutProps, LayoutChangeCallback} from '../types';
@@ -17,6 +17,10 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
     const dispatch = useDispatch();
     const isMobile = useSelector((state: RootState) => state.ui.isMobile);
     
+    // Refs для скролла к NavigationControls
+    const mobileNavigationRef = useRef<HTMLDivElement>(null);
+    const desktopNavigationRef = useRef<HTMLDivElement>(null);
+    
     // Дефолтные лейауты - всегда используются для мобильных устройств
     const defaultLayouts: Layouts = {
         lg: [
@@ -29,14 +33,14 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
             { i: 'moves', x: 6, y: 0, w: 6, h: 6, minW: 3, minH: 4 },
             { i: 'analysis', x: 0, y: 6, w: 12, h: 4, minW: 6, minH: 3 }
         ],
-        // ФИКСИРОВАННЫЙ МОБИЛЬНЫЙ ЛЕЙАУТ - ПЕРЕСТАВЛЕНЫ МЕСТАМИ
+        // ОБНОВЛЕННЫЙ МОБИЛЬНЫЙ ЛЕЙАУТ - MoveList сверху, AnalysisPanel посередине, ChessBoard снизу
         sm: [
-            // Шахматная доска с навигацией (верх экрана)
-            { i: 'chessboard', x: 0, y: 0, w: 12, h: 10, static: true, minW: 12, minH: 10, maxW: 12, maxH: 10 },
-            // Ходы - сразу под доской (фиксированная высота)
-            { i: 'moves', x: 0, y: 10, w: 12, h: 6, static: true, minW: 12, minH: 6, maxW: 12, maxH: 20 },
-            // Анализ - внизу (фиксированная высота для 4 линий)
-            { i: 'analysis', x: 0, y: 16, w: 12, h: 4, static: true, minW: 12, minH: 4, maxW: 12, maxH: 4 }
+            // Ходы - самый верхний блок
+            { i: 'moves', x: 0, y: 0, w: 12, h: 6, static: true, minW: 12, minH: 6, maxW: 12, maxH: 20 },
+            // Анализ - второй блок (посередине)
+            { i: 'analysis', x: 0, y: 6, w: 12, h: 4, static: true, minW: 12, minH: 4, maxW: 12, maxH: 4 },
+            // Шахматная доска с навигацией - самый нижний блок
+            { i: 'chessboard', x: 0, y: 10, w: 12, h: 10, static: true, minW: 12, minH: 10, maxW: 12, maxH: 10 }
         ]
     };
     
@@ -111,28 +115,28 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
     if (isMobile) {
         return (
             <div className={`custom-layout-container mobile-fixed-layout ${className || ''}`}>
-                {/* Шахматная доска с навигацией */}
+                {/* Панель ходов - теперь самый верхний блок */}
+                <div className="mobile-moves-section">
+                    <MoveList />
+                </div>
+                
+                {/* Панель анализа - теперь посередине */}
+                <div className="mobile-analysis-section">
+                    <AnalysisPanel />
+                </div>
+                
+                {/* Шахматная доска с навигацией - теперь внизу */}
                 <div className="mobile-chessboard-section">
                     <div className="chess-board-wrapper">
                         <ChessBoard isFlipped={isFlipped} />
                     </div>
-                    <div className="navigation-wrapper mobile-compact">
+                    <div className="navigation-wrapper mobile-compact" ref={mobileNavigationRef}>
                         <NavigationControls 
                             onFlipBoard={handleFlipBoard} 
                             isFlipped={isFlipped}
                             compact={true}
                         />
                     </div>
-                </div>
-                
-                {/* Панель ходов - теперь сразу под доской */}
-                <div className="mobile-moves-section">
-                    <MoveList />
-                </div>
-                
-                {/* Панель анализа - теперь внизу */}
-                <div className="mobile-analysis-section">
-                    <AnalysisPanel />
                 </div>
             </div>
         );
@@ -164,7 +168,7 @@ const CustomLayout: React.FC<CustomLayoutProps> = ({ className }) => {
                         <div className="chess-board-wrapper">
                             <ChessBoard isFlipped={isFlipped} />
                         </div>
-                        <div className="navigation-wrapper">
+                        <div className="navigation-wrapper" ref={desktopNavigationRef}>
                             <NavigationControls onFlipBoard={handleFlipBoard} isFlipped={isFlipped} />
                         </div>
                     </div>

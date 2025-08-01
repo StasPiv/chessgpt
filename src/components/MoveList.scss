@@ -9,12 +9,40 @@ $move-list-mobile-font-size: 3vw;
   flex-direction: column;
   height: 100%;
   @include m.move-list-container;
+
+  // УБИРАЕМ ОТСТУПЫ НА МОБИЛЬНЫХ
+  @include m.mobile {
+    & {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}
+
+// ФИКСИРОВАННЫЙ ЗАГОЛОВОК - НЕ СКРОЛЛИТСЯ
+.fixed-game-header {
+  flex: 0 0 auto; // НЕ РАСТЯГИВАЕТСЯ И НЕ СЖИМАЕТСЯ
+  position: sticky; // ФИКСИРУЕТСЯ ВВЕРХУ
+  top: 0;
+  z-index: 10; // ПОВЕРХ ДРУГИХ ЭЛЕМЕНТОВ
+  background: white; // ФОНОВЫЙ ЦВЕТ ДЛЯ ЗАКРЫТИЯ КОНТЕНТА СНИЗУ
+  border-bottom: 1px solid v.$border-color; // РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ
+
+  @include m.mobile {
+    & {
+      // НА МОБИЛЬНЫХ УБИРАЕМ ДОПОЛНИТЕЛЬНЫЕ ОТСТУПЫ
+      margin: 0;
+      border-radius: 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // ЛЕГКАЯ ТЕНЬ ДЛЯ ВИЗУАЛЬНОГО РАЗДЕЛЕНИЯ
+    }
+  }
 }
 
 .moves-container {
   width: 100%;
-  flex: 1;
-  overflow-y: auto;
+  flex: 1; // ЗАНИМАЕТ ВСЕ ОСТАВШЕЕСЯ МЕСТО
+  overflow-y: auto; // СКРОЛЛИРУЕТСЯ ПО ВЕРТИКАЛИ
+  min-height: 0; // ВАЖНО ДЛЯ ПРАВИЛЬНОЙ РАБОТЫ FLEX
   // Принудительно отключаем автоматическое масштабирование текста
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -178,7 +206,7 @@ $move-list-mobile-font-size: 3vw;
   .moves-list {
     font-size: 20px !important; // ФИКСИРОВАННЫЙ размер вместо vw
     line-height: 1.6 !important;
-    padding: 12px !important;
+    padding: v.$spacing-sm !important; // МИНИМАЛЬНЫЙ ОТСТУП
     -webkit-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
   }
@@ -225,6 +253,18 @@ $move-list-mobile-font-size: 3vw;
     padding: 32px;
     min-height: 120px;
     font-size: $move-list-mobile-font-size
+  }
+
+  // СПЕЦИАЛЬНЫЕ СТИЛИ ДЛЯ ФИКСИРОВАННОГО ЗАГОЛОВКА НА МОБИЛЬНЫХ
+  .fixed-game-header {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important; // БОЛЕЕ ВЫРАЖЕННАЯ ТЕНЬ
+
+    // УБИРАЕМ ОТСТУПЫ У ЗАГОЛОВКА ВНУТРИ ФИКСИРОВАННОГО КОНТЕЙНЕРА
+    .game-header {
+      margin-bottom: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
   }
 }
 
