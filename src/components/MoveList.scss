@@ -1,5 +1,8 @@
+
 @use '../styles/variables' as v;
 @use '../styles/mixins' as m;
+
+$move-list-mobile-font-size: 3vw;
 
 .move-list-container {
   display: flex;
@@ -12,10 +15,19 @@
   width: 100%;
   flex: 1;
   overflow-y: auto;
+  // Принудительно отключаем автоматическое масштабирование текста
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 .moves-list {
   @include m.moves-list-typography;
+  // Дополнительные настройки для предотвращения автоматического масштабирования
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  max-height: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .move-item {
@@ -31,7 +43,7 @@
     @include m.move-variation;
   }
 
-  // Current/active move styling - ДОБАВЛЯЕМ ЯВНЫЕ СТИЛИ
+  // Current/active move styling
   &.current {
     background-color: #007bff !important;
     color: white !important;
@@ -41,7 +53,6 @@
     margin: 1px 2px !important;
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
 
-    // Убираем hover эффекты для активного хода
     &:hover {
       background-color: #007bff !important;
       color: white !important;
@@ -54,7 +65,6 @@
     }
   }
 
-  // Focus state for accessibility
   &:focus {
     outline: 2px solid v.$info-color;
     outline-offset: 1px;
@@ -62,21 +72,10 @@
 }
 
 // Variation level colors
-.variation-level-1 {
-  @include m.variation-level(1);
-}
-
-.variation-level-2 {
-  @include m.variation-level(2);
-}
-
-.variation-level-3 {
-  @include m.variation-level(3);
-}
-
-.variation-level-4 {
-  @include m.variation-level(4);
-}
+.variation-level-1 { @include m.variation-level(1); }
+.variation-level-2 { @include m.variation-level(2); }
+.variation-level-3 { @include m.variation-level(3); }
+.variation-level-4 { @include m.variation-level(4); }
 
 .variation-bracket {
   @include m.variation-bracket;
@@ -86,7 +85,6 @@
   @include m.no-moves-state;
 }
 
-// Move number styling
 .move-number {
   @include m.move-number;
   margin-right: v.$spacing-xxs;
@@ -95,22 +93,10 @@
     font-weight: normal;
   }
 
-  // Variation level colors for move numbers
-  &.variation-level-1 {
-    @include m.variation-level(1);
-  }
-
-  &.variation-level-2 {
-    @include m.variation-level(2);
-  }
-
-  &.variation-level-3 {
-    @include m.variation-level(3);
-  }
-
-  &.variation-level-4 {
-    @include m.variation-level(4);
-  }
+  &.variation-level-1 { @include m.variation-level(1); }
+  &.variation-level-2 { @include m.variation-level(2); }
+  &.variation-level-3 { @include m.variation-level(3); }
+  &.variation-level-4 { @include m.variation-level(4); }
 }
 
 .move-san {
@@ -118,7 +104,6 @@
   margin-right: v.$spacing-xs;
 }
 
-// Specific bracket positioning
 .variation-bracket-open {
   margin: 0;
 }
@@ -128,40 +113,25 @@
   margin-right: 0.5em;
 }
 
-// Move numbers after variations
 .move-number-after-variation {
   margin-right: v.$spacing-xxs;
   display: inline;
 
-  // Main line - bold black
   &:not(.variation-move) {
     @include m.move-main-line;
   }
 
-  // Variations inherit from their level
   &.variation-move {
     font-weight: normal;
   }
 
-  // Variation level colors
-  &.variation-level-1 {
-    @include m.variation-level(1);
-  }
-
-  &.variation-level-2 {
-    @include m.variation-level(2);
-  }
-
-  &.variation-level-3 {
-    @include m.variation-level(3);
-  }
-
-  &.variation-level-4 {
-    @include m.variation-level(4);
-  }
+  &.variation-level-1 { @include m.variation-level(1); }
+  &.variation-level-2 { @include m.variation-level(2); }
+  &.variation-level-3 { @include m.variation-level(3); }
+  &.variation-level-4 { @include m.variation-level(4); }
 }
 
-// Enhanced desktop experience
+// Desktop styles
 @include m.desktop {
   .move-item {
     transition: all v.$transition-fast ease;
@@ -188,6 +158,102 @@
 
   .variation-bracket {
     font-size: 14px;
+  }
+}
+
+// УПРОЩЕННЫЕ медиа-запросы без перекрытий
+// Мобильные устройства (до 767px включительно)
+@media screen and (max-width: 767px) {
+  .moves-container {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  .moves-list {
+    font-size: 20px !important; // ФИКСИРОВАННЫЙ размер вместо vw
+    line-height: 1.6 !important;
+    padding: 12px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  .move-item {
+    min-height: 32px;
+    line-height: 32px;
+    padding: 2px 3px;
+    margin-right: 0.4em;
+    font-size: 20px !important; // ФИКСИРОВАННЫЙ размер
+
+    &:hover:not(.current) {
+      background-color: transparent;
+    }
+
+    &:active:not(.current) {
+      background-color: v.$move-hover-bg;
+    }
+
+    &.current {
+      background-color: #007bff !important;
+      color: white !important;
+      font-weight: bold !important;
+      border-radius: 6px !important;
+      padding: 4px 8px !important;
+      margin: 2px 4px !important;
+      min-height: 36px !important;
+      line-height: 28px !important;
+      box-shadow: 0 3px 8px rgba(0, 123, 255, 0.4) !important;
+    }
+  }
+
+  .move-number,
+  .move-san,
+  .move-number-after-variation {
+    font-size: 20px !important; // ФИКСИРОВАННЫЙ размер
+  }
+
+  .variation-bracket {
+    font-size: 16px !important; // ФИКСИРОВАННЫЙ размер
+  }
+
+  .no-moves {
+    padding: 32px;
+    min-height: 120px;
+    font-size: $move-list-mobile-font-size
+  }
+}
+
+// Планшеты (768px и выше)
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  .moves-list {
+    font-size: $move-list-mobile-font-size;
+    line-height: 1.5;
+    padding: 14px;
+  }
+
+  .move-item {
+    padding: 3px 4px;
+    font-size: $move-list-mobile-font-size;
+
+    &.current {
+      padding: 4px 8px !important;
+      margin: 2px 3px !important;
+    }
+  }
+
+  .move-number,
+  .move-san,
+  .move-number-after-variation {
+    font-size: $move-list-mobile-font-size;
+  }
+
+  .variation-bracket {
+    font-size: 16px;
   }
 }
 
@@ -243,154 +309,5 @@
     &:hover:not(.current) {
       transform: none;
     }
-  }
-}
-
-// Tablet optimizations (768px-995px)
-@include m.tablet {
-  .moves-list {
-    font-size: 3.8vw; // Используем vw и для планшетов
-    line-height: 1.45;
-  }
-
-  .move-item {
-    padding: v.$spacing-xxs v.$spacing-xs;
-    font-size: 3.8vw;
-
-    &.current {
-      padding: 3px 8px !important;
-      margin: 2px 3px !important;
-    }
-  }
-
-  .move-number,
-  .move-san,
-  .move-number-after-variation {
-    font-size: 3.8vw;
-  }
-
-  .variation-bracket {
-    font-size: 3vw;
-  }
-}
-
-// Mobile optimizations (до 767px)
-@include m.mobile {
-  .moves-container {
-    // Better touch targets on mobile
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  .moves-list {
-    font-size: v.$move-font-size-mobile !important; // !important чтобы переопределить планшетные стили
-    line-height: 1.5 !important;
-  }
-
-  .move-item {
-    // Larger touch targets
-    min-height: 24px;
-    line-height: 24px;
-    padding: 1px 1px;
-    margin-right: 0.3em;
-    font-size: v.$move-font-size-mobile !important;
-
-    &:hover:not(.current) {
-      // Disable hover on mobile to prevent sticky states
-      background-color: transparent;
-    }
-
-    &:active:not(.current) {
-      background-color: v.$move-hover-bg;
-    }
-
-    // Мобильные стили для активного хода
-    &.current {
-      background-color: #007bff !important;
-      color: white !important;
-      font-weight: bold !important;
-      border-radius: 3px !important;
-      padding: 2px 4px !important;
-      margin: 1px 2px !important;
-      min-height: 26px !important;
-      line-height: 22px !important;
-      box-shadow: 0 1px 3px rgba(0, 123, 255, 0.4) !important;
-    }
-  }
-
-  .move-number,
-  .move-san,
-  .move-number-after-variation {
-    font-size: v.$move-font-size-mobile !important;
-  }
-
-  .variation-bracket {
-    font-size: v.$variation-bracket-size-mobile !important;
-  }
-}
-
-// Дополнительные медиа-запросы для очень маленьких экранов
-@media (max-width: 320px) {
-  .moves-list,
-  .move-item,
-  .move-number,
-  .move-san,
-  .move-number-after-variation {
-    font-size: 5vw !important;
-  }
-
-  .variation-bracket {
-    font-size: 4vw !important;
-  }
-
-  .move-item.current {
-    padding: 2px 3px !important;
-    margin: 1px !important;
-    min-height: 24px !important;
-    line-height: 20px !important;
-  }
-}
-
-// Медиа-запрос для средних мобильных экранов
-@media (min-width: 321px) and (max-width: 414px) {
-  .moves-list,
-  .move-item,
-  .move-number,
-  .move-san,
-  .move-number-after-variation {
-    font-size: 4.2vw !important;
-  }
-
-  .variation-bracket {
-    font-size: 3.2vw !important;
-  }
-
-  .move-item.current {
-    padding: 2px 4px !important;
-    margin: 1px 2px !important;
-  }
-}
-
-// Для больших мобильных экранов (415px-767px)
-@media (min-width: 415px) and (max-width: 767px) {
-  .moves-list,
-  .move-item,
-  .move-number,
-  .move-san,
-  .move-number-after-variation {
-    font-size: 4.5vw !important;
-  }
-
-  .variation-bracket {
-    font-size: 3.5vw !important;
-  }
-
-  .move-item.current {
-    padding: 3px 5px !important;
-    margin: 1px 2px !important;
   }
 }
