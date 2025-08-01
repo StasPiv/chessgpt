@@ -30,12 +30,8 @@
       }
     ]
   },
-  "expected": [
-    {
-      "san": "e4",
-      "globalIndex": 0
-    },
-    {
+  "expected": {
+    "newCurrentMove": {
       "san": "c5",
       "globalIndex": 1,
       "variations": [
@@ -46,6 +42,24 @@
           }
         ]
       ]
-    }
-  ]
+    },
+    "updatedHistory": [
+      {
+        "san": "e4",
+        "globalIndex": 0
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "variations": [
+          [
+            {
+              "san": "e6",
+              "globalIndex": 2000
+            }
+          ]
+        ]
+      }
+    ]
+  }
 }

@@ -1,6 +1,8 @@
 
+
 import { ChessMove } from '../types';
 import { promoteVariationLink } from './PromoteVariationLink';
+import { deleteVariation as deleteVariationUtil } from './DeleteVariation';
 
 /**
  * Результат добавления хода в историю
@@ -22,6 +24,14 @@ interface AddVariationResult {
  */
 interface PromoteVariationResult {
     updatedHistory: ChessMove[];
+}
+
+/**
+ * Результат удаления вариации
+ */
+interface DeleteVariationResult {
+    updatedHistory: ChessMove[];
+    newCurrentMove: ChessMove | null;
 }
 
 /**
@@ -188,5 +198,21 @@ export function promoteVariation(
 
     return {
         updatedHistory: updatedHistory as ChessMove[]
+    };
+}
+
+/**
+ * Удаляет вариацию, содержащую указанный ход
+ */
+export function deleteVariation(
+    currentMove: ChessMove,
+    history: ChessMove[]
+): DeleteVariationResult {
+    // Используем протестированную функцию deleteVariation
+    const result = deleteVariationUtil(currentMove, history, true);
+
+    return {
+        updatedHistory: result.updatedHistory as ChessMove[],
+        newCurrentMove: result.newCurrentMove as ChessMove | null
     };
 }

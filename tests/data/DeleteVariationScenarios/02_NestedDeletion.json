@@ -44,35 +44,42 @@
       }
     ]
   },
-  "expected": [
-    {
-      "san": "e4",
-      "globalIndex": 0
-    },
-    {
-      "san": "c5",
-      "globalIndex": 1,
-      "variations": [
-        [
-          {
-            "san": "e5",
-            "globalIndex": 1000
-          },
-          {
-            "san": "Nf3",
-            "globalIndex": 1001,
-            "variations": []
-          },
-          {
-            "san": "Bb5",
-            "globalIndex": 1002
-          }
-        ]
-      ]
-    },
-    {
+  "expected": {
+    "newCurrentMove": {
       "san": "Nf3",
-      "globalIndex": 2
-    }
-  ]
+      "globalIndex": 1001,
+      "variations": []
+    },
+    "updatedHistory": [
+      {
+        "san": "e4",
+        "globalIndex": 0
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "variations": [
+          [
+            {
+              "san": "e5",
+              "globalIndex": 1000
+            },
+            {
+              "san": "Nf3",
+              "globalIndex": 1001,
+              "variations": []
+            },
+            {
+              "san": "Bb5",
+              "globalIndex": 1002
+            }
+          ]
+        ]
+      },
+      {
+        "san": "Nf3",
+        "globalIndex": 2
+      }
+    ]
+  }
 }
