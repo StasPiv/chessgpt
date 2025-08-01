@@ -1,4 +1,3 @@
-
 import React, { ReactElement, useCallback, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gotoMoveAction, loadPGNAction } from '../redux/actions.js';
@@ -13,6 +12,7 @@ import {
 } from '../utils/ChessMoveProcessing';
 import './MoveList.scss';
 import GameHeader from "./GameHeader";
+import GameEditorPanel from "./GameEditorPanel";
 
 const MoveList = (): ReactElement => {
     const dispatch = useDispatch();
@@ -228,6 +228,7 @@ const MoveList = (): ReactElement => {
                     </div>
                 )}
             </div>
+            <GameEditorPanel />
         </div>
     );
 };

@@ -2,12 +2,16 @@
 @use '../styles/mixins' as m;
 
 .move-list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   @include m.move-list-container;
 }
 
 .moves-container {
   width: 100%;
-  height: 100%;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .moves-list {
@@ -16,7 +20,7 @@
 
 .move-item {
   @include m.move-item-base;
-  
+
   // Main line moves (не в вариациях)
   &:not(.variation-move) {
     @include m.move-main-line;
@@ -36,14 +40,14 @@
     padding: 2px 6px !important;
     margin: 1px 2px !important;
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
-    
+
     // Убираем hover эффекты для активного хода
     &:hover {
       background-color: #007bff !important;
       color: white !important;
       transform: none !important;
     }
-    
+
     &:active {
       background-color: #0056b3 !important;
       transform: none !important;
@@ -86,24 +90,24 @@
 .move-number {
   @include m.move-number;
   margin-right: v.$spacing-xxs;
-  
+
   &.variation-move {
     font-weight: normal;
   }
-  
+
   // Variation level colors for move numbers
   &.variation-level-1 {
     @include m.variation-level(1);
   }
-  
+
   &.variation-level-2 {
     @include m.variation-level(2);
   }
-  
+
   &.variation-level-3 {
     @include m.variation-level(3);
   }
-  
+
   &.variation-level-4 {
     @include m.variation-level(4);
   }
@@ -120,7 +124,7 @@
 }
 
 .variation-bracket-close {
-  margin: 0;  
+  margin: 0;
   margin-right: 0.5em;
 }
 
@@ -161,27 +165,27 @@
 @include m.desktop {
   .move-item {
     transition: all v.$transition-fast ease;
-    
+
     &:hover:not(.current) {
       background-color: v.$move-hover-bg;
       border-radius: v.$border-radius-sm;
       transform: translateY(-1px);
     }
-    
+
     &:active:not(.current) {
       transform: translateY(0);
     }
-    
+
     &.current {
       box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4) !important;
     }
   }
-  
+
   .moves-list {
     font-size: 17px;
     line-height: 1.5;
   }
-  
+
   .variation-bracket {
     font-size: 14px;
   }
@@ -193,12 +197,12 @@
     overflow: visible;
     height: auto;
   }
-  
+
   .moves-list {
     font-size: 12px;
     line-height: 1.3;
   }
-  
+
   .move-item {
     &.current {
       background-color: transparent !important;
@@ -206,7 +210,7 @@
       font-weight: bold !important;
       text-decoration: underline !important;
     }
-    
+
     &:hover {
       background-color: transparent;
     }
@@ -217,12 +221,12 @@
 @media (prefers-contrast: high) {
   .move-item {
     border: 1px solid transparent;
-    
+
     &:hover:not(.current) {
       border-color: v.$border-color;
       background-color: v.$background-hover;
     }
-    
+
     &.current {
       border: 2px solid #0056b3 !important;
       background-color: #007bff !important;
@@ -235,7 +239,7 @@
 @media (prefers-reduced-motion: reduce) {
   .move-item {
     transition: none;
-    
+
     &:hover:not(.current) {
       transform: none;
     }
@@ -248,23 +252,23 @@
     font-size: 3.8vw; // Используем vw и для планшетов
     line-height: 1.45;
   }
-  
+
   .move-item {
     padding: v.$spacing-xxs v.$spacing-xs;
     font-size: 3.8vw;
-    
+
     &.current {
       padding: 3px 8px !important;
       margin: 2px 3px !important;
     }
   }
-  
+
   .move-number,
   .move-san,
   .move-number-after-variation {
     font-size: 3.8vw;
   }
-  
+
   .variation-bracket {
     font-size: 3vw;
   }
@@ -281,12 +285,12 @@
     -ms-user-select: none;
     user-select: none;
   }
-  
+
   .moves-list {
     font-size: v.$move-font-size-mobile !important; // !important чтобы переопределить планшетные стили
     line-height: 1.5 !important;
   }
-  
+
   .move-item {
     // Larger touch targets
     min-height: 24px;
@@ -294,16 +298,16 @@
     padding: 1px 1px;
     margin-right: 0.3em;
     font-size: v.$move-font-size-mobile !important;
-    
+
     &:hover:not(.current) {
       // Disable hover on mobile to prevent sticky states
       background-color: transparent;
     }
-    
+
     &:active:not(.current) {
       background-color: v.$move-hover-bg;
     }
-    
+
     // Мобильные стили для активного хода
     &.current {
       background-color: #007bff !important;
@@ -317,13 +321,13 @@
       box-shadow: 0 1px 3px rgba(0, 123, 255, 0.4) !important;
     }
   }
-  
+
   .move-number,
   .move-san,
   .move-number-after-variation {
     font-size: v.$move-font-size-mobile !important;
   }
-  
+
   .variation-bracket {
     font-size: v.$variation-bracket-size-mobile !important;
   }
@@ -338,11 +342,11 @@
   .move-number-after-variation {
     font-size: 5vw !important;
   }
-  
+
   .variation-bracket {
     font-size: 4vw !important;
   }
-  
+
   .move-item.current {
     padding: 2px 3px !important;
     margin: 1px !important;
@@ -360,11 +364,11 @@
   .move-number-after-variation {
     font-size: 4.2vw !important;
   }
-  
+
   .variation-bracket {
     font-size: 3.2vw !important;
   }
-  
+
   .move-item.current {
     padding: 2px 4px !important;
     margin: 1px 2px !important;
@@ -380,11 +384,11 @@
   .move-number-after-variation {
     font-size: 4.5vw !important;
   }
-  
+
   .variation-bracket {
     font-size: 3.5vw !important;
   }
-  
+
   .move-item.current {
     padding: 3px 5px !important;
     margin: 1px 2px !important;

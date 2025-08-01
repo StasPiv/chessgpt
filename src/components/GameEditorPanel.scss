@@ -1,0 +1,355 @@
+@use '../styles/variables' as v;
+@use '../styles/mixins' as m;
+
+.game-editor-panel {
+  width: 100%;
+  padding: v.$spacing-sm v.$spacing-md;
+  border-top: 1px solid v.$border-color;
+  background-color: v.$background-secondary;
+  
+  &.hidden {
+    display: none;
+  }
+}
+
+.editor-buttons {
+  display: flex;
+  gap: v.$spacing-sm;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.editor-btn {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-xxs;
+  padding: v.$spacing-xs v.$spacing-sm;
+  border: 1px solid v.$border-color;
+  border-radius: v.$border-radius-md;
+  background-color: v.$background-primary;
+  color: v.$text-primary;
+  font-size: v.$font-size-sm;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all v.$transition-fast ease;
+  min-width: 80px;
+  justify-content: center;
+  
+  .btn-icon {
+    font-weight: bold;
+    font-size: v.$font-size-md;
+  }
+  
+  .btn-text {
+    font-size: v.$font-size-xs;
+    font-weight: 500;
+  }
+  
+  &:hover {
+    background-color: v.$background-hover;
+    border-color: v.$border-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:focus {
+    outline: 2px solid v.$info-color;
+    outline-offset: 2px;
+  }
+}
+
+// Specific button styles
+.promote-btn {
+  .btn-icon {
+    color: #28a745;
+  }
+  
+  &:hover {
+    background-color: #e8f5e8;
+    border-color: #28a745;
+    color: #28a745;
+  }
+}
+
+.delete-variation-btn {
+  .btn-icon {
+    color: #dc3545;
+    font-size: v.$font-size-lg;
+  }
+  
+  &:hover {
+    background-color: #fdeaea;
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+}
+
+.delete-remaining-btn {
+  .btn-icon {
+    color: #ffc107;
+    font-size: v.$font-size-lg;
+    font-family: monospace;
+  }
+  
+  &:hover {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+  }
+}
+
+// Mobile optimizations с использованием vw
+@include m.mobile {
+  .game-editor-panel {
+    padding: 1.5vw 2vw;
+    border-top-width: 0.3vw;
+  }
+  
+  .editor-buttons {
+    gap: 2vw;
+  }
+  
+  .editor-btn {
+    min-width: 12vw;
+    height: 6vw;
+    padding: 2vw;
+    border-radius: 2vw;
+    border-width: 0.3vw;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    
+    .btn-icon {
+      font-size: 5vw;
+      font-weight: bold;
+    }
+    
+    // Скрываем текст на мобильных устройствах
+    .btn-text {
+      display: none;
+    }
+    
+    &:hover {
+      transform: none; // Disable transform on mobile
+    }
+    
+    &:active {
+      transform: scale(0.95);
+      box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.2);
+    }
+    
+    &:focus {
+      outline-width: 0.5vw;
+      outline-offset: 0.5vw;
+    }
+  }
+  
+  // Мобильные стили для специфических кнопок
+  .promote-btn {
+    .btn-icon {
+      color: #28a745;
+      font-size: 4.5vw;
+    }
+  }
+  
+  .delete-variation-btn {
+    .btn-icon {
+      color: #dc3545;
+      font-size: 5.5vw;
+    }
+  }
+  
+  .delete-remaining-btn {
+    .btn-icon {
+      color: #ffc107;
+      font-size: 5.5vw;
+      font-family: monospace;
+    }
+  }
+}
+
+// Tablet optimizations
+@include m.tablet {
+  .game-editor-panel {
+    padding: v.$spacing-sm v.$spacing-lg;
+  }
+  
+  .editor-buttons {
+    gap: v.$spacing-md;
+  }
+  
+  .editor-btn {
+    min-width: 85px;
+    padding: v.$spacing-sm v.$spacing-md;
+    
+    .btn-icon {
+      font-size: v.$font-size-lg;
+    }
+    
+    .btn-text {
+      font-size: 11px;
+    }
+  }
+}
+
+// Desktop enhancements
+@include m.desktop {
+  .editor-btn {
+    &:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .game-editor-panel {
+    border-top: 2px solid v.$border-color;
+  }
+  
+  .editor-btn {
+    border: 2px solid v.$border-color;
+    
+    &:focus {
+      outline: 3px solid v.$info-color;
+    }
+    
+    &:hover {
+      border-width: 2px;
+    }
+  }
+  
+  @include m.mobile {
+    .game-editor-panel {
+      border-top-width: 0.6vw;
+    }
+    
+    .editor-btn {
+      border-width: 0.6vw;
+      
+      &:focus {
+        outline-width: 1vw;
+      }
+    }
+  }
+}
+
+// Reduced motion preference
+@media (prefers-reduced-motion: reduce) {
+  .editor-btn {
+    transition: color v.$transition-fast ease, background-color v.$transition-fast ease;
+    
+    &:hover {
+      transform: none;
+    }
+    
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .game-editor-panel {
+    display: none;
+  }
+}
+
+// Очень маленькие экраны (до 320px)
+@media (max-width: 320px) {
+  .game-editor-panel {
+    padding: 2vw 2.5vw;
+  }
+  
+  .editor-buttons {
+    gap: 2.5vw;
+  }
+  
+  .editor-btn {
+    min-width: 14vw;
+    height: 14vw;
+    padding: 2.5vw;
+    border-radius: 2.5vw;
+    
+    .btn-icon {
+      font-size: 6vw;
+    }
+  }
+  
+  .promote-btn .btn-icon {
+    font-size: 5.5vw;
+  }
+  
+  .delete-variation-btn .btn-icon,
+  .delete-remaining-btn .btn-icon {
+    font-size: 6.5vw;
+  }
+}
+
+// Средние мобильные экраны (321px-414px)
+@media (min-width: 321px) and (max-width: 414px) {
+  .game-editor-panel {
+    padding: 1.8vw 2.2vw;
+  }
+  
+  .editor-buttons {
+    gap: 2.2vw;
+  }
+  
+  .editor-btn {
+    min-width: 13vw;
+    height: 13vw;
+    padding: 2.2vw;
+    border-radius: 2.2vw;
+    
+    .btn-icon {
+      font-size: 5.5vw;
+    }
+  }
+  
+  .promote-btn .btn-icon {
+    font-size: 5vw;
+  }
+  
+  .delete-variation-btn .btn-icon,
+  .delete-remaining-btn .btn-icon {
+    font-size: 6vw;
+  }
+}
+
+// Большие мобильные экраны (415px-767px)
+@media (min-width: 415px) and (max-width: 767px) {
+  .game-editor-panel {
+    padding: 1.6vw 2vw;
+  }
+  
+  .editor-buttons {
+    gap: 2vw;
+  }
+  
+  .editor-btn {
+    min-width: 12vw;
+    height: 12vw;
+    padding: 2vw;
+    border-radius: 2vw;
+    
+    .btn-icon {
+      font-size: 5vw;
+    }
+  }
+  
+  .promote-btn .btn-icon {
+    font-size: 4.5vw;
+  }
+  
+  .delete-variation-btn .btn-icon,
+  .delete-remaining-btn .btn-icon {
+    font-size: 5.5vw;
+  }
+}
