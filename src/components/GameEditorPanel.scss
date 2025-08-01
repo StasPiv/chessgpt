@@ -3,10 +3,19 @@
 
 .game-editor-panel {
   width: 100%;
-  padding: v.$spacing-sm v.$spacing-md;
+  padding: calc(v.$spacing-sm / 2) calc(v.$spacing-md / 2); // Уменьшено вдвое
   border-top: 1px solid v.$border-color;
   background-color: v.$background-secondary;
-  
+
+  // Позиционирование только для десктопа
+  @include m.desktop {
+    position: absolute; // Позиционируем абсолютно относительно move-list-container
+    bottom: 0; // Прикрепляем к низу контейнера
+    left: 0;
+    right: 0;
+    z-index: 10; // Выше контента ходов
+  }
+
   &.hidden {
     display: none;
   }
@@ -14,7 +23,7 @@
 
 .editor-buttons {
   display: flex;
-  gap: v.$spacing-sm;
+  gap: calc(v.$spacing-sm / 2); // Уменьшено вдвое
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -22,44 +31,58 @@
 .editor-btn {
   display: flex;
   align-items: center;
-  gap: v.$spacing-xxs;
-  padding: v.$spacing-xs v.$spacing-sm;
+  gap: calc(v.$spacing-xxs / 2); // Уменьшено вдвое
+  padding: calc(v.$spacing-xs / 2) calc(v.$spacing-sm / 2); // Уменьшено вдвое
   border: 1px solid v.$border-color;
-  border-radius: v.$border-radius-md;
+  border-radius: calc(v.$border-radius-md / 2); // Уменьшено вдвое
   background-color: v.$background-primary;
   color: v.$text-primary;
-  font-size: v.$font-size-sm;
+  font-size: calc(v.$font-size-sm / 1.2); // Уменьшено
   font-family: inherit;
   cursor: pointer;
   transition: all v.$transition-fast ease;
-  min-width: 80px;
+  min-width: 40px; // Уменьшено вдвое (было 80px)
   justify-content: center;
-  
+
   .btn-icon {
     font-weight: bold;
-    font-size: v.$font-size-md;
+    font-size: calc(v.$font-size-md / 1.2); // Уменьшено
   }
-  
+
   .btn-text {
-    font-size: v.$font-size-xs;
+    font-size: calc(v.$font-size-xs / 1.1); // Уменьшено
     font-weight: 500;
   }
-  
+
   &:hover {
     background-color: v.$background-hover;
     border-color: v.$border-hover;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-0.5px); // Уменьшено вдвое
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); // Уменьшено вдвое
   }
-  
+
   &:active {
     transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.1); // Уменьшено вдвое
   }
-  
+
   &:focus {
-    outline: 2px solid v.$info-color;
-    outline-offset: 2px;
+    outline: 1px solid v.$info-color; // Уменьшено вдвое
+    outline-offset: 1px; // Уменьшено вдвое
+  }
+
+  // Стили для disabled состояния
+  &.disabled,
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: v.$background-primary;
+      border-color: v.$border-color;
+      transform: none;
+      box-shadow: none;
+    }
   }
 }
 
@@ -68,8 +91,8 @@
   .btn-icon {
     color: #28a745;
   }
-  
-  &:hover {
+
+  &:hover:not(.disabled):not(:disabled) {
     background-color: #e8f5e8;
     border-color: #28a745;
     color: #28a745;
@@ -79,10 +102,10 @@
 .delete-variation-btn {
   .btn-icon {
     color: #dc3545;
-    font-size: v.$font-size-lg;
+    font-size: calc(v.$font-size-lg / 1.2); // Уменьшено
   }
-  
-  &:hover {
+
+  &:hover:not(.disabled):not(:disabled) {
     background-color: #fdeaea;
     border-color: #dc3545;
     color: #dc3545;
@@ -92,107 +115,138 @@
 .delete-remaining-btn {
   .btn-icon {
     color: #ffc107;
-    font-size: v.$font-size-lg;
+    font-size: calc(v.$font-size-lg / 1.2); // Уменьшено
     font-family: monospace;
   }
-  
-  &:hover {
+
+  &:hover:not(.disabled):not(:disabled) {
     background-color: #fff3cd;
     border-color: #ffc107;
     color: #856404;
   }
 }
 
-// Mobile optimizations с использованием vw
+.undo-btn {
+  .btn-icon {
+    color: #6c757d;
+  }
+
+  &:hover:not(.disabled):not(:disabled) {
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+    color: #6c757d;
+  }
+}
+
+.redo-btn {
+  .btn-icon {
+    color: #6c757d;
+  }
+
+  &:hover:not(.disabled):not(:disabled) {
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+    color: #6c757d;
+  }
+}
+
+// Mobile optimizations с использованием vw - все размеры уменьшены вдвое
 @include m.mobile {
   .game-editor-panel {
-    padding: 1.5vw 2vw;
-    border-top-width: 0.3vw;
+    padding: 0.75vw 1vw; // Уменьшено вдвое (было 1.5vw 2vw)
+    border-top-width: 0.15vw; // Уменьшено вдвое (было 0.3vw)
   }
-  
+
   .editor-buttons {
-    gap: 2vw;
+    gap: 1vw; // Уменьшено вдвое (было 2vw)
   }
-  
+
   .editor-btn {
-    min-width: 12vw;
-    height: 6vw;
-    padding: 2vw;
-    border-radius: 2vw;
-    border-width: 0.3vw;
+    min-width: 6vw; // Уменьшено вдвое (было 12vw)
+    height: 3vw; // Уменьшено вдвое (было 6vw)
+    padding: 1vw; // Уменьшено вдвое (было 2vw)
+    border-radius: 1vw; // Уменьшено вдвое (было 2vw)
+    border-width: 0.15vw; // Уменьшено вдвое (было 0.3vw)
     flex-direction: column;
     justify-content: center;
     gap: 0;
-    
+
     .btn-icon {
-      font-size: 5vw;
+      font-size: 2.5vw; // Уменьшено вдвое (было 5vw)
       font-weight: bold;
     }
-    
+
     // Скрываем текст на мобильных устройствах
     .btn-text {
       display: none;
     }
-    
+
     &:hover {
       transform: none; // Disable transform on mobile
     }
-    
+
     &:active {
       transform: scale(0.95);
-      box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0.25vw 0.5vw rgba(0, 0, 0, 0.2); // Уменьшено вдвое
     }
-    
+
     &:focus {
-      outline-width: 0.5vw;
-      outline-offset: 0.5vw;
+      outline-width: 0.25vw; // Уменьшено вдвое (было 0.5vw)
+      outline-offset: 0.25vw; // Уменьшено вдвое (было 0.5vw)
     }
   }
-  
-  // Мобильные стили для специфических кнопок
+
+  // Мобильные стили для специфических кнопок - все размеры уменьшены вдвое
   .promote-btn {
     .btn-icon {
       color: #28a745;
-      font-size: 4.5vw;
+      font-size: 2.25vw; // Уменьшено вдвое (было 4.5vw)
     }
   }
-  
+
   .delete-variation-btn {
     .btn-icon {
       color: #dc3545;
-      font-size: 5.5vw;
+      font-size: 2.75vw; // Уменьшено вдвое (было 5.5vw)
     }
   }
-  
+
   .delete-remaining-btn {
     .btn-icon {
       color: #ffc107;
-      font-size: 5.5vw;
+      font-size: 2.75vw; // Уменьшено вдвое (было 5.5vw)
       font-family: monospace;
+    }
+  }
+
+  .undo-btn,
+  .redo-btn {
+    .btn-icon {
+      font-size: 2.5vw; // Новый размер для кнопок undo/redo
     }
   }
 }
 
-// Tablet optimizations
+// Tablet optimizations - все размеры уменьшены
 @include m.tablet {
   .game-editor-panel {
-    padding: v.$spacing-sm v.$spacing-lg;
+    padding: calc(v.$spacing-sm / 2) calc(v.$spacing-lg / 2); // Уменьшено вдвое
   }
-  
+
   .editor-buttons {
-    gap: v.$spacing-md;
+    gap: calc(v.$spacing-md / 2); // Уменьшено вдвое
   }
-  
+
   .editor-btn {
-    min-width: 85px;
-    padding: v.$spacing-sm v.$spacing-md;
-    
+    min-width: 42px; // Уменьшено вдвое (было 85px)
+    padding: calc(v.$spacing-sm / 2) calc(v.$spacing-md / 2); // Уменьшено вдвое
+
     .btn-icon {
-      font-size: v.$font-size-lg;
+      font-size: calc(v.$font-size-lg / 1.2); // Уменьшено
     }
-    
+
     .btn-text {
-      font-size: 11px;
+      font-size: 9px; // Уменьшено (было 11px)
     }
   }
 }
@@ -200,8 +254,8 @@
 // Desktop enhancements
 @include m.desktop {
   .editor-btn {
-    &:hover {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    &:hover:not(.disabled):not(:disabled) {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); // Уменьшено вдвое (было 0 4px 8px)
     }
   }
 }
@@ -209,31 +263,31 @@
 // High contrast mode
 @media (prefers-contrast: high) {
   .game-editor-panel {
-    border-top: 2px solid v.$border-color;
+    border-top: 1px solid v.$border-color; // Уменьшено (было 2px)
   }
-  
+
   .editor-btn {
-    border: 2px solid v.$border-color;
-    
+    border: 1px solid v.$border-color; // Уменьшено (было 2px)
+
     &:focus {
-      outline: 3px solid v.$info-color;
+      outline: 1.5px solid v.$info-color; // Уменьшено (было 3px)
     }
-    
+
     &:hover {
-      border-width: 2px;
+      border-width: 1px; // Уменьшено (было 2px)
     }
   }
-  
+
   @include m.mobile {
     .game-editor-panel {
-      border-top-width: 0.6vw;
+      border-top-width: 0.3vw; // Уменьшено вдвое (было 0.6vw)
     }
-    
+
     .editor-btn {
-      border-width: 0.6vw;
-      
+      border-width: 0.3vw; // Уменьшено вдвое (было 0.6vw)
+
       &:focus {
-        outline-width: 1vw;
+        outline-width: 0.5vw; // Уменьшено вдвое (было 1vw)
       }
     }
   }
@@ -243,11 +297,11 @@
 @media (prefers-reduced-motion: reduce) {
   .editor-btn {
     transition: color v.$transition-fast ease, background-color v.$transition-fast ease;
-    
+
     &:hover {
       transform: none;
     }
-    
+
     &:active {
       transform: none;
     }
@@ -261,95 +315,95 @@
   }
 }
 
-// Очень маленькие экраны (до 320px)
+// Очень маленькие экраны (до 320px) - все размеры уменьшены вдвое
 @media (max-width: 320px) {
   .game-editor-panel {
-    padding: 2vw 2.5vw;
+    padding: 1vw 1.25vw; // Уменьшено вдвое (было 2vw 2.5vw)
   }
-  
+
   .editor-buttons {
-    gap: 2.5vw;
+    gap: 1.25vw; // Уменьшено вдвое (было 2.5vw)
   }
-  
+
   .editor-btn {
-    min-width: 14vw;
-    height: 14vw;
-    padding: 2.5vw;
-    border-radius: 2.5vw;
-    
+    min-width: 7vw; // Уменьшено вдвое (было 14vw)
+    height: 7vw; // Уменьшено вдвое (было 14vw)
+    padding: 1.25vw; // Уменьшено вдвое (было 2.5vw)
+    border-radius: 1.25vw; // Уменьшено вдвое (было 2.5vw)
+
     .btn-icon {
-      font-size: 6vw;
+      font-size: 3vw; // Уменьшено вдвое (было 6vw)
     }
   }
-  
+
   .promote-btn .btn-icon {
-    font-size: 5.5vw;
+    font-size: 2.75vw; // Уменьшено вдвое (было 5.5vw)
   }
-  
+
   .delete-variation-btn .btn-icon,
   .delete-remaining-btn .btn-icon {
-    font-size: 6.5vw;
+    font-size: 3.25vw; // Уменьшено вдвое (было 6.5vw)
   }
 }
 
-// Средние мобильные экраны (321px-414px)
+// Средние мобильные экраны (321px-414px) - все размеры уменьшены вдвое
 @media (min-width: 321px) and (max-width: 414px) {
   .game-editor-panel {
-    padding: 1.8vw 2.2vw;
+    padding: 0.9vw 1.1vw; // Уменьшено вдвое (было 1.8vw 2.2vw)
   }
-  
+
   .editor-buttons {
-    gap: 2.2vw;
+    gap: 1.1vw; // Уменьшено вдвое (было 2.2vw)
   }
-  
+
   .editor-btn {
-    min-width: 13vw;
-    height: 13vw;
-    padding: 2.2vw;
-    border-radius: 2.2vw;
-    
+    min-width: 9.5vw; // Уменьшено вдвое (было 13vw)
+    height: 4.5vw; // Уменьшено вдвое (было 13vw)
+    padding: 1.1vw; // Уменьшено вдвое (было 2.2vw)
+    border-radius: 1.1vw; // Уменьшено вдвое (было 2.2vw)
+
     .btn-icon {
-      font-size: 5.5vw;
+      font-size: 2.75vw; // Уменьшено вдвое (было 5.5vw)
     }
   }
-  
+
   .promote-btn .btn-icon {
-    font-size: 5vw;
+    font-size: 2.5vw; // Уменьшено вдвое (было 5vw)
   }
-  
+
   .delete-variation-btn .btn-icon,
   .delete-remaining-btn .btn-icon {
-    font-size: 6vw;
+    font-size: 3vw; // Уменьшено вдвое (было 6vw)
   }
 }
 
-// Большие мобильные экраны (415px-767px)
+// Большие мобильные экраны (415px-767px) - все размеры уменьшены вдвое
 @media (min-width: 415px) and (max-width: 767px) {
   .game-editor-panel {
-    padding: 1.6vw 2vw;
+    padding: 0.8vw 1vw; // Уменьшено вдвое (было 1.6vw 2vw)
   }
-  
+
   .editor-buttons {
-    gap: 2vw;
+    gap: 1vw; // Уменьшено вдвое (было 2vw)
   }
-  
+
   .editor-btn {
-    min-width: 12vw;
-    height: 12vw;
-    padding: 2vw;
-    border-radius: 2vw;
-    
+    min-width: 6vw; // Уменьшено вдвое (было 12vw)
+    height: 6vw; // Уменьшено вдвое (было 12vw)
+    padding: 1vw; // Уменьшено вдвое (было 2vw)
+    border-radius: 1vw; // Уменьшено вдвое (было 2vw)
+
     .btn-icon {
-      font-size: 5vw;
+      font-size: 2.5vw; // Уменьшено вдвое (было 5vw)
     }
   }
-  
+
   .promote-btn .btn-icon {
-    font-size: 4.5vw;
+    font-size: 2.25vw; // Уменьшено вдвое (было 4.5vw)
   }
-  
+
   .delete-variation-btn .btn-icon,
   .delete-remaining-btn .btn-icon {
-    font-size: 5.5vw;
+    font-size: 2.75vw; // Уменьшено вдвое (было 5.5vw)
   }
 }

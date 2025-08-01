@@ -86,17 +86,10 @@ const AnalysisPanel: React.FC = () => {
                             className="analysis-switch"
                             activeBoxShadow="0 0 2px 3px #28a74544"
                         />
-                        <span className="switch-label">Auto-analyze moves</span>
                     </div>
                 </div>
                 
                 <div className="header-right">
-                    {totalNodes > 0 && (
-                        <div className="total-nodes-container">
-                            <span className="total-nodes">{totalNodes.toLocaleString()}</span>
-                            <span className="nodes-label">nodes</span>
-                        </div>
-                    )}
                     <div className="connection-indicator">
                         <div className={`connection-status ${isConnected ? 'connected' : 'disconnected'}`}>
                             <div className="connection-dot"></div>

@@ -15,35 +15,43 @@
   gap: 10px;
   white-space: nowrap;
   overflow-x: scroll;
-  
+
   // Состояния
   &.inactive {
     opacity: 0.6;
   }
-  
+
   &:hover {
     background-color: v.$background-hover;
     border-left-color: v.$primary-color;
   }
-  
+
   // Первая линия (лучший ход)
   &:first-child {
     border-left-color: v.$success-color;
     background-color: v.$success-background;
-    
+
     &:hover {
       background-color: v.$success-background-hover;
     }
   }
-  
-  // Адаптивные изменения для мобильных
+
+  // Адаптивные изменения для мобильных - КОМПАКТНЫЕ РАЗМЕРЫ
   @include m.mobile {
     & {
-      padding: v.$spacing-xs-mobile v.$spacing-sm-mobile;
-      gap: v.$spacing-xs-mobile;
-      font-size: 2.8vw;
-      border-radius: v.$border-radius-sm-mobile;
-      border-left-width: 0.6vw;
+      padding: 4px 4px; // УБРАЛИ ВЕРТИКАЛЬНЫЕ ОТСТУПЫ (только горизонтальные)
+      margin: 0; // Убираем внешние отступы
+      gap: 4px; // Минимальный gap
+      font-size: 2.2vw; // Уменьшено на 20% с 2.8vw (примерно 8-9px)
+      min-font-size: 8px;
+      max-font-size: 10px;
+      // ВЫСОТА = clamp(8px + 1px, 2.2vw + 1px, 10px + 1px) = clamp(9px, 2.2vw + 1px, 11px)
+      height: clamp(9px, calc(2.2vw + 1px), 11px);
+      min-height: 9px;
+      max-height: 11px;
+      line-height: clamp(9px, calc(2.2vw + 1px), 11px);
+      border-radius: 0; // Убираем скругления для экономии места
+      border-left-width: 2px; // Тоньше граница
     }
   }
 }
@@ -54,26 +62,30 @@
   min-width: 50px;
   font-size: 12px;
   flex-shrink: 0;
-  
+
   @include m.mobile {
     & {
-      min-width: 10vw;
-      font-size: 2.8vw;
+      min-width: 8vw; // Уменьшено с 10vw
+      font-size: 2.2vw; // Уменьшено на 20% с 2.8vw
+      min-font-size: 8px;
+      max-font-size: 10px;
       font-weight: 700; // Более жирный на мобильных для читаемости
     }
   }
 }
 
 .line-depth {
-  font-size: 10px;
+  font-size: 8px; // Уменьшено на 20% с 10px
   color: v.$text-muted;
-  min-width: 35px;
+  min-width: 28px; // Уменьшено с 35px
   flex-shrink: 0;
-  
+
   @include m.mobile {
     & {
-      min-width: 8vw;
-      font-size: 2.2vw;
+      min-width: 6vw; // Уменьшено с 8vw
+      font-size: 1.8vw; // Уменьшено на 20% с 2.2vw
+      min-font-size: 7px;
+      max-font-size: 9px;
     }
   }
 }
@@ -86,15 +98,17 @@
   flex: 1;
   font-size: 12px;
   flex-shrink: 0;
-  
+
   &:hover {
     color: v.$primary-hover;
     text-decoration: underline;
   }
-  
+
   @include m.mobile {
     & {
-      font-size: 2.8vw;
+      font-size: 2.2vw; // Уменьшено на 20% с 2.8vw
+      min-font-size: 8px;
+      max-font-size: 10px;
     }
   }
 }
@@ -102,23 +116,29 @@
 // Дополнительные стили для планшетов
 @include m.tablet {
   .analysis-line {
-    padding: v.$spacing-sm;
-    gap: v.$spacing-sm;
-    font-size: 2.5vw;
+    padding: 0 6px; // УБРАЛИ ВЕРТИКАЛЬНЫЕ ОТСТУПЫ
+    gap: 6px;
+    font-size: 2.0vw; // Уменьшено на 20% с 2.5vw
+    // ВЫСОТА = clamp(минимум, 2.0vw + 1px, максимум)
+    height: clamp(13px, calc(2.0vw + 1px), 17px);
+    min-height: 13px;
+    max-height: 17px;
+    line-height: clamp(13px, calc(2.0vw + 1px), 17px);
+    margin: 0;
   }
-  
+
   .line-score {
-    min-width: 8vw;
-    font-size: 2.5vw;
+    min-width: 6vw; // Уменьшено с 8vw
+    font-size: 2.0vw; // Уменьшено на 20% с 2.5vw
   }
-  
+
   .line-depth {
-    min-width: 6vw;
-    font-size: 2vw;
+    min-width: 5vw; // Уменьшено с 6vw
+    font-size: 1.6vw; // Уменьшено на 20% с 2vw
   }
-  
+
   .line-moves {
-    font-size: 2.5vw;
+    font-size: 2.0vw; // Уменьшено на 20% с 2.5vw
   }
 }
 
@@ -129,12 +149,12 @@
       transform: translateY(-1px);
       box-shadow: 0 2px 4px v.$shadow-light;
     }
-    
+
     &:first-child:hover {
       box-shadow: 0 2px 6px v.$shadow-medium;
     }
   }
-  
+
   .line-moves {
     &:hover {
       font-weight: 500;
@@ -142,62 +162,110 @@
   }
 }
 
-// Стили для очень маленьких экранов
+// Стили для очень маленьких экранов - ЭКСТРА КОМПАКТНЫЕ
 @media (max-width: 320px) {
   .analysis-line {
-    font-size: 3.2vw !important;
-    gap: 1vw !important;
+    font-size: 2.4vw !important; // Уменьшено на 20% с 3.2vw
+    // ВЫСОТА = clamp(7px + 1px, 2.4vw + 1px, 9px + 1px) = clamp(8px, 2.4vw + 1px, 10px)
+    height: clamp(8px, calc(2.4vw + 1px), 10px) !important;
+    min-height: 8px !important;
+    max-height: 10px !important;
+    line-height: clamp(8px, calc(2.4vw + 1px), 10px) !important;
+    gap: 2px !important; // Минимальный gap
+    padding: 0 3px !important; // УБРАЛИ ВЕРТИКАЛЬНЫЕ ОТСТУПЫ
+    margin: 0 !important;
   }
-  
+
   .line-score {
-    min-width: 12vw !important;
-    font-size: 3.2vw !important;
-  }
-  
-  .line-depth {
     min-width: 10vw !important;
-    font-size: 2.5vw !important;
+    font-size: 2.4vw !important; // Уменьшено на 20% с 3.2vw
   }
-  
+
+  .line-depth {
+    min-width: 8vw !important;
+    font-size: 1.8vw !important; // Уменьшено на 20% с 2.5vw
+  }
+
   .line-moves {
-    font-size: 3.2vw !important;
+    font-size: 2.4vw !important; // Уменьшено на 20% с 3.2vw
+  }
+}
+
+// Применяем стили скролла только для мобильных устройств
+@include m.mobile {
+  // Глобальные стили скролла для мобильных
+  ::-webkit-scrollbar {
+    height: 1px;
+    width: 1px;
+    background: gray;
+  }
+
+  ::-webkit-scrollbar-thumb:horizontal {
+    background: #000;
+    border-radius: 10px;
+  }
+
+  // Или более точечно для конкретных элементов
+  .moves-display {
+    &::-webkit-scrollbar {
+      height: 1px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #000;
+      border-radius: 10px;
+    }
   }
 }
 
 // Средние мобильные экраны
 @media (min-width: 321px) and (max-width: 414px) {
   .analysis-line {
-    font-size: 2.8vw !important;
+    font-size: 2.2vw !important; // Уменьшено на 20% с 2.8vw
+    // ВЫСОТА = clamp(8px + 1px, 2.2vw + 1px, 10px + 1px) = clamp(9px, 2.2vw + 1px, 11px)
+    height: clamp(9px, calc(2.2vw + 1px), 11px) !important;
+    min-height: 9px !important;
+    max-height: 11px !important;
+    line-height: clamp(9px, calc(2.2vw + 1px), 11px) !important;
+    padding: 0 4px !important; // УБРАЛИ ВЕРТИКАЛЬНЫЕ ОТСТУПЫ
+    margin: 0 !important;
   }
-  
+
   .line-score {
-    font-size: 2.8vw !important;
+    font-size: 2.2vw !important; // Уменьшено на 20% с 2.8vw
   }
-  
+
   .line-depth {
-    font-size: 2.2vw !important;
+    font-size: 1.7vw !important; // Уменьшено на 20% с 2.2vw
   }
-  
+
   .line-moves {
-    font-size: 2.8vw !important;
+    font-size: 2.2vw !important; // Уменьшено на 20% с 2.8vw
   }
 }
 
 // Большие мобильные экраны
 @media (min-width: 415px) and (max-width: 767px) {
   .analysis-line {
-    font-size: 2.5vw !important;
+    font-size: 2.0vw !important; // Уменьшено на 20% с 2.5vw
+    // ВЫСОТА = clamp(10px + 1px, 2.0vw + 1px, 12px + 1px) = clamp(11px, 2.0vw + 1px, 13px)
+    height: clamp(11px, calc(2.0vw + 1px), 13px) !important;
+    min-height: 11px !important;
+    max-height: 13px !important;
+    line-height: clamp(11px, calc(2.0vw + 1px), 13px) !important;
+    padding: 0 5px !important; // УБРАЛИ ВЕРТИКАЛЬНЫЕ ОТСТУПЫ
+    margin: 0 !important;
   }
-  
+
   .line-score {
-    font-size: 2.5vw !important;
+    font-size: 2.0vw !important; // Уменьшено на 20% с 2.5vw
   }
-  
+
   .line-depth {
-    font-size: 2vw !important;
+    font-size: 1.6vw !important; // Уменьшено на 20% с 2vw
   }
-  
+
   .line-moves {
-    font-size: 2.5vw !important;
+    font-size: 2.0vw !important; // Уменьшено на 20% с 2.5vw
   }
 }

@@ -28,12 +28,12 @@
   border-radius: v.$border-radius-sm v.$border-radius-sm 0 0;
   gap: v.$spacing-sm;
 
-  // УВЕЛИЧЕННАЯ ВЫСОТА ДЛЯ ПРИПЛЮСНУТОГО ПЕРЕКЛЮЧАТЕЛЯ
+  // УМЕНЬШЕННАЯ ВЫСОТА - СООТВЕТСТВУЮЩАЯ СВИТЧЕРУ
   @include m.mobile {
     & {
-      padding: v.$spacing-sm; // Увеличенный padding
-      min-height: 48px; // Увеличили до 48px для больших элементов
-      max-height: 48px;
+      padding: v.$spacing-xs v.$spacing-sm; // Уменьшенный padding
+      min-height: 18px; // Уменьшили до размера свитчера (20px + padding)
+      max-height: 30px;
       border-radius: 0; // УБИРАЕМ СКРУГЛЕНИЯ НА МОБИЛЬНЫХ
     }
   }
@@ -66,9 +66,9 @@
 
   @include m.mobile {
     & {
-      font-size: 4vw; // ИСПОЛЬЗУЕМ VW ДЛЯ АДАПТИВНОСТИ (примерно 15-16px)
-      min-font-size: 14px; // Минимальный размер
-      max-font-size: 16px; // Максимальный размер
+      font-size: 3.5vw; // УМЕНЬШИЛИ РАЗМЕР (примерно 13-14px)
+      min-font-size: 12px; // Уменьшенный минимальный размер
+      max-font-size: 14px; // Уменьшенный максимальный размер
     }
   }
 }
@@ -89,7 +89,7 @@
 
   @include m.mobile {
     & {
-      gap: v.$spacing-sm;
+      gap: v.$spacing-xs; // Уменьшенный gap
     }
   }
 }
@@ -101,28 +101,29 @@
   align-items: flex-end;
   justify-content: center;
   height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
-  padding: v.$spacing-xs 0;
+  padding: 2px 0; // Уменьшенный padding
 
   @include m.mobile {
     & {
       align-items: center;
       text-align: center;
+      padding: 1px 0; // Еще меньший padding для мобильных
     }
   }
 }
 
 .total-nodes {
   font-family: v.$font-mono;
-  font-size: 15px; // УВЕЛИЧЕННЫЙ РАЗМЕР
+  font-size: 15px;
   color: v.$text-color;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.1; // Уменьшенный line-height
 
   @include m.mobile {
     & {
-      font-size: 4.2vw; // ИСПОЛЬЗУЕМ VW (примерно 16-17px)
-      min-font-size: 15px;
-      max-font-size: 18px;
+      font-size: 3.5vw; // УМЕНЬШИЛИ РАЗМЕР (примерно 13-14px)
+      min-font-size: 13px;
+      max-font-size: 15px;
     }
   }
 }
@@ -132,13 +133,13 @@
   color: v.$text-muted;
   font-weight: 400;
   line-height: 1;
-  margin-top: 1px;
+  margin-top: 0; // Убрали margin
 
   @include m.mobile {
     & {
-      font-size: 2.8vw; // ИСПОЛЬЗУЕМ VW (примерно 11-12px)
-      min-font-size: 10px;
-      max-font-size: 12px;
+      font-size: 2.5vw; // УМЕНЬШИЛИ РАЗМЕР (примерно 9-10px)
+      min-font-size: 9px;
+      max-font-size: 11px;
     }
   }
 }
@@ -163,7 +164,7 @@
   align-items: center;
   justify-content: center;
   height: 100%; // ЗАНИМАЕТ ВСЮ ВЫСОТУ
-  padding: v.$spacing-xs;
+  padding: 2px v.$spacing-xs; // Уменьшенный padding
   border-radius: v.$border-radius-sm;
   transition: background-color v.$transition-fast ease;
 
@@ -187,36 +188,36 @@
 
   @include m.mobile {
     & {
-      padding: v.$spacing-xs v.$spacing-sm;
-      min-width: 12vw; // АДАПТИВНАЯ ШИРИНА
-      max-width: 60px;
+      padding: 1px v.$spacing-xs; // Еще меньший padding
+      min-width: 10vw; // УМЕНЬШИЛИ ШИРИНУ
+      max-width: 50px;
       border-radius: 0; // УБИРАЕМ СКРУГЛЕНИЯ НА МОБИЛЬНЫХ
     }
   }
 }
 
 .connection-dot {
-  width: 10px; // УВЕЛИЧЕННЫЙ РАЗМЕР
-  height: 10px;
+  width: 8px; // УМЕНЬШЕННЫЙ РАЗМЕР
+  height: 8px;
   border-radius: 50%;
   transition: all v.$transition-fast ease;
-  margin-bottom: 2px;
+  margin-bottom: 1px; // Уменьшенный margin
 
   @include m.mobile {
     & {
-      width: 3vw; // АДАПТИВНЫЙ РАЗМЕР (примерно 12-13px)
-      height: 3vw;
-      min-width: 11px;
-      min-height: 11px;
-      max-width: 14px;
-      max-height: 14px;
-      margin-bottom: 1px;
+      width: 2.5vw; // УМЕНЬШИЛИ РАЗМЕР (примерно 9-10px)
+      height: 2.5vw;
+      min-width: 8px;
+      min-height: 8px;
+      max-width: 11px;
+      max-height: 11px;
+      margin-bottom: 0; // Убрали margin
     }
   }
 }
 
 .connection-text {
-  font-size: 11px;
+  font-size: 10px; // Уменьшенный размер
   color: v.$text-color;
   font-weight: 500;
   text-align: center;
@@ -224,9 +225,9 @@
 
   @include m.mobile {
     & {
-      font-size: 2.8vw; // АДАПТИВНЫЙ РАЗМЕР (примерно 11-12px)
-      min-font-size: 10px;
-      max-font-size: 13px;
+      font-size: 2.3vw; // УМЕНЬШИЛИ РАЗМЕР (примерно 9-10px)
+      min-font-size: 8px;
+      max-font-size: 11px;
     }
   }
 }
@@ -234,14 +235,14 @@
 .reconnect-btn {
   background: v.$background-color;
   border: 1px solid v.$border-color;
-  padding: v.$spacing-xs;
+  padding: 2px; // Уменьшенный padding
   cursor: pointer;
-  font-size: 16px; // УВЕЛИЧЕННЫЙ РАЗМЕР
+  font-size: 14px; // УМЕНЬШЕННЫЙ РАЗМЕР
   color: v.$text-muted;
   border-radius: v.$border-radius-sm;
   transition: all v.$transition-fast ease;
-  height: 100%;
-  aspect-ratio: 1;
+  height: 24px; // Фиксированная высота
+  width: 24px; // Фиксированная ширина
   display: flex;
   align-items: center;
   justify-content: center;
@@ -261,26 +262,107 @@
 
   @include m.mobile {
     & {
-      font-size: 4.5vw; // КРУПНЫЙ АДАПТИВНЫЙ РАЗМЕР (примерно 18-19px)
-      min-font-size: 16px;
-      max-font-size: 20px;
-      padding: v.$spacing-xs;
-      min-width: 10vw; // АДАПТИВНАЯ ШИРИНА
-      min-height: 10vw; // АДАПТИВНАЯ ВЫСОТА
-      max-width: 44px;
-      max-height: 44px;
-      border-width: 2px; // Более толстая граница для лучшей видимости
+      font-size: 3.5vw; // УМЕНЬШИЛИ РАЗМЕР (примерно 13-14px)
+      min-font-size: 12px;
+      max-font-size: 16px;
+      padding: 1px;
+      width: 7vw; // УМЕНЬШИЛИ РАЗМЕР
+      height: 7vw;
+      min-width: 24px;
+      min-height: 24px;
+      max-width: 32px;
+      max-height: 32px;
+      border-width: 1px; // Нормальная толщина границы
       border-radius: 0; // УБИРАЕМ СКРУГЛЕНИЯ НА МОБИЛЬНЫХ
     }
   }
 }
 
-// ДОБАВЛЯЕМ СТИЛИ ДЛЯ ОСНОВНОГО КОНТЕЙНЕРА АНАЛИЗА
+// КОНТЕЙНЕР ДЛЯ СТРОК АНАЛИЗА - ТОЧНО 4 СТРОКИ БЕЗ ОТСТУПОВ
 .analysis-lines {
   @include m.mobile {
     & {
       padding: 0; // УБИРАЕМ ОТСТУПЫ
       margin: 0; // УБИРАЕМ ОТСТУПЫ
+      
+      // МОБИЛЬНЫЕ: высота = 4 × clamp(9px, 2.2vw + 1px, 11px)
+      height: calc(4 * clamp(9px, calc(2.2vw + 1px), 11px));
+      min-height: calc(4 * 9px); // 36px - минимум
+      max-height: calc(4 * 11px); // 44px - максимум
+      
+      // Адаптация для разных размеров экранов
+      @media (max-width: 320px) {
+        // Высота = 4 × clamp(8px, 2.4vw + 1px, 10px)
+        height: calc(4 * clamp(8px, calc(2.4vw + 1px), 10px));
+        min-height: calc(4 * 8px); // 32px
+        max-height: calc(4 * 10px); // 40px
+      }
+
+      @media (orientation: landscape) and (max-width: 767px) {
+        // Компактная высота для ландшафта
+        height: calc(4 * clamp(8px, calc(2.2vw + 1px), 10px));
+        min-height: calc(4 * 8px); // 32px
+        max-height: calc(4 * 10px); // 40px
+      }
+      
+      @media (min-width: 415px) and (max-width: 767px) {
+        // Высота = 4 × clamp(11px, 2.0vw + 1px, 13px)
+        height: calc(4 * clamp(11px, calc(2.0vw + 1px), 13px));
+        min-height: calc(4 * 11px); // 44px
+        max-height: calc(4 * 13px); // 52px
+      }
     }
+  }
+  
+  // Планшеты
+  @include m.tablet {
+    & {
+      // Высота = 4 × clamp(13px, 2.0vw + 1px, 17px)
+      height: calc(4 * clamp(13px, calc(2.0vw + 1px), 17px));
+      min-height: calc(4 * 13px); // 52px
+      max-height: calc(4 * 17px); // 68px
+    }
+  }
+  
+  // Ограничиваем количество видимых строк до 4
+  .analysis-line {
+    flex: 0 0 auto;
+    margin: 0; // УБИРАЕМ ВСЕ внешние отступы
+    
+    // Скрываем строки после 4-й
+    &:nth-child(n+5) {
+      display: none;
+    }
+  }
+}
+
+// Стили для состояния "нет анализа"
+.no-analysis {
+  padding: v.$spacing-md;
+  text-align: center;
+  color: v.$text-muted;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  
+  @include m.mobile {
+    & {
+      padding: v.$spacing-sm;
+      font-size: 3.5vw;
+      min-font-size: 12px;
+      max-font-size: 14px;
+      height: 100%;
+    }
+  }
+}
+
+// Стили для неактивного состояния
+.analysis-lines.inactive {
+  opacity: 0.6;
+  
+  .analysis-line {
+    pointer-events: none;
   }
 }

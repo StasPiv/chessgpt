@@ -25,6 +25,17 @@ $info-color: #2196f3;
 $info-hover: #1976d2;
 $info-background: #e3f2fd;
 
+// Game Editor Panel button colors
+$undo-redo-color: #6c757d;
+$undo-redo-hover-bg: #f8f9fa;
+$promote-color: #28a745;
+$promote-hover-bg: #e8f5e8;
+$delete-color: #dc3545;
+$delete-hover-bg: #fdeaea;
+$truncate-color: #ffc107;
+$truncate-hover-bg: #fff3cd;
+$truncate-hover-text: #856404;
+
 $white: #ffffff;
 $black: #000000;
 
@@ -92,6 +103,13 @@ $font-size-md: 16px;
 $font-size-lg: 18px;
 $font-size-xl: 20px;
 
+// Mobile font sizes - компактные для полноэкранного режима
+$font-size-mobile-xs: 12px;
+$font-size-mobile-sm: 13px;
+$font-size-mobile-md: 14px;
+$font-size-mobile-lg: 15px;
+$font-size-mobile-xl: 16px;
+
 // Transitions
 $transition-fast: 0.2s;
 $transition-medium: 0.3s;
@@ -119,12 +137,13 @@ $variation-level-2: #1976d2;
 $variation-level-3: #42a5f5;
 $variation-level-4: #64b5f6;
 
-// Move list specific
+// Move list specific - компактные размеры для мобильных
 $move-font-size: 16px;
-$move-font-size-mobile: 3.5vw;
+$move-font-size-mobile: 13px; // Уменьшено для вмещения 10+ строк
 $move-line-height: 1.4;
+$move-line-height-mobile: 1.25; // Компактный междустрочный интервал
 $variation-bracket-size: 13px;
-$variation-bracket-size-mobile: 3.5vw;
+$variation-bracket-size-mobile: 11px; // Уменьшено
 
 // Navigation controls - desktop
 $nav-controls-bg: #f0f0f0;
@@ -151,3 +170,9 @@ $flip-button-flipped-hover: #555555;
 // Position indicator
 $position-indicator-size: 12px;
 $position-indicator-size-mobile: 1.2vw;
+
+// Compact mobile spacing - для полноэкранного режима
+$mobile-compact-padding: 2px;
+$mobile-compact-margin: 1px;
+$mobile-move-padding: 1px 2px;
+$mobile-move-margin: 0px 1px;

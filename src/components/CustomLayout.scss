@@ -46,12 +46,13 @@
   }
 }
 
-// Секция анализа на мобильном - СРЕДНИЙ БЛОК
+// Секция анализа на мобильном - СРЕДНИЙ БЛОК - ТОЧНАЯ ВЫСОТА БЕЗ ПУСТОГО МЕСТА
 .mobile-analysis-section {
   @include m.mobile {
     & {
       flex: 0 0 auto;
-      height: 250px; // Увеличено: 48px заголовок + 4×35px линии + отступы
+      // ТОЧНАЯ ВЫСОТА: 30px заголовок + 1px граница + 4×clamp(9px, 2.2vw + 1px, 11px) строки
+      height: calc(30px + 1px + 4 * clamp(9px, calc(2.2vw + 1px), 11px));
       background: white;
       border-radius: 0; // УБИРАЕМ СКРУГЛЕНИЯ
       margin: 0; // УБИРАЕМ ОТСТУПЫ
@@ -61,17 +62,27 @@
       border-bottom: 1px solid v.$border-color; // Тонкая граница для разделения
     }
 
-    // Для маленьких экранов
+    // Для очень маленьких экранов
     @media (max-width: 320px) {
       & {
-        height: 230px !important;
+        // ВЫСОТА: 30px заголовок + 1px граница + 4×clamp(8px, 2.4vw + 1px, 10px) строки
+        height: calc(30px + 1px + 4 * clamp(8px, calc(2.4vw + 1px), 10px)) !important;
       }
     }
 
-    // Для ландшафтной ориентации
+    // Для ландшафтной ориентации - компактная высота
     @media (orientation: landscape) and (max-width: 767px) {
       & {
-        height: 210px !important;
+        // ВЫСОТА: 30px заголовок + 1px граница + 4×clamp(8px, 2.2vw + 1px, 10px) строки
+        height: calc(30px + 1px + 4 * clamp(8px, calc(2.2vw + 1px), 10px)) !important;
+      }
+    }
+    
+    // Для больших мобильных экранов
+    @media (min-width: 415px) and (max-width: 767px) {
+      & {
+        // ВЫСОТА: 30px заголовок + 1px граница + 4×clamp(11px, 2.0vw + 1px, 13px) строки
+        height: calc(30px + 1px + 4 * clamp(11px, calc(2.0vw + 1px), 13px)) !important;
       }
     }
   }

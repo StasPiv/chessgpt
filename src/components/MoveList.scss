@@ -1,14 +1,17 @@
-
 @use '../styles/variables' as v;
 @use '../styles/mixins' as m;
-
-$move-list-mobile-font-size: 3vw;
 
 .move-list-container {
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
   @include m.move-list-container;
+
+  // Позиционирование только для десктопа
+  @include m.desktop {
+    position: relative; // Добавляем для позиционирования панели редактора
+  }
 
   // УБИРАЕМ ОТСТУПЫ НА МОБИЛЬНЫХ
   @include m.mobile {
@@ -21,36 +24,38 @@ $move-list-mobile-font-size: 3vw;
 
 // ФИКСИРОВАННЫЙ ЗАГОЛОВОК - НЕ СКРОЛЛИТСЯ
 .fixed-game-header {
-  flex: 0 0 auto; // НЕ РАСТЯГИВАЕТСЯ И НЕ СЖИМАЕТСЯ
-  position: sticky; // ФИКСИРУЕТСЯ ВВЕРХУ
+  flex: 0 0 auto;
+  position: sticky;
   top: 0;
-  z-index: 10; // ПОВЕРХ ДРУГИХ ЭЛЕМЕНТОВ
-  background: white; // ФОНОВЫЙ ЦВЕТ ДЛЯ ЗАКРЫТИЯ КОНТЕНТА СНИЗУ
-  border-bottom: 1px solid v.$border-color; // РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ
+  z-index: 10;
+  background: white;
+  border-bottom: 1px solid v.$border-color;
 
   @include m.mobile {
     & {
-      // НА МОБИЛЬНЫХ УБИРАЕМ ДОПОЛНИТЕЛЬНЫЕ ОТСТУПЫ
       margin: 0;
       border-radius: 0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // ЛЕГКАЯ ТЕНЬ ДЛЯ ВИЗУАЛЬНОГО РАЗДЕЛЕНИЯ
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   }
 }
 
 .moves-container {
   width: 100%;
-  flex: 1; // ЗАНИМАЕТ ВСЕ ОСТАВШЕЕСЯ МЕСТО
-  overflow-y: auto; // СКРОЛЛИРУЕТСЯ ПО ВЕРТИКАЛИ
-  min-height: 0; // ВАЖНО ДЛЯ ПРАВИЛЬНОЙ РАБОТЫ FLEX
-  // Принудительно отключаем автоматическое масштабирование текста
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  
+  // Отступ для панели редактора только на десктопе
+  @include m.desktop {
+    padding-bottom: 60px; // Добавляем отступ снизу для панели редактора
+  }
 }
 
 .moves-list {
   @include m.moves-list-typography;
-  // Дополнительные настройки для предотвращения автоматического масштабирования
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   max-height: none;
@@ -161,6 +166,11 @@ $move-list-mobile-font-size: 3vw;
 
 // Desktop styles
 @include m.desktop {
+  .moves-item {
+    .panel-content {
+      height: 100%;
+    }
+  }
   .move-item {
     transition: all v.$transition-fast ease;
 
@@ -189,8 +199,7 @@ $move-list-mobile-font-size: 3vw;
   }
 }
 
-// УПРОЩЕННЫЕ медиа-запросы без перекрытий
-// Мобильные устройства (до 767px включительно)
+// КОМПАКТНАЯ МОБИЛЬНАЯ ВЕРСИЯ ДЛЯ ПОЛНОЭКРАННОГО РЕЖИМА
 @media screen and (max-width: 767px) {
   .moves-container {
     -webkit-touch-callout: none;
@@ -204,19 +213,19 @@ $move-list-mobile-font-size: 3vw;
   }
 
   .moves-list {
-    font-size: 20px !important; // ФИКСИРОВАННЫЙ размер вместо vw
-    line-height: 1.6 !important;
-    padding: v.$spacing-sm !important; // МИНИМАЛЬНЫЙ ОТСТУП
+    font-size: v.$move-font-size-mobile !important; // 13px для компактности
+    line-height: v.$move-line-height-mobile !important; // 1.25 для плотного размещения
+    padding: v.$mobile-compact-padding !important; // Минимальный отступ
     -webkit-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
   }
 
   .move-item {
-    min-height: 32px;
-    line-height: 32px;
-    padding: 2px 3px;
-    margin-right: 0.4em;
-    font-size: 20px !important; // ФИКСИРОВАННЫЙ размер
+    min-height: 18px !important; // Компактная высота для 10+ строк
+    line-height: 18px !important;
+    padding: v.$mobile-move-padding !important; // 1px 2px
+    margin-right: 0.2em !important; // Минимальный отступ справа
+    font-size: v.$move-font-size-mobile !important; // 13px
 
     &:hover:not(.current) {
       background-color: transparent;
@@ -230,36 +239,35 @@ $move-list-mobile-font-size: 3vw;
       background-color: #007bff !important;
       color: white !important;
       font-weight: bold !important;
-      border-radius: 6px !important;
-      padding: 4px 8px !important;
-      margin: 2px 4px !important;
-      min-height: 36px !important;
-      line-height: 28px !important;
-      box-shadow: 0 3px 8px rgba(0, 123, 255, 0.4) !important;
+      border-radius: 3px !important; // Компактные скругления
+      padding: v.$mobile-move-padding !important; // Такой же padding как у обычных
+      margin: v.$mobile-move-margin !important; // 0px 1px - минимальные отступы
+      min-height: 20px !important; // Немного больше для выделения
+      line-height: 18px !important;
+      box-shadow: 0 1px 3px rgba(0, 123, 255, 0.4) !important; // Компактная тень
     }
   }
 
   .move-number,
   .move-san,
   .move-number-after-variation {
-    font-size: 20px !important; // ФИКСИРОВАННЫЙ размер
+    font-size: v.$move-font-size-mobile !important; // 13px
   }
 
   .variation-bracket {
-    font-size: 16px !important; // ФИКСИРОВАННЫЙ размер
+    font-size: v.$variation-bracket-size-mobile !important; // 11px
   }
 
   .no-moves {
-    padding: 32px;
-    min-height: 120px;
-    font-size: $move-list-mobile-font-size
+    padding: 16px;
+    min-height: 60px;
+    font-size: v.$move-font-size-mobile;
   }
 
   // СПЕЦИАЛЬНЫЕ СТИЛИ ДЛЯ ФИКСИРОВАННОГО ЗАГОЛОВКА НА МОБИЛЬНЫХ
   .fixed-game-header {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important; // БОЛЕЕ ВЫРАЖЕННАЯ ТЕНЬ
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
 
-    // УБИРАЕМ ОТСТУПЫ У ЗАГОЛОВКА ВНУТРИ ФИКСИРОВАННОГО КОНТЕЙНЕРА
     .game-header {
       margin-bottom: 0 !important;
       border-radius: 0 !important;
@@ -271,29 +279,29 @@ $move-list-mobile-font-size: 3vw;
 // Планшеты (768px и выше)
 @media screen and (min-width: 768px) and (max-width: 1199px) {
   .moves-list {
-    font-size: $move-list-mobile-font-size;
-    line-height: 1.5;
-    padding: 14px;
+    font-size: 15px;
+    line-height: 1.4;
+    padding: 12px;
   }
 
   .move-item {
-    padding: 3px 4px;
-    font-size: $move-list-mobile-font-size;
+    padding: 2px 3px;
+    font-size: 15px;
 
     &.current {
-      padding: 4px 8px !important;
-      margin: 2px 3px !important;
+      padding: 3px 6px !important;
+      margin: 1px 2px !important;
     }
   }
 
   .move-number,
   .move-san,
   .move-number-after-variation {
-    font-size: $move-list-mobile-font-size;
+    font-size: 15px;
   }
 
   .variation-bracket {
-    font-size: 16px;
+    font-size: 13px;
   }
 }
 
