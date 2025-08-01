@@ -1,12 +1,14 @@
 import React, { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { promoteVariationAction, deleteVariationAction, deleteRemainingAction } from '../redux/actions.js';
+import { promoteVariationAction, deleteVariationAction, deleteRemainingAction, undoAction, redoAction } from '../redux/actions.js';
 import { RootState } from '../types';
 import './GameEditorPanel.scss';
 
 const GameEditorPanel = (): ReactElement => {
     const dispatch = useDispatch();
     const currentMove = useSelector((state: RootState) => state.chess.currentMove);
+    const canUndo = useSelector((state: RootState) => state.chess.canUndo);
+    const canRedo = useSelector((state: RootState) => state.chess.canRedo);
     
     // Показываем панель только если есть текущий ход
     if (!currentMove) {
@@ -23,6 +25,14 @@ const GameEditorPanel = (): ReactElement => {
 
     const handleDeleteRemaining = () => {
         dispatch(deleteRemainingAction());
+    };
+
+    const handleUndo = () => {
+        dispatch(undoAction());
+    };
+
+    const handleRedo = () => {
+        dispatch(redoAction());
     };
 
     return (
@@ -56,6 +66,28 @@ const GameEditorPanel = (): ReactElement => {
                 >
                     <span className="btn-icon">]</span>
                     <span className="btn-text">Truncate</span>
+                </button>
+
+                <button
+                    className={`editor-btn undo-btn ${!canUndo ? 'disabled' : ''}`}
+                    onClick={handleUndo}
+                    disabled={!canUndo}
+                    title="Отменить последнее действие"
+                    aria-label="Undo last action"
+                >
+                    <span className="btn-icon">↶</span>
+                    <span className="btn-text">Undo</span>
+                </button>
+
+                <button
+                    className={`editor-btn redo-btn ${!canRedo ? 'disabled' : ''}`}
+                    onClick={handleRedo}
+                    disabled={!canRedo}
+                    title="Вернуть последнее действие"
+                    aria-label="Redo last action"
+                >
+                    <span className="btn-icon">↷</span>
+                    <span className="btn-text">Redo</span>
                 </button>
             </div>
         </div>

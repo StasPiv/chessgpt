@@ -28,6 +28,13 @@ export interface ChessMove {
     [key: string]: any;   // Дополнительные свойства от chess.js
 }
 
+// Интерфейс для записи в истории undo/redo
+export interface UndoHistoryEntry {
+    state: Omit<ChessState, 'undoHistory' | 'redoHistory' | 'canUndo' | 'canRedo'>;
+    action: any;
+    timestamp: number;
+}
+
 // Основное состояние шахмат
 export interface ChessState {
     fen: string;
@@ -46,4 +53,9 @@ export interface ChessState {
     currentVariation: number;
     globalIndex: number;
     isGameLoaded: boolean;
+    // Добавляем свойства для undo/redo функциональности
+    undoHistory: UndoHistoryEntry[];
+    redoHistory: UndoHistoryEntry[];
+    canUndo: boolean;
+    canRedo: boolean;
 }

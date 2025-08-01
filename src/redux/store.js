@@ -3,10 +3,11 @@ import { chessReducer } from './chessReducer.js';
 import { analysisReducer } from './analysisReducer.js';
 import { websocketReducer } from './websocketReducer.js';
 import { uiReducer } from './uiReducer.js';
+import { undoMiddleware, withUndoRedo } from './undoMiddleware.js';
 
 export const store = configureStore({
     reducer: {
-        chess: chessReducer,
+        chess: withUndoRedo(chessReducer),
         analysis: analysisReducer,
         websocket: websocketReducer,
         ui: uiReducer,
@@ -15,7 +16,7 @@ export const store = configureStore({
         getDefaultMiddleware({
             serializableCheck: false,
             immutableCheck: false,
-        }),
+        }).concat(undoMiddleware),
 });
 
 export default store;

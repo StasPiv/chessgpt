@@ -1,17 +1,17 @@
-
 export const LOAD_PGN = 'LOAD_PGN';
 export const ADD_MOVE = 'ADD_MOVE';
 export const ADD_VARIATION = 'ADD_VARIATION';
 export const PROMOTE_VARIATION = 'PROMOTE_VARIATION';
 export const DELETE_VARIATION = 'DELETE_VARIATION';
 export const DELETE_REMAINING = 'DELETE_REMAINING';
-export const UNDO_MOVE = 'UNDO_MOVE';
 export const GOTO_MOVE = 'GOTO_MOVE';
 export const GOTO_FIRST = 'GOTO_FIRST';
 export const GOTO_LAST = 'GOTO_LAST';
 export const GOTO_PREVIOUS = 'GOTO_PREVIOUS';
 export const GOTO_NEXT = 'GOTO_NEXT';
 export const SET_IS_MOBILE = 'SET_IS_MOBILE';
+export const UNDO_ACTION = 'UNDO_ACTION';
+export const REDO_ACTION = 'REDO_ACTION';
 
 export function loadPGNAction(pgn) {
     return { type: LOAD_PGN, payload: pgn };
@@ -35,6 +35,14 @@ export function deleteVariationAction() {
 
 export function deleteRemainingAction() {
     return { type: DELETE_REMAINING };
+}
+
+export function undoAction() {
+    return { type: UNDO_ACTION };
+}
+
+export function redoAction() {
+    return { type: REDO_ACTION };
 }
 
 export function gotoMoveAction(payload) {
