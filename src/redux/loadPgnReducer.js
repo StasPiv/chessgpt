@@ -1,6 +1,7 @@
 import { Chess } from 'cm-chess';
 import { cleanPgn } from './cleanPgn.js';
 import { LOAD_PGN } from './actions.js';
+import { linkAllMovesRecursively } from '../utils/ChessHistoryUtils';
 
 const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -65,11 +66,31 @@ function findMoveByGlobalIndex(history, globalIndex) {
     return searchInHistory(history);
 }
 
+// Function to add empty variation property to all moves recursively
+function addEmptyVariationToMoves(history) {
+    function processMove(move) {
+        // Устанавливаем variation в пустой массив для каждого хода
+        move.variation = [];
+        
+        // Рекурсивно обрабатываем variations, если они есть
+        if (move.variations && move.variations.length > 0) {
+            move.variations.forEach(variation => {
+                variation.forEach(varMove => processMove(varMove));
+            });
+        }
+        
+        return move;
+    }
+    
+    return history.map(move => processMove(move));
+}
+
 // Function to assign global indexes to moves
 function assignGlobalIndexes(history) {
     let variationCounter = 0;
     let maxGlobalIndex = 0;
-    
+    let hasVariations = false; // Флаг для отслеживания наличия вариаций
+
     function processMove(move, currentVariationIndex = 0) {
         if (currentVariationIndex === 0) {
             // Main line: indexes from 0 to 999
@@ -79,14 +100,15 @@ function assignGlobalIndexes(history) {
             // Variations: each variation gets its own 1000-based range
             move.globalIndex = currentVariationIndex * 1000 + (move.moveIndex || 0);
             maxGlobalIndex = Math.max(maxGlobalIndex, move.globalIndex);
+            hasVariations = true; // Отмечаем что есть вариации
         }
-        
+
         // Process variations if they exist
         if (move.variations && move.variations.length > 0) {
             move.variations.forEach((variation) => {
                 variationCounter++; // Каждая новая вариация получает свой счетчик
                 const variationIndex = variationCounter;
-                
+
                 variation.forEach((varMove, moveIndex) => {
                     varMove.moveIndex = moveIndex;
                     processMove(varMove, variationIndex);
@@ -94,18 +116,21 @@ function assignGlobalIndexes(history) {
             });
         }
     }
-    
+
     history.forEach((move, index) => {
         move.moveIndex = index;
         processMove(move);
     });
-    
-    // Округляем maxGlobalIndex до ближайшего меньшего числа, кратного 1000
-    const roundedMaxGlobalIndex = Math.ceil((maxGlobalIndex) / 1000) * 1000;
-    
-    return { 
-        history, 
-        maxGlobalIndex: roundedMaxGlobalIndex
+
+    // Если нет вариаций, устанавливаем maxGlobalIndex = 0
+    // Иначе округляем до ближайшего большего числа, кратного 1000
+    const finalMaxGlobalIndex = hasVariations
+        ? Math.ceil((maxGlobalIndex + 1) / 1000) * 1000
+        : 0;
+
+    return {
+        history,
+        maxGlobalIndex: finalMaxGlobalIndex
     };
 }
 
@@ -133,17 +158,23 @@ function handleLoadPgn(state, action) {
         // Assign global indexes to all moves and get max global index
         const { history: historyWithGlobalIndexes, maxGlobalIndex } = assignGlobalIndexes(loadedHistory);
         
+        // Добавляем пустое свойство variation ко всем ходам
+        const historyWithVariations = addEmptyVariationToMoves(historyWithGlobalIndexes);
+        
+        // Устанавливаем ссылки next и previous для всех ходов в истории
+        linkAllMovesRecursively(historyWithVariations);
+        
         // Определяем текущий ход после загрузки
-        const currentMoveIndex = historyWithGlobalIndexes.length - 1;
-        const currentMove = findMoveByGlobalIndex(historyWithGlobalIndexes, currentMoveIndex);
+        const currentMoveIndex = historyWithVariations.length - 1;
+        const currentMove = findMoveByGlobalIndex(historyWithVariations, currentMoveIndex);
         
         // Полный сброс состояния к начальному с новыми данными
         return {
             ...initialState, // Сначала берем все поля из initialState
             game: newGame,
             fen: newGame.fen(),
-            history: historyWithGlobalIndexes,
-            fullHistory: historyWithGlobalIndexes,
+            history: historyWithVariations,
+            fullHistory: [], // Очищаем fullHistory - делаем пустым массивом
             currentMoveIndex: currentMoveIndex,
             currentMove: currentMove, // Устанавливаем объект текущего хода
             pgnHeaders: pgnHeaders,
