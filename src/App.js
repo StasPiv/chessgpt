@@ -5,6 +5,7 @@ import CustomLayout from './components/CustomLayout.tsx';
 import LoadPgn from './components/LoadPgn.tsx';
 import { connectWebSocket } from './websocket.js';
 import './App.scss';
+import FullScreenHint from "./components/FullScreenHint";
 
 function AppContent() {
     const [showPgnModal, setShowPgnModal] = useState(false);
@@ -66,6 +67,8 @@ function AppContent() {
             <div className="layout-container">
                 <CustomLayout />
             </div>
+
+            <FullScreenHint />
 
             {showPgnModal && (
                 <div className="pgn-modal">

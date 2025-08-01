@@ -1,0 +1,318 @@
+@use '../styles/variables' as v;
+@use '../styles/mixins' as m;
+
+.fullscreen-hint-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.fullscreen-hint-container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 30px 20px 20px;
+  text-align: center;
+  max-width: 300px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hint-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 1;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+  }
+  
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.finger-animation {
+  cursor: pointer;
+  margin: 20px 0;
+  position: relative;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.finger {
+  font-size: 48px;
+  position: relative;
+  z-index: 2;
+  animation: fingerSwipe 2s ease-in-out infinite;
+  user-select: none;
+  transition: transform 0.2s ease;
+  
+  &:active {
+    transform: scale(1.2);
+  }
+}
+
+.swipe-trail {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 60px;
+  background: linear-gradient(to top, transparent, #007bff, transparent);
+  border-radius: 2px;
+  opacity: 0;
+  animation: trailAnimation 2s ease-in-out infinite;
+}
+
+.hint-text {
+  margin: 20px 0;
+}
+
+.hint-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.hint-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 15px;
+}
+
+.arrow-up {
+  font-size: 24px;
+  color: #007bff;
+  animation: arrowBounce 1.5s ease-in-out infinite;
+  margin-top: 10px;
+}
+
+// Анимации
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fingerSwipe {
+  0%, 100% {
+    transform: translateY(20px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes trailAnimation {
+  0%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleY(0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scaleY(1);
+  }
+}
+
+@keyframes arrowBounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+}
+
+// Адаптация для маленьких экранов
+@media (max-width: 320px) {
+  .fullscreen-hint-container {
+    padding: 25px 15px 15px;
+    max-width: 280px;
+  }
+  
+  .finger {
+    font-size: 40px;
+  }
+  
+  .hint-title {
+    font-size: 16px;
+  }
+  
+  .hint-description {
+    font-size: 13px;
+  }
+}
+
+// Ландшафтная ориентация
+@media (orientation: landscape) and (max-height: 500px) {
+  .fullscreen-hint-container {
+    padding: 20px 15px 15px;
+    max-width: 350px;
+  }
+  
+  .finger-animation {
+    height: 80px;
+    margin: 15px 0;
+  }
+  
+  .finger {
+    font-size: 36px;
+  }
+  
+  .swipe-trail {
+    height: 40px;
+  }
+  
+  .hint-text {
+    margin: 15px 0;
+  }
+  
+  .hint-title {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  
+  .hint-description {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  
+  .arrow-up {
+    font-size: 20px;
+    margin-top: 5px;
+  }
+}
+
+// Темная тема
+@media (prefers-color-scheme: dark) {
+  .fullscreen-hint-container {
+    background: rgba(42, 42, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .hint-title {
+    color: #fff;
+  }
+  
+  .hint-description {
+    color: #ccc;
+  }
+  
+  .hint-close-btn {
+    color: #ccc;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+  }
+}
+
+// Высокий контраст
+@media (prefers-contrast: high) {
+  .fullscreen-hint-overlay {
+    background: rgba(0, 0, 0, 0.9);
+  }
+  
+  .fullscreen-hint-container {
+    background: white;
+    border: 2px solid #000;
+  }
+  
+  .hint-title {
+    color: #000;
+  }
+  
+  .hint-description {
+    color: #333;
+  }
+  
+  .arrow-up {
+    color: #000;
+  }
+}
+
+// Уменьшенная анимация
+@media (prefers-reduced-motion: reduce) {
+  .finger,
+  .swipe-trail,
+  .arrow-up {
+    animation: none;
+  }
+  
+  .fullscreen-hint-overlay {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .finger:active {
+    transform: none;
+  }
+}
+
+// Для устройств без hover
+@media (hover: none) and (pointer: coarse) {
+  .finger-animation {
+    // Увеличиваем область нажатия
+    &::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+    }
+  }
+  
+  .hint-close-btn {
+    // Увеличиваем область нажатия для кнопки закрытия
+    &::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+    }
+  }
+}
