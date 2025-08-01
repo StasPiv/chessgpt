@@ -1,0 +1,58 @@
+{
+  "name": "simple promotion from continuation move",
+  "input": {
+    "currentMove": {
+      "san": "Nf3",
+      "globalIndex": 1001,
+      "variations": [
+        [
+          {
+            "san": "Nc3",
+            "globalIndex": 2000
+          }
+        ]
+      ]
+    },
+    "history": [
+      {
+        "san": "e4",
+        "globalIndex": 0
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "variations": [
+          [
+            {
+              "san": "e5",
+              "globalIndex": 1000
+            },
+            {
+              "san": "Nf3",
+              "globalIndex": 1001,
+              "variations": [
+                [
+                  {
+                    "san": "Nc3",
+                    "globalIndex": 2000
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "expected": [
+    {
+      "san": "e4",
+      "globalIndex": 0
+    },
+    {
+      "san": "c5",
+      "globalIndex": 1,
+      "variations": []
+    }
+  ]
+}
