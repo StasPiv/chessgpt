@@ -41,7 +41,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
             before: move.before,
             after: move.after,
             fen: move.fen,
-            next: null,
+            next: undefined, // Изменено с null на undefined
+            globalIndex: move.globalIndex || 0, // Добавлено значение по умолчанию
+            ply: move.ply || 0, // Добавлено значение по умолчанию
         };
     };
 

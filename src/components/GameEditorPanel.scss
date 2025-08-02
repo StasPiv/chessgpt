@@ -3,7 +3,7 @@
 
 .game-editor-panel {
   width: 100%;
-  padding: calc(v.$spacing-sm / 2) calc(v.$spacing-md / 2); // Уменьшено вдвое
+  padding: calc(#{v.$spacing-sm} / 2) calc(#{v.$spacing-md} / 2); // Уменьшено вдвое
   border-top: 1px solid v.$border-color;
   background-color: v.$background-secondary;
 
@@ -23,7 +23,7 @@
 
 .editor-buttons {
   display: flex;
-  gap: calc(v.$spacing-sm / 2); // Уменьшено вдвое
+  gap: calc(#{v.$spacing-sm} / 2); // Уменьшено вдвое
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -31,13 +31,13 @@
 .editor-btn {
   display: flex;
   align-items: center;
-  gap: calc(v.$spacing-xxs / 2); // Уменьшено вдвое
-  padding: calc(v.$spacing-xs / 2) calc(v.$spacing-sm / 2); // Уменьшено вдвое
+  gap: calc(#{v.$spacing-xxs} / 2); // Уменьшено вдвое
+  padding: calc(#{v.$spacing-xs} / 2) calc(#{v.$spacing-sm} / 2); // Уменьшено вдвое
   border: 1px solid v.$border-color;
-  border-radius: calc(v.$border-radius-md / 2); // Уменьшено вдвое
+  border-radius: calc(#{v.$border-radius-md} / 2); // Уменьшено вдвое
   background-color: v.$background-primary;
   color: v.$text-primary;
-  font-size: calc(v.$font-size-sm / 1.2); // Уменьшено
+  font-size: calc(#{v.$font-size-sm} / 1.2); // Уменьшено
   font-family: inherit;
   cursor: pointer;
   transition: all v.$transition-fast ease;
@@ -46,11 +46,11 @@
 
   .btn-icon {
     font-weight: bold;
-    font-size: calc(v.$font-size-md / 1.2); // Уменьшено
+    font-size: calc(#{v.$font-size-md} / 1.2); // Уменьшено
   }
 
   .btn-text {
-    font-size: calc(v.$font-size-xs / 1.1); // Уменьшено
+    font-size: calc(#{v.$font-size-xs} / 1.1); // Уменьшено
     font-weight: 500;
   }
 
@@ -102,7 +102,7 @@
 .delete-variation-btn {
   .btn-icon {
     color: #dc3545;
-    font-size: calc(v.$font-size-lg / 1.2); // Уменьшено
+    font-size: calc(#{v.$font-size-lg} / 1.2); // Уменьшено
   }
 
   &:hover:not(.disabled):not(:disabled) {
@@ -115,7 +115,7 @@
 .delete-remaining-btn {
   .btn-icon {
     color: #ffc107;
-    font-size: calc(v.$font-size-lg / 1.2); // Уменьшено
+    font-size: calc(#{v.$font-size-lg} / 1.2); // Уменьшено
     font-family: monospace;
   }
 
@@ -230,19 +230,19 @@
 // Tablet optimizations - все размеры уменьшены
 @include m.tablet {
   .game-editor-panel {
-    padding: calc(v.$spacing-sm / 2) calc(v.$spacing-lg / 2); // Уменьшено вдвое
+    padding: calc(#{v.$spacing-sm} / 2) calc(#{v.$spacing-lg} / 2); // Уменьшено вдвое
   }
 
   .editor-buttons {
-    gap: calc(v.$spacing-md / 2); // Уменьшено вдвое
+    gap: calc(#{v.$spacing-md} / 2); // Уменьшено вдвое
   }
 
   .editor-btn {
     min-width: 42px; // Уменьшено вдвое (было 85px)
-    padding: calc(v.$spacing-sm / 2) calc(v.$spacing-md / 2); // Уменьшено вдвое
+    padding: calc(#{v.$spacing-sm} / 2) calc(#{v.$spacing-md} / 2); // Уменьшено вдвое
 
     .btn-icon {
-      font-size: calc(v.$font-size-lg / 1.2); // Уменьшено
+      font-size: calc(#{v.$font-size-lg} / 1.2); // Уменьшено
     }
 
     .btn-text {
@@ -261,7 +261,7 @@
 }
 
 // High contrast mode
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
   .game-editor-panel {
     border-top: 1px solid v.$border-color; // Уменьшено (было 2px)
   }

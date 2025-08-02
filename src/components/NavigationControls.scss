@@ -419,7 +419,7 @@
 }
 
 // High contrast mode
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
   .nav-button {
     border: 1px solid #007bff;
     

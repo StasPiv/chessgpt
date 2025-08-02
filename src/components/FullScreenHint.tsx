@@ -14,8 +14,8 @@ const FullScreenHint = (): ReactElement | null => {
 
     // Подписка на изменения полноэкранного режима
     useEffect(() => {
-        const unsubscribe = fullscreenManager.addListener((fullscreen) => {
-            dispatch(setIsFullscreenAction(fullscreen));
+        const unsubscribe = fullscreenManager.addListener((isFullscreen: boolean) => {
+            dispatch(setIsFullscreenAction(isFullscreen));
         });
         
         // Инициализируем состояние
