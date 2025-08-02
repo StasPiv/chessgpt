@@ -1,0 +1,97 @@
+{
+  "name": "Add move to nested variation",
+  "input": {
+    "newMove": {
+      "san": "d6",
+      "globalIndex": 2001,
+      "ply": 4
+    },
+    "currentMove": {
+      "san": "Nc6",
+      "globalIndex": 2000,
+      "ply": 3
+    },
+    "history": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "ply": 2,
+        "variations": [
+          [
+            {
+              "san": "e5",
+              "globalIndex": 1000,
+              "ply": 2
+            },
+            {
+              "san": "Nf3",
+              "globalIndex": 1001,
+              "ply": 3,
+              "variations": [
+                [
+                  {
+                    "san": "Nc6",
+                    "globalIndex": 2000,
+                    "ply": 3
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "updatedCurrentMove": {
+      "san": "d6",
+      "globalIndex": 2001,
+      "ply": 4
+    },
+    "updatedHistory": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "ply": 2,
+        "variations": [
+          [
+            {
+              "san": "e5",
+              "globalIndex": 1000,
+              "ply": 2
+            },
+            {
+              "san": "Nf3",
+              "globalIndex": 1001,
+              "ply": 3,
+              "variations": [
+                [
+                  {
+                    "san": "Nc6",
+                    "globalIndex": 2000,
+                    "ply": 3
+                  },
+                  {
+                    "san": "d6",
+                    "globalIndex": 2001,
+                    "ply": 4
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

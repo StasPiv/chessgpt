@@ -1,5 +1,5 @@
 {
-  "name": "simple promotion from continuation move",
+  "name": "simple deletion from continuation move",
   "input": {
     "currentMove": {
       "san": "Nf3",
@@ -46,19 +46,17 @@
   },
   "expected": {
     "newCurrentMove": {
-      "san": "c5",
       "globalIndex": 1,
-      "variations": []
+      "san": "c5"
     },
     "updatedHistory": [
       {
-        "san": "e4",
-        "globalIndex": 0
+        "globalIndex": 0,
+        "san": "e4"
       },
       {
-        "san": "c5",
         "globalIndex": 1,
-        "variations": []
+        "san": "c5"
       }
     ]
   }

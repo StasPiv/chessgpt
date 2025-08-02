@@ -1,5 +1,5 @@
 {
-  "name": "simple promotion",
+  "name": "simple deletion",
   "input": {
     "currentMove": {
       "san": "e5",
@@ -26,19 +26,17 @@
   },
   "expected": {
     "newCurrentMove": {
-      "san": "c5",
       "globalIndex": 1,
-      "variations": []
+      "san": "c5"
     },
     "updatedHistory": [
       {
-        "san": "e4",
-        "globalIndex": 0
+        "globalIndex": 0,
+        "san": "e4"
       },
       {
-        "san": "c5",
         "globalIndex": 1,
-        "variations": []
+        "san": "c5"
       }
     ]
   }

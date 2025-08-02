@@ -1,0 +1,41 @@
+{
+  "name": "Add second move to main line",
+  "input": {
+    "newMove": {
+      "san": "e5",
+      "globalIndex": 1,
+      "ply": 2
+    },
+    "currentMove": {
+      "san": "e4",
+      "globalIndex": 0,
+      "ply": 1
+    },
+    "history": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      }
+    ]
+  },
+  "expected": {
+    "updatedCurrentMove": {
+      "san": "e5",
+      "globalIndex": 1,
+      "ply": 2
+    },
+    "updatedHistory": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "e5",
+        "globalIndex": 1,
+        "ply": 2
+      }
+    ]
+  }
+}

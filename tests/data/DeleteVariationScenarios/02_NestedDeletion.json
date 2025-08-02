@@ -1,5 +1,5 @@
 {
-  "name": "nested promotion with parent line continuation",
+  "name": "nested deletion with parent line continuation",
   "input": {
     "currentMove": {
       "san": "Nc3",
@@ -46,39 +46,37 @@
   },
   "expected": {
     "newCurrentMove": {
-      "san": "Nf3",
       "globalIndex": 1001,
-      "variations": []
+      "san": "Nf3"
     },
     "updatedHistory": [
       {
-        "san": "e4",
-        "globalIndex": 0
+        "globalIndex": 0,
+        "san": "e4"
       },
       {
-        "san": "c5",
         "globalIndex": 1,
+        "san": "c5",
         "variations": [
           [
             {
-              "san": "e5",
-              "globalIndex": 1000
+              "globalIndex": 1000,
+              "san": "e5"
             },
             {
-              "san": "Nf3",
               "globalIndex": 1001,
-              "variations": []
+              "san": "Nf3"
             },
             {
-              "san": "Bb5",
-              "globalIndex": 1002
+              "globalIndex": 1002,
+              "san": "Bb5"
             }
           ]
         ]
       },
       {
-        "san": "Nf3",
-        "globalIndex": 2
+        "globalIndex": 2,
+        "san": "Nf3"
       }
     ]
   }

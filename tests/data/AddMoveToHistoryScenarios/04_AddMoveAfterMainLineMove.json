@@ -1,0 +1,69 @@
+{
+  "name": "Add move after main line move",
+  "input": {
+    "newMove": {
+      "san": "Nf3",
+      "globalIndex": 2,
+      "ply": 3
+    },
+    "currentMove": {
+      "san": "c5",
+      "globalIndex": 1,
+      "ply": 2
+    },
+    "history": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "ply": 2,
+        "variations": [
+          [
+            {
+              "san": "e5",
+              "globalIndex": 1000,
+              "ply": 2
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "updatedCurrentMove": {
+      "san": "Nf3",
+      "globalIndex": 2,
+      "ply": 3
+    },
+    "updatedHistory": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "c5",
+        "globalIndex": 1,
+        "ply": 2,
+        "variations": [
+          [
+            {
+              "san": "e5",
+              "globalIndex": 1000,
+              "ply": 2
+            }
+          ]
+        ]
+      },
+      {
+        "san": "Nf3",
+        "globalIndex": 2,
+        "ply": 3
+      }
+    ]
+  }
+}
