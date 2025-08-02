@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Switch from 'react-switch';
 import { toggleAutoAnalysis } from '../redux/analysisReducer.js';
@@ -17,9 +17,24 @@ const AnalysisPanel: React.FC = () => {
     
     // Получаем состояние WebSocket из Redux
     const { isConnected } = useSelector((state: RootState) => state.websocket);
-    
-    // Состояние для индикации процесса переподключения
-    const [isReconnecting, setIsReconnecting] = useState(false);
+
+    // Автоматическое переподключение при клике в любом месте приложения
+    useEffect(() => {
+        const handleGlobalClick = () => {
+            if (!isConnected) {
+                console.log('Auto reconnection triggered by click...');
+                connectWebSocket(store);
+            }
+        };
+
+        // Добавляем глобальный обработчик кликов
+        document.addEventListener('click', handleGlobalClick);
+
+        // Убираем обработчик при размонтировании компонента
+        return () => {
+            document.removeEventListener('click', handleGlobalClick);
+        };
+    }, [isConnected]);
 
     const handleToggleAutoAnalysis = (checked: boolean): void => {
         dispatch(toggleAutoAnalysis());
@@ -29,18 +44,6 @@ const AnalysisPanel: React.FC = () => {
         } else if (currentFen && isConnected) {
             sendPosition(currentFen);
         }
-    };
-
-    const handleReconnect = (): void => {
-        console.log('Manual reconnection requested...');
-        setIsReconnecting(true);
-        
-        connectWebSocket(store);
-        
-        // Убираем индикатор переподключения через некоторое время
-        setTimeout(() => {
-            setIsReconnecting(false);
-        }, 2000);
     };
 
     const isInactive: boolean = !autoAnalysisEnabled || status === 'stopped';
@@ -97,16 +100,6 @@ const AnalysisPanel: React.FC = () => {
                                 {isConnected ? 'Connected' : 'Disconnected'}
                             </span>
                         </div>
-                        {!isConnected && (
-                            <button 
-                                className="reconnect-btn"
-                                onClick={handleReconnect}
-                                disabled={isReconnecting}
-                                title="Reconnect to analysis server"
-                            >
-                                {isReconnecting ? '🔄' : '🔌'}
-                            </button>
-                        )}
                     </div>
                 </div>
             </div>
@@ -124,7 +117,7 @@ const AnalysisPanel: React.FC = () => {
                 ) : (
                     <div className="no-analysis">
                         {!isConnected 
-                            ? 'No connection to analysis server' 
+                            ? 'No connection to analysis server. Click anywhere to reconnect.' 
                             : autoAnalysisEnabled 
                                 ? 'Analysis not started' 
                                 : 'Enable auto-analysis to start analysis'
