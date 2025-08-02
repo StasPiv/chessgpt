@@ -120,25 +120,30 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ isFlipped = false }) => {
             if (selectedSquare === square) {
                 // Клик по той же клетке - отменяем выбор
                 setSelectedSquare(null);
+                setCustomSquareStyles({});
             } else {
-                // Клик по другой клетке - пытаемся сделать ход
-                const moveSuccess = makeMove(selectedSquare, square);
-
-                // Сбрасываем выбор независимо от результата
-                setSelectedSquare(null);
-
-                if (!moveSuccess) {
-                    // Если ход невозможен, попробуем выбрать новую фигуру
-                    if (piece && piece.pieceType) {
-                        const pieceColor = piece.pieceType[0].toLowerCase();
-                        if (pieceColor === tempGame.turn()) {
-                            setSelectedSquare(square);
-                        }
+                // Проверяем, кликнули ли мы на свою фигуру
+                if (piece && piece.pieceType) {
+                    const pieceColor = piece.pieceType[0].toLowerCase();
+                    if (pieceColor === tempGame.turn()) {
+                        // Кликнули на свою фигуру - сразу выделяем её
+                        setSelectedSquare(square);
+                        setCustomSquareStyles({
+                            [square]: {
+                                backgroundColor: 'rgba(255, 255, 0, 0.4)',
+                            }
+                        });
+                        return;
                     }
                 }
-            }
 
-            setCustomSquareStyles({});
+                // Клик по другой клетке (не своей фигуре) - пытаемся сделать ход
+                const moveSuccess = makeMove(selectedSquare, square);
+
+                // Сбрасываем выбор
+                setSelectedSquare(null);
+                setCustomSquareStyles({});
+            }
         }
     }, [selectedSquare, fen, makeMove]);
 
