@@ -1,0 +1,31 @@
+{
+  "name": "simple link",
+  "input": [
+    {
+      "san": "e4",
+      "globalIndex": 0
+    },
+    {
+      "san": "e5",
+      "globalIndex": 1
+    }
+  ],
+  "expected": [
+    {
+      "san": "e4",
+      "globalIndex": 0,
+      "next": {
+        "san": "e5",
+        "globalIndex": 1
+      }
+    },
+    {
+      "san": "e5",
+      "globalIndex": 1,
+      "previous": {
+        "san": "e4",
+        "globalIndex": 0
+      }
+    }
+  ]
+}

@@ -44,8 +44,7 @@ export function linkMovesInArray(moves: any[]): void {
     const validMoves = moves.filter(move => 
         move && 
         typeof move === 'object' && 
-        move.globalIndex !== undefined &&
-        Object.keys(move).length > 2 // больше чем just next/previous
+        move.globalIndex !== undefined
     );
     
     for (let i = 0; i < validMoves.length; i++) {
@@ -59,6 +58,29 @@ export function linkMovesInArray(moves: any[]): void {
 }
 
 /**
+ * Обрабатывает вариации без перезаписи связей в основной линии
+ * @param moves - массив ходов для обработки
+ */
+function processVariationsOnly(moves: any[]): void {
+    moves.forEach(move => {
+        if (move.variations && Array.isArray(move.variations)) {
+            move.variations.forEach((variation: any[]) => {
+                // Связываем ходы внутри вариации
+                linkMovesInArray(variation);
+
+                // Устанавливаем previous для первого хода вариации
+                if (variation.length > 0 && move.previous) {
+                    variation[0].previous = move.previous;
+                }
+
+                // Рекурсивно обрабатываем подвариации
+                processVariationsOnly(variation);
+            });
+        }
+    });
+}
+
+/**
  * Рекурсивно добавляет ссылки next и previous ко всем ходам в истории, включая вариации
  * @param history - история ходов для связывания
  */
@@ -66,14 +88,8 @@ export function linkAllMovesRecursively(history: any[]): void {
     // Связываем основную линию
     linkMovesInArray(history);
 
-    // Рекурсивно обрабатываем вариации
-    history.forEach(move => {
-        if (move.variations && Array.isArray(move.variations)) {
-            move.variations.forEach((variation: any[]) => {
-                linkAllMovesRecursively(variation);
-            });
-        }
-    });
+    // Обрабатываем все вариации
+    processVariationsOnly(history);
 }
 
 /**

@@ -2,6 +2,7 @@ import { ChessMove } from '../types';
 import { promoteVariationLink } from './PromoteVariationLink';
 import { deleteVariation as deleteVariationUtil } from './DeleteVariation';
 import { deleteRemaining as deleteRemainingUtil } from './DeleteRemaining';
+import { linkAllMovesRecursively } from './ChessHistoryUtils';
 
 /**
  * Результат добавления хода в историю
@@ -141,6 +142,9 @@ export function addMoveToHistory(
     const newHistory = addMoveToCorrectLocation(history, currentMove, newMove);
     const updatedHistory = updatePreviousMoveNext(newHistory, currentMove, newMove);
 
+    // Связываем все ходы рекурсивно после добавления нового хода
+    linkAllMovesRecursively(updatedHistory);
+
     return {
         updatedCurrentMove: newMove,
         updatedHistory: updatedHistory
@@ -186,6 +190,9 @@ export function addVariationToHistory(
     }
 
     const updatedHistory = updateInHistory(history);
+
+    // Связываем все ходы рекурсивно после добавления вариации
+    linkAllMovesRecursively(updatedHistory);
 
     return {
         updatedHistory: updatedHistory
