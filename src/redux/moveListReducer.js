@@ -1,12 +1,15 @@
 import { Chess } from 'cm-chess';
-import { ADD_MOVE, ADD_VARIATION, PROMOTE_VARIATION, DELETE_VARIATION, DELETE_REMAINING, GOTO_MOVE } from './actions.js';
+import { ADD_MOVE, ADD_VARIATION, PROMOTE_VARIATION, DELETE_VARIATION, DELETE_REMAINING } from './actions.js';
 import { addMoveToHistory, addVariationToHistory, promoteVariation, deleteVariation, deleteRemaining } from '../utils/ChessMoveHistoryUpdater.ts';
-
-const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+import { 
+    getStartPosition, 
+    findMoveByGlobalIndex,
+    getDefaultStartPosition
+} from '../utils/ChessReducerUtils.js';
 
 const initialState = {
     game: new Chess(),
-    fen: DEFAULT_START_POSITION,
+    fen: getDefaultStartPosition(),
     history: [],
     currentMoveIndex: -1,
     currentMove: null, // Добавляем объект текущего хода
@@ -14,39 +17,6 @@ const initialState = {
     pgnHeaders: {},
     maxGlobalIndex: -1 // Добавляем максимальный глобальный индекс
 };
-
-// Function to get the starting position from PGN headers or default
-function getStartPosition(pgnHeaders) {
-    return pgnHeaders.FEN || DEFAULT_START_POSITION;
-}
-
-// Function to find move object by global index
-function findMoveByGlobalIndex(history, globalIndex) {
-    if (globalIndex === -1) {
-        return null;
-    }
-
-    function searchInHistory(moves) {
-        for (const move of moves) {
-            if (move.globalIndex === globalIndex) {
-                return move;
-            }
-
-            // Search in variations
-            if (move.variations && move.variations.length > 0) {
-                for (const variation of move.variations) {
-                    const moveInVariation = searchInHistory(variation);
-                    if (moveInVariation) {
-                        return moveInVariation;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    return searchInHistory(history);
-}
 
 // Add move handler
 function handleAddMove(state, action) {
@@ -158,7 +128,6 @@ function handlePromoteVariation(state, action) {
     }
 }
 
-
 // Delete variation handler
 function handleDeleteVariation(state, action) {
     try {
@@ -239,42 +208,6 @@ function handleDeleteRemaining(state, action) {
     }
 }
 
-// Goto move handler
-function handleGotoMove(state, action) {
-    try {
-        const { moveIndex, variationPath, fen } = action.payload;
-
-        // If going to position before first move
-        if (moveIndex === -1) {
-            const newGame = new Chess();
-            const startPosition = getStartPosition(state.pgnHeaders);
-            newGame.load(startPosition);
-
-            return {
-                ...state,
-                game: newGame,
-                fen: startPosition,
-                currentMoveIndex: -1,
-                currentMove: null
-            };
-        }
-
-        // Находим объект хода по глобальному индексу
-        const currentMove = findMoveByGlobalIndex(state.history, moveIndex);
-
-        return {
-            ...state,
-            fen: fen,
-            currentMoveIndex: moveIndex,
-            currentMove: currentMove,
-            currentVariationPath: variationPath,
-        };
-    } catch (error) {
-        console.error('Error in goto move:', error);
-        return state;
-    }
-}
-
 export function moveListReducer(state = initialState, action) {
     switch (action.type) {
         case ADD_MOVE:
@@ -287,8 +220,6 @@ export function moveListReducer(state = initialState, action) {
             return handleDeleteVariation(state, action);
         case DELETE_REMAINING:
             return handleDeleteRemaining(state, action);
-        case GOTO_MOVE:
-            return handleGotoMove(state, action);
         default:
             return state;
     }

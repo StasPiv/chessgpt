@@ -3,81 +3,26 @@ import {
     GOTO_FIRST, 
     GOTO_LAST, 
     GOTO_PREVIOUS, 
-    GOTO_NEXT 
+    GOTO_NEXT,
+    GOTO_MOVE
 } from './actions.js';
-
-const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+import { 
+    getStartPosition, 
+    findMoveByGlobalIndex, 
+    findFenByGlobalIndex,
+    getDefaultStartPosition
+} from '../utils/ChessReducerUtils.js';
 
 const initialState = {
     game: new Chess(),
-    fen: DEFAULT_START_POSITION,
+    fen: getDefaultStartPosition(),
     history: [],
     currentMoveIndex: -1,
     currentMove: null, // Добавляем объект текущего хода
     currentGlobalIndex: -1,
+    currentVariationPath: [],
     pgnHeaders: {}
 };
-
-// Function to get the starting position from PGN headers or default
-function getStartPosition(pgnHeaders) {
-    return pgnHeaders.FEN || DEFAULT_START_POSITION;
-}
-
-// Function to find FEN by global index
-function findFenByGlobalIndex(history, globalIndex, startPosition) {
-    if (globalIndex === -1) {
-        return startPosition;
-    }
-    
-    function searchInHistory(moves) {
-        for (const move of moves) {
-            if (move.globalIndex === globalIndex) {
-                return move.fen;
-            }
-            
-            // Search in variations
-            if (move.variations && move.variations.length > 0) {
-                for (const variation of move.variations) {
-                    const fenInVariation = searchInHistory(variation);
-                    if (fenInVariation) {
-                        return fenInVariation;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    
-    return searchInHistory(history) || startPosition;
-}
-
-// Function to find move object by global index
-function findMoveByGlobalIndex(history, globalIndex) {
-    if (globalIndex === -1) {
-        return null;
-    }
-    
-    function searchInHistory(moves) {
-        for (const move of moves) {
-            if (move.globalIndex === globalIndex) {
-                return move;
-            }
-            
-            // Search in variations
-            if (move.variations && move.variations.length > 0) {
-                for (const variation of move.variations) {
-                    const moveInVariation = searchInHistory(variation);
-                    if (moveInVariation) {
-                        return moveInVariation;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    
-    return searchInHistory(history);
-}
 
 // Handler for going to first move
 function handleGotoFirst(state) {
@@ -203,6 +148,42 @@ function handleGotoNext(state) {
     }
 }
 
+// Goto move handler
+function handleGotoMove(state, action) {
+    try {
+        const { moveIndex, variationPath, fen } = action.payload;
+
+        // If going to position before first move
+        if (moveIndex === -1) {
+            const newGame = new Chess();
+            const startPosition = getStartPosition(state.pgnHeaders);
+            newGame.load(startPosition);
+
+            return {
+                ...state,
+                game: newGame,
+                fen: startPosition,
+                currentMoveIndex: -1,
+                currentMove: null
+            };
+        }
+
+        // Находим объект хода по глобальному индексу
+        const currentMove = findMoveByGlobalIndex(state.history, moveIndex);
+
+        return {
+            ...state,
+            fen: fen,
+            currentMoveIndex: moveIndex,
+            currentMove: currentMove,
+            currentVariationPath: variationPath,
+        };
+    } catch (error) {
+        console.error('Error in goto move:', error);
+        return state;
+    }
+}
+
 export function navigationReducer(state = initialState, action) {
     switch (action.type) {
         case GOTO_FIRST:
@@ -213,6 +194,8 @@ export function navigationReducer(state = initialState, action) {
             return handleGotoPrevious(state);
         case GOTO_NEXT:
             return handleGotoNext(state);
+        case GOTO_MOVE:
+            return handleGotoMove(state, action);
         default:
             return state;
     }

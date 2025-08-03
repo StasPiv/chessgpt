@@ -2,12 +2,16 @@ import { Chess } from 'cm-chess';
 import { cleanPgn } from './cleanPgn.js';
 import { LOAD_PGN } from './actions.js';
 import { linkAllMovesRecursively } from '../utils/ChessHistoryUtils';
-
-const DEFAULT_START_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+import { 
+    getStartPosition, 
+    findMoveByGlobalIndex, 
+    extractPgnHeaders,
+    getDefaultStartPosition
+} from '../utils/ChessReducerUtils.js';
 
 const initialState = {
     game: new Chess(),
-    fen: DEFAULT_START_POSITION,
+    fen: getDefaultStartPosition(),
     history: [],
     fullHistory: [],
     currentMoveIndex: -1,
@@ -17,54 +21,6 @@ const initialState = {
     pgnHeaders: {},
     maxGlobalIndex: 0
 };
-
-// Function to get the starting position from PGN headers or default
-function getStartPosition(pgnHeaders) {
-    return pgnHeaders.FEN || DEFAULT_START_POSITION;
-}
-
-// Function to extract PGN headers
-function extractPgnHeaders(pgn) {
-    const headers = {};
-    const lines = pgn.split('\n');
-    
-    for (const line of lines) {
-        const match = line.match(/^\[(\w+)\s+"(.*)"\]$/);
-        if (match) {
-            headers[match[1]] = match[2];
-        }
-    }
-    
-    return headers;
-}
-
-// Function to find move object by global index
-function findMoveByGlobalIndex(history, globalIndex) {
-    if (globalIndex === -1) {
-        return null;
-    }
-    
-    function searchInHistory(moves) {
-        for (const move of moves) {
-            if (move.globalIndex === globalIndex) {
-                return move;
-            }
-            
-            // Search in variations
-            if (move.variations && move.variations.length > 0) {
-                for (const variation of move.variations) {
-                    const moveInVariation = searchInHistory(variation);
-                    if (moveInVariation) {
-                        return moveInVariation;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    
-    return searchInHistory(history);
-}
 
 // Function to add empty variation property to all moves recursively
 function addEmptyVariationToMoves(history) {
