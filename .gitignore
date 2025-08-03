@@ -19,6 +19,30 @@ frontend/.env.production
 # Frontend Test coverage
 frontend/coverage/
 
+# Backend (Laravel) files
+backend/vendor/
+backend/node_modules/
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/.phpunit.result.cache
+backend/Homestead.json
+backend/Homestead.yaml
+backend/auth.json
+backend/npm-debug.log
+backend/yarn-error.log
+backend/storage/*.key
+backend/storage/app/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/testing/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+backend/bootstrap/cache/*
+backend/public/hot
+backend/public/storage
+backend/public/mix-manifest.json
+
 # IDE files
 .idea/
 .vscode/

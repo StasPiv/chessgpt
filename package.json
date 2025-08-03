@@ -1,24 +1,27 @@
 {
   "name": "chessgpt-monorepo",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "private": true,
   "description": "ChessGPT - AI-powered chess analysis tool",
   "scripts": {
     "install:frontend": "cd frontend && npm install",
     "install:backend": "cd backend && composer install",
-    "setup": "npm run install:frontend",
-
+    "setup": "npm run install:frontend && npm run install:backend",
+    
     "dev:frontend": "cd frontend && npm run dev",
-    "dev": "npm run dev:frontend",
-
+    "dev:backend": "cd backend && php artisan serve",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    
     "build:frontend": "cd frontend && npm run build",
     "build": "npm run build:frontend",
-
+    
     "test:frontend": "cd frontend && npm test",
-    "test": "npm run test:frontend",
-
-    "lint:frontend": "cd frontend && npm run lint || echo 'Lint script not found'",
-    "lint": "npm run lint:frontend"
+    "test:backend": "cd backend && php artisan test",
+    "test": "npm run test:frontend && npm run test:backend",
+    
+    "migrate": "cd backend && php artisan migrate",
+    "migrate:fresh": "cd backend && php artisan migrate:fresh --seed",
+    "seed": "cd backend && php artisan db:seed"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
