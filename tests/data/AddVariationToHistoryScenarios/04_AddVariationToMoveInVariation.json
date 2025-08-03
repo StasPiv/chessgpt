@@ -1,0 +1,93 @@
+{
+  "name": "Add variation to move in variation",
+  "input": {
+    "newMove": {
+      "san": "Bb5",
+      "globalIndex": 4000,
+      "ply": 4
+    },
+    "currentMove": {
+      "san": "d6",
+      "globalIndex": 1001,
+      "ply": 3,
+      "next": {
+        "san": "d4",
+        "globalIndex": 1002,
+        "ply": 4
+      }
+    },
+    "history": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "e5",
+        "globalIndex": 1,
+        "ply": 2,
+        "variations": [
+          [
+            {
+              "san": "d6",
+              "globalIndex": 1001,
+              "ply": 3
+            },
+            {
+              "san": "d4",
+              "globalIndex": 1002,
+              "ply": 4
+            }
+          ]
+        ]
+      },
+      {
+        "san": "Nf3",
+        "globalIndex": 2,
+        "ply": 3
+      }
+    ]
+  },
+  "expected": {
+    "updatedHistory": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "e5",
+        "globalIndex": 1,
+        "ply": 2,
+        "variations": [
+          [
+            {
+              "san": "d6",
+              "globalIndex": 1001,
+              "ply": 3
+            },
+            {
+              "san": "d4",
+              "globalIndex": 1002,
+              "ply": 4,
+              "variations": [
+                [
+                  {
+                    "san": "Bb5",
+                    "globalIndex": 4000,
+                    "ply": 4
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      },
+      {
+        "san": "Nf3",
+        "globalIndex": 2,
+        "ply": 3
+      }
+    ]
+  }
+}

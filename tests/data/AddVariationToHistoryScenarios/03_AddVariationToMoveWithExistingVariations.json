@@ -1,0 +1,81 @@
+{
+  "name": "Add variation to move with existing variations",
+  "input": {
+    "newMove": {
+      "san": "Bc4",
+      "globalIndex": 3000,
+      "ply": 3
+    },
+    "currentMove": {
+      "san": "e4",
+      "globalIndex": 0,
+      "ply": 1,
+      "next": {
+        "san": "e5",
+        "globalIndex": 1,
+        "ply": 2
+      }
+    },
+    "history": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "e5",
+        "globalIndex": 1,
+        "ply": 2,
+        "variations": [
+          [
+            {
+              "san": "d4",
+              "globalIndex": 2000,
+              "ply": 3
+            }
+          ]
+        ]
+      },
+      {
+        "san": "Nf3",
+        "globalIndex": 2,
+        "ply": 3
+      }
+    ]
+  },
+  "expected": {
+    "updatedHistory": [
+      {
+        "san": "e4",
+        "globalIndex": 0,
+        "ply": 1
+      },
+      {
+        "san": "e5",
+        "globalIndex": 1,
+        "ply": 2,
+        "variations": [
+          [
+            {
+              "san": "d4",
+              "globalIndex": 2000,
+              "ply": 3
+            }
+          ],
+          [
+            {
+              "san": "Bc4",
+              "globalIndex": 3000,
+              "ply": 3
+            }
+          ]
+        ]
+      },
+      {
+        "san": "Nf3",
+        "globalIndex": 2,
+        "ply": 3
+      }
+    ]
+  }
+}
