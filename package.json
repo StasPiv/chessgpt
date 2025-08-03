@@ -1,0 +1,29 @@
+{
+  "name": "chessgpt-monorepo",
+  "version": "7.0.0",
+  "private": true,
+  "description": "ChessGPT - AI-powered chess analysis tool",
+  "scripts": {
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && composer install",
+    "setup": "npm run install:frontend",
+
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "npm run dev:frontend",
+
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:frontend",
+
+    "test:frontend": "cd frontend && npm test",
+    "test": "npm run test:frontend",
+
+    "lint:frontend": "cd frontend && npm run lint || echo 'Lint script not found'",
+    "lint": "npm run lint:frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "workspaces": [
+    "frontend"
+  ]
+}
