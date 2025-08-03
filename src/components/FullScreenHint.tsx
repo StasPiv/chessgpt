@@ -12,31 +12,31 @@ const FullScreenHint = (): ReactElement | null => {
     const isMobile = useSelector((state: RootState) => state.ui.isMobile);
     const isFullscreen = useSelector((state: RootState) => state.ui.isFullscreen);
 
-    // Подписка на изменения полноэкранного режима
+    // Subscribe to fullscreen mode changes
     useEffect(() => {
         const unsubscribe = fullscreenManager.addListener((isFullscreen: boolean) => {
             dispatch(setIsFullscreenAction(isFullscreen));
         });
         
-        // Инициализируем состояние
+        // Initialize state
         dispatch(setIsFullscreenAction(fullscreenManager.isInFullscreen()));
         
         return unsubscribe;
     }, [dispatch]);
 
-    // Показываем подсказку только на мобильных устройствах, если не в полноэкранном режиме
+    // Show hint only on mobile devices when not in fullscreen mode
     useEffect(() => {
         if (isMobile && !isFullscreen) {
             if (!hasInteracted) {
-                // Показываем подсказку через 2 секунды после загрузки
+                // Show hint after 2 seconds from loading
                 const timer = setTimeout(() => {
                     setIsVisible(true);
                 }, 2000);
 
                 return () => clearTimeout(timer);
             } else {
-                // Если пользователь уже взаимодействовал, но вышел из полноэкранного режима,
-                // показываем подсказку сразу
+                // If user already interacted but exited fullscreen mode,
+                // show hint immediately
                 setIsVisible(true);
             }
         } else {
@@ -44,7 +44,7 @@ const FullScreenHint = (): ReactElement | null => {
         }
     }, [isMobile, isFullscreen, hasInteracted]);
 
-    // Автоматически скрываем подсказку через 10 секунд (только для первого показа)
+    // Automatically hide hint after 10 seconds (only for first display)
     useEffect(() => {
         if (isVisible && !hasInteracted) {
             const timer = setTimeout(() => {
@@ -61,7 +61,7 @@ const FullScreenHint = (): ReactElement | null => {
         setIsVisible(false);
 
         try {
-            // Виброотклик для подтверждения
+            // Vibration feedback for confirmation
             if ('vibrate' in navigator) {
                 navigator.vibrate(50);
             }
@@ -77,7 +77,7 @@ const FullScreenHint = (): ReactElement | null => {
         setIsVisible(false);
     };
 
-    // Не показываем компонент если не мобильное устройство или не видимый
+    // Don't show component if not mobile device or not visible
     if (!isMobile || !isVisible) {
         return null;
     }
@@ -85,16 +85,16 @@ const FullScreenHint = (): ReactElement | null => {
     return (
         <div className="fullscreen-hint-overlay">
             <div className="fullscreen-hint-container">
-                {/* Кнопка закрытия */}
+                {/* Close button */}
                 <button 
                     className="hint-close-btn"
                     onClick={handleDismiss}
-                    aria-label="Закрыть подсказку"
+                    aria-label="Close hint"
                 >
                     ✕
                 </button>
 
-                {/* Анимированный палец */}
+                {/* Animated finger */}
                 <div 
                     className="finger-animation"
                     onClick={handleFingerClick}
@@ -105,18 +105,18 @@ const FullScreenHint = (): ReactElement | null => {
                     <div className="swipe-trail"></div>
                 </div>
 
-                {/* Текст подсказки */}
+                {/* Hint text */}
                 <div className="hint-text">
-                    <div className="hint-title">Полноэкранный режим</div>
+                    <div className="hint-title">Fullscreen Mode</div>
                     <div className="hint-description">
                         {hasInteracted ? 
-                            'Войдите в полноэкранный режим для продолжения игры' :
-                            'Нажмите на палец или проведите вверх для лучшего игрового опыта'
+                            'Enter fullscreen mode for comfortable game analysis' :
+                            'Tap the finger or swipe up for better chess position study'
                         }
                     </div>
                 </div>
 
-                {/* Стрелка вверх */}
+                {/* Up arrow */}
                 <div className="arrow-up">
                     ↑
                 </div>
