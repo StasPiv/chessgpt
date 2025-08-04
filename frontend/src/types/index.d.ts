@@ -7,3 +7,4 @@ export * from './Layout';
 export * from './GameHeader';
 export * from './NavigationControls';
 export * from './LoadPgn';
+export * from './Auth';
