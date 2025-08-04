@@ -3,6 +3,7 @@ import { chessReducer } from './chessReducer.js';
 import { analysisReducer } from './analysisReducer.js';
 import { websocketReducer } from './websocketReducer.js';
 import { uiReducer } from './uiReducer.js';
+import { authReducer } from './authReducer.js';
 import { undoMiddleware, withUndoRedo } from './undoMiddleware.js';
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
         analysis: analysisReducer,
         websocket: websocketReducer,
         ui: uiReducer,
+        auth: authReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

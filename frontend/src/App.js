@@ -4,6 +4,8 @@ import { store } from './redux/store.js';
 import { setIsFullscreenAction } from './redux/actions.js';
 import CustomLayout from './components/CustomLayout.tsx';
 import LoadPgn from './components/LoadPgn.tsx';
+import AuthHeader from './components/AuthHeader.tsx';
+import OAuthCallback from './components/OAuthCallback.tsx';
 import { connectWebSocket } from './websocket.js';
 import fullscreenManager from './utils/FullscreenManager.js';
 import './App.scss';
@@ -78,11 +80,17 @@ function AppContent() {
         setShowPgnModal(false);
     };
 
+    // Check if this is OAuth callback URL
+    if (window.location.pathname === '/auth/google/callback') {
+        return <OAuthCallback />;
+    }
+
     // Определяем, нужно ли показывать основное содержимое
     const shouldShowMainContent = !isMobile || isFullscreen;
 
     return (
         <div className="app-container">
+            <AuthHeader />
             {shouldShowMainContent && (
                 <div className="layout-container">
                     <CustomLayout />
